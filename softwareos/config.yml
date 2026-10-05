@@ -1,0 +1,12 @@
+# SoftwareOS project config — see softwareos/README.md
+version: 1.4.1
+customer: TBD
+# customer_root: ../<customer>-os   # uncomment if customer docs live in a hub repo
+default_branch: main
+
+# Project mode — setup | production
+#   setup      lightweight gates; tests/QA/security review are optional
+#   production tests, security review, and full QA are demanded and enforced
+# Asked (never guessed) by /join-project or /plan-customer; /go-production
+# transitions an already-onboarded project.
+mode: setup

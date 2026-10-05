@@ -1,0 +1,8 @@
+# SoftwareOS Standards Index
+
+global:
+  git-workflow:
+    description: Needs description - run /index-standards
+  tech-stack:
+    description: Needs description - run /index-standards
+

@@ -1,0 +1,152 @@
+# SoftwareOS manifest — generated; do not edit by hand
+version: 1.4.1
+base_commit: 69ba855921aa626927e8c22c6fd2b795205a3a6d
+base_remote: https://github.com/MoveoTech/Davids-skillOS.git
+profile: moveo
+files:
+  .claude/agents/build-error-resolver.md:
+    hash: sha256:decc8a1888b9e9f918ffa1199b66ab9c282301fa5c358891ab983c5e7c1535f3
+  .claude/agents/code-explorer.md:
+    hash: sha256:daf77d44778dc37b4253d83da4eb3cd0e981cdff979adfb1438b01fe8ff8c768
+  .claude/agents/code-reviewer.md:
+    hash: sha256:bc0dcc470bb2ba54e8e6b88a6043fccf6f3a7b0508d8b496ef6a892a10f908a0
+  .claude/agents/curator.md:
+    hash: sha256:6e494c9f167730de7baea157faf7fa7cf9cc6d162aed47b88602f542e4c75ab3
+  .claude/agents/os-explainer.md:
+    hash: sha256:39571d542c3bce9181c893772ed70396e3142798a661523e1647064aef4fe57a
+  .claude/agents/planner.md:
+    hash: sha256:bfa14eff2ccfe2770f153a8b59928b3389e1bc8047f8ccc69e55ed70cfe94e0f
+  .claude/agents/security-reviewer.md:
+    hash: sha256:39443931825734c995753c9c396943b25d31a0186345c698bcf1494f6a227f34
+  .claude/agents/tdd-guide.md:
+    hash: sha256:638457f03cce580d99d632c8d20b594e7fca6763f41bb22c277c4283772536fb
+  .claude/commands/softwareos/code-review.md:
+    hash: sha256:5bd7c1a1256c1393f5fbd1044a20df6c95bd835b00aa86b1d700c902acf461a2
+  .claude/commands/softwareos/curate.md:
+    hash: sha256:ee6aa22466d2b99e8a629947022dd7b4e244c77a5b7a12808e0ea14746097662
+  .claude/commands/softwareos/discover-standards.md:
+    hash: sha256:a81d0eade0e46bab612718d583268c992c30c00384c478f3fa7eed047f8cf3bf
+  .claude/commands/softwareos/explain-os.md:
+    hash: sha256:cdafeede922bb8c33c11a8291cbb7bb308c9b460555f9961a87dbbeb0948e500
+  .claude/commands/softwareos/go-production.md:
+    hash: sha256:b4189708f86c8d00fe13a0865575f57717fdc1818dc63c52d31dd276e4a12c69
+  .claude/commands/softwareos/hotfix.md:
+    hash: sha256:6d0bcc518e2ea4b6c08cf775f212ce1fd5160eff6e32eb580b21e680ad264661
+  .claude/commands/softwareos/index-standards.md:
+    hash: sha256:efb9a0a8f5c9ba5abaa99280360ee2ff7ba7853fc1c8b59c07a13859032be699
+  .claude/commands/softwareos/inject-standards.md:
+    hash: sha256:8a0ca31280e2eb454024e5659ea8cde360eba49755c287b7b5d281b6a2e9d2cd
+  .claude/commands/softwareos/join-project.md:
+    hash: sha256:5b57dfc3107db2c4aab5981e18a52dc18ce3a4901e1bbea9b85e0a19fdfd59f3
+  .claude/commands/softwareos/migrate-agent-os.md:
+    hash: sha256:c25d385fb4c5f77fda38935cd2548ce5b44c96ee020edcd73cd9d4f5c6337f69
+  .claude/commands/softwareos/plan-customer.md:
+    hash: sha256:037c9569fa47e9c3a0741236eff5bbe760247dc988841ec3c5be2644e5b72e11
+  .claude/commands/softwareos/plan-ecosystem.md:
+    hash: sha256:22fc396c364a7525d2f0036163389671944248bb50eccb0f8678cebb313141cb
+  .claude/commands/softwareos/plan-epic.md:
+    hash: sha256:3caecbc81b488d9d871220cbf424886adfe47ece883c1bf140a0355d387f5f12
+  .claude/commands/softwareos/plan-product.md:
+    hash: sha256:35cac414e358c696c03bd7a21412e526846bebc969292cb7078ec39def650eee
+  .claude/commands/softwareos/project-status.md:
+    hash: sha256:d69e1a43f54c3e1fdfb70d373139641335d424cc2489987ef0f7d8911031a6c3
+  .claude/commands/softwareos/refresh-indexes.md:
+    hash: sha256:524a33fa6073006caffa184f77843291aed6104333d843b447003931b4b2e263
+  .claude/commands/softwareos/shape-spec.md:
+    hash: sha256:b24ccb1d247b938bd82ccea3441632c29125b91af9130159e9add21f475fe680
+  .claude/commands/softwareos/spec-changes.md:
+    hash: sha256:1c2a912235a592a2ed500e56c77c1331deddbbe699a4197972671fcae07901c6
+  .claude/commands/softwareos/spec-of.md:
+    hash: sha256:9e400e8483e195421489559db81c44359e05b0181ed64c33679f2f5fe7ee8de3
+  .claude/commands/softwareos/update-os.md:
+    hash: sha256:bc662c0c544ff4e8d4398afb825335439e068441fe7190ee793561acfdc1c9a8
+  .claude/commands/softwareos/verify.md:
+    hash: sha256:e20c637335a1942bb80feb65380113fd2a9c883d440579cd33179ffcb5e38b8e
+  .claude/hooks/softwareos/context-banner.sh:
+    hash: sha256:c3754e7d7791825c4bd47ebfda15c348e2e3ed1c9c74a87094e1a044258f5cf6
+  .claude/hooks/softwareos/guard-git.sh:
+    hash: sha256:dc8f0279fabbd9c37f36f285f8521378e28affe787c5c741743ad0e8db64022d
+  .claude/hooks/softwareos/pattern-tripwire.sh:
+    hash: sha256:081c90524f8df2fdc22aafc60539710ff78dbceb78bba4632c7d2a372a17b5d5
+  .claude/hooks/softwareos/protect-config.sh:
+    hash: sha256:bf9b8bd8df413c38a4f5a4f6aa727d1417875ce4743b5e48778b2372681ed458
+  .claude/hooks/softwareos/secret-scan.sh:
+    hash: sha256:8468e9fe49c995502de1e94a6a123f41cdb1fed1e0fa82cb549f30d7dfda778b
+  .claude/skills/audit-log/SKILL.md:
+    hash: sha256:4290275807671f6781cd9780866c23593d2cb293a94536a9ef490fdced28859e
+  .claude/skills/explain-os/SKILL.md:
+    hash: sha256:c7889ae007e25e332c47f25dd521332faf8d91d2d08bfa14eba156dd8718c009
+  .claude/skills/explain-os/slides/00-title.md:
+    hash: sha256:f0710d2dfe081b43c9bc31ff973f1725c870c2afcdd4a9298b3ce48e23fe58b1
+  .claude/skills/explain-os/slides/01-why.md:
+    hash: sha256:3459f4e022a8ce1a3744a2e62d824d786e05707c7249d1e6f1e089b5d851e5a1
+  .claude/skills/explain-os/slides/02-hierarchy.md:
+    hash: sha256:4940cbd88afa21a996eb92716ce409217108bf2c9c1af0895385185ab77bced0
+  .claude/skills/explain-os/slides/03-on-disk.md:
+    hash: sha256:71a122f06f2b09aca82f11a84083e2b545c076210fc32c7959225b582018f1cd
+  .claude/skills/explain-os/slides/04-which-command.md:
+    hash: sha256:21c374e258d57217e9783d14697b8e6b1008c4fc1f90615e6909d5d1df9c5027
+  .claude/skills/explain-os/slides/05-dev-loop.md:
+    hash: sha256:6756dba36dc770285d3141a3f085a76af60122b8672a7bfe1e4d0887ca22a718
+  .claude/skills/explain-os/slides/06-pm-loop.md:
+    hash: sha256:f4c3e23377b37527ad7e421b47d2fab3f0b3319df0ce83d668a1caf16d1ab5f7
+  .claude/skills/explain-os/slides/07-spec-stays-true.md:
+    hash: sha256:92c1524f5147c2be288ad80abf19fc0bc8cf9a413354ba3f37580f020b269590
+  .claude/skills/explain-os/slides/08-guardrails.md:
+    hash: sha256:0ddac12bfe959bc3bd30836d2a2b34efcbf99105e2bcb3459ae714f2cfac9891
+  .claude/skills/explain-os/slides/09-next-pm.md:
+    hash: sha256:30518697343b67a177f718afc98b0cd30e8537e32595bbc324952dd5beb160eb
+  .claude/skills/explain-os/slides/09-next-project.md:
+    hash: sha256:1cc708c6aa008193080e1838b1f7669b36264b7e55b8a8880698ed0951c99499
+  .claude/skills/explain-os/slides/09-next-techlead.md:
+    hash: sha256:a8fbb84fcba20b6061b2fa1aa703d18f874587a726a04ad8e8f0cb4ffc84cfba
+  .claude/skills/pr/SKILL.md:
+    hash: sha256:977302c5be906d36bc9796ff627f27545a29369915be2f02dd6c12ba8099a70e
+  .claude/skills/process-meeting/SKILL.md:
+    hash: sha256:d20ae08c2c53a8f20ad4703e6e688b7233b9efbc12d6107e518c9d5399b4a1f5
+  .claude/skills/qa/SKILL.md:
+    hash: sha256:c37dab85be0b9edac403ff6ea87292b510560993a4481eabbfe061c62db4f906
+  .claude/skills/skill-creator/LICENSE.txt:
+    hash: sha256:58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd
+  .claude/skills/skill-creator/SKILL.md:
+    hash: sha256:dcd4803e61e913e6fc27294184cd3a71f09f5e924ff20c8a9a20173e7b3c2bcf
+  .claude/skills/skill-creator/agents/analyzer.md:
+    hash: sha256:bf68f4cac5a56c673a928c2e6d619586c5b93ea364026ab37547772cb45a663a
+  .claude/skills/skill-creator/agents/comparator.md:
+    hash: sha256:fe1fc9787c495d864c5d6eada47396478572325fde1b33a96d78bf4b849b7a3e
+  .claude/skills/skill-creator/agents/grader.md:
+    hash: sha256:57134da0c1a4eea33fbd74a1c9c44aa814f07d6bc64de303edb586f941e5d21a
+  .claude/skills/skill-creator/assets/eval_review.html:
+    hash: sha256:ce477dcc74dc1c0d1d3352646a79167b5a63634e936b1019160025065974e452
+  .claude/skills/skill-creator/eval-viewer/generate_review.py:
+    hash: sha256:fc9d1b9243fe5ab6012ebd579bd76d0035de1b79fd3b969de114defab26478fb
+  .claude/skills/skill-creator/eval-viewer/viewer.html:
+    hash: sha256:a53213426ee1100441d701a3a0d49cda7a842f992d2c36463f4d3cc0258575fa
+  .claude/skills/skill-creator/references/schemas.md:
+    hash: sha256:8e8876180a8989b406a4d3edddf875b04cdfd5805cc8616686d552b11ce4455f
+  .claude/skills/skill-creator/scripts/__init__.py:
+    hash: sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  .claude/skills/skill-creator/scripts/aggregate_benchmark.py:
+    hash: sha256:123ef128ea5ccc01a4b1ac212ef5567f21e9c13d3d240609780beeb3200c49aa
+  .claude/skills/skill-creator/scripts/generate_report.py:
+    hash: sha256:13df7118a3c50c83c4c3250a606d5f2b20b25a3d44cbc392b3d669ec75281453
+  .claude/skills/skill-creator/scripts/improve_description.py:
+    hash: sha256:87d864570220b699fac52da309d2d6efdb060647bfebc74f768128e646accf80
+  .claude/skills/skill-creator/scripts/package_skill.py:
+    hash: sha256:1a33059b0db1ef73375d46d513e5ea81369d2e8838c970597b0d52ddef8d1c0f
+  .claude/skills/skill-creator/scripts/quick_validate.py:
+    hash: sha256:67cf5703402013936c8fb75ad6a1afecd8841d45cc5e606b634eb05825fde365
+  .claude/skills/skill-creator/scripts/run_eval.py:
+    hash: sha256:43e3b8f80dbf69c343967ba77e268fae991d9fa3ed68b32a0ff02532cd48657f
+  .claude/skills/skill-creator/scripts/run_loop.py:
+    hash: sha256:7bd6f674203168520517eec94c55f493c0d154339b061b4d7c0f0dad187d0f21
+  .claude/skills/skill-creator/scripts/utils.py:
+    hash: sha256:3af8ae62c40c73ab712207436a0d9a981e845f25c5a7040229eb189cc8e45bb1
+  .claude/skills/testing/SKILL.md:
+    hash: sha256:2e32dc87d5051b607b62b28aae4630aceea0207b072220701b21064d5429f739
+  softwareos/standards/global/git-workflow.md:
+    hash: sha256:810b601fc4ed2fcabfd0a49518dbc878a433a169c23fc0b124f32ca89b9d9843
+    source: default
+  softwareos/standards/global/tech-stack.md:
+    hash: sha256:b2d784751b257d0abc85b82b6519628fbeaec41e474a6ca58544dbab1f6960f6
+    source: default
