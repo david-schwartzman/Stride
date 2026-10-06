@@ -9,7 +9,7 @@ After the first four epics, all 8 pages work, but only locally and on PR preview
 - A production deploy on Vercel with its own Neon production database, migrations applied and the catalog loaded.
 - Consistent, friendly error, loading and 404 states across all 8 pages, matching Figma. The empty states built in earlier epics are checked for consistency, not rebuilt.
 - Basic launch quality: mobile-responsive layouts, keyboard and screen-reader basics, page titles/meta for SEO, fast first load.
-- A final end-to-end check that the full shopping flow works on production in under 3 minutes.
+- A final end-to-end check that the full shopping flow works in under 3 minutes on a production-like preview, plus a read-only check that production is live and stocked, without placing real orders or touching real stock.
 
 ## User Stories
 
@@ -27,10 +27,11 @@ After the first four epics, all 8 pages work, but only locally and on PR preview
 - Every route (all 8 pages, 11 routes) has error, loading and not-found states where applicable, matching Figma. No page shows a blank screen or a raw error.
 - The empty states from earlier epics use one shared look and match Figma.
 - Every page is usable at 375px width, and every page has a title and meta description.
-- Lighthouse accessibility is ≥ 90 on Home, Catalog and Product.
+- Lighthouse accessibility is ≥ 90 on Home, Catalog, Product, Cart, Checkout and Login.
 - A keyboard-only run from landing to a confirmed order succeeds.
 - First-load performance target: TBD (set when shaping `responsive-a11y-pass`).
-- Playwright: landing → confirmation passes against the production URL in under 3 minutes.
+- Playwright: landing → confirmation passes against a production-like preview deploy in under 3 minutes, and a read-only smoke check (key pages load, catalog populated, no 5xx) passes against the production URL.
+- A bad release can be rolled back to the previous Vercel deployment without a database rollback.
 
 ## Out of Scope
 
