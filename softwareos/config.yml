@@ -1,6 +1,6 @@
 # SoftwareOS project config — see softwareos/README.md
 version: 1.4.1
-customer: TBD
+customer: stride
 # customer_root: ../<customer>-os   # uncomment if customer docs live in a hub repo
 default_branch: main
 
