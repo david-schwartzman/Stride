@@ -1,5 +1,9 @@
 # Git Workflow
 
+## Base branch
+
+Branch off `develop` and open every PR against `develop`. `main` is not a PR target.
+
 ## Branch naming
 
 One branch per spec, named from the SoftwareOS slugs (no date prefixes):
@@ -13,7 +17,7 @@ chore/<slug>                          # everything else
 
 - The canonical branch is recorded in the spec's `tasks.md` `> Branch:` line. To map a branch to a spec: match that line first; fall back to suffix-matching `<spec-slug>` against `feat/*/`.
 - Slugs are load-bearing — never rename an epic or spec after branches exist.
-- Never commit on the default branch. Branch first.
+- Never commit on `develop` or `main`. Branch first.
 
 ## Commits
 

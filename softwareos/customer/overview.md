@@ -29,4 +29,11 @@ Required pages:
 
 ## Key Dates
 
-- 4-week Moveo Academy capstone. Start/end dates TBD
+4-week Moveo Academy capstone: **Sun 2026-10-04 → Thu 2026-10-29**. Weeks run Sunday–Thursday.
+
+| Week | Dates | Milestone |
+| --- | --- | --- |
+| 1 | Oct 4–8 | Foundation: customer and product docs, roadmap, tech-stack rationale, Figma designs, AI skills. PM pitch Wed Oct 7, presentation Thu Oct 8 |
+| 2 | Oct 11–15 | First feature end to end: Catalog & Search (Home, Catalog, Product detail) |
+| 3 | Oct 18–22 | Accounts & Auth, then Cart & Checkout (mock payment) |
+| 4 | Oct 25–29 | Account & Wishlist, production deploy on Vercel, empty/error-state polish, final presentation |
