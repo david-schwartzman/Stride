@@ -24,6 +24,10 @@
 
 - PostgreSQL hosted on Neon (serverless Postgres)
 - Prisma ORM with migrations and a seed script for the product catalog
+- Neon branch per preview deployment: each PR preview gets its own database branch, forked from the `develop` database branch, so preview data and migrations stay isolated
+  - CI/preview build runs `prisma migrate deploy` then the seed script against that preview's branch
+  - Production runs migrations only, never the seed script
+  - The preview branch is deleted when the PR closes
 
 ## Testing
 
