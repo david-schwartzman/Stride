@@ -8,13 +8,13 @@ None — greenfield product.
 
 The 8 required pages (full rules in [mission.md](mission.md#v1-scope--in)), built in this order:
 
-1. **Catalog** — Home, Catalog (search, filter, sort), Product detail
-2. **Auth** — Sign-up / Login, protected routes
+1. **Auth** — Sign-up / Login, protected routes (also creates the app base: scaffold, CI, Prisma, shared layout)
+2. **Catalog** — Home, Catalog (search, filter, sort), Product detail
 3. **Cart + Checkout** — Cart (guest cookie, merge on login), Checkout, Confirmation (mock payment)
 4. **Account + Wishlist** — Account / profile with order history, Favorites / wishlist
 5. **Deploy + polish** — production deploy on Vercel; empty and error states polished end to end
 
-**Why this order:** catalog first because everything depends on products → auth, needed for checkout, wishlist and order history → cart + checkout, the core purchase → account + wishlist, which depend on auth and orders → deploy and polish.
+**Why this order:** auth first because it doesn't depend on products, and checkout, wishlist and order history all need it, so it lays the app base and unblocks them early → catalog, the products everything else sells → cart + checkout, the core purchase → account + wishlist, which depend on auth and orders → deploy and polish.
 
 ## Phase 2: Post-Launch
 

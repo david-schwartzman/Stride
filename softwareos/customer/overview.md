@@ -34,6 +34,6 @@ Required pages:
 | Week | Dates | Milestone |
 | --- | --- | --- |
 | 1 | Oct 4–8 | Foundation: customer and product docs, roadmap, tech-stack rationale, Figma designs, AI skills. PM pitch Wed Oct 7, presentation Thu Oct 8 |
-| 2 | Oct 11–15 | First feature end to end: Catalog & Search (Home, Catalog, Product detail) |
-| 3 | Oct 18–22 | Accounts & Auth, then Cart & Checkout (mock payment) |
+| 2 | Oct 11–15 | First feature end to end: Accounts & Auth (app base, Sign-up / Login, protected routes) |
+| 3 | Oct 18–22 | Catalog & Search (Home, Catalog, Product detail), then Cart & Checkout (mock payment) |
 | 4 | Oct 25–29 | Account & Wishlist, production deploy on Vercel, empty/error-state polish, final presentation |

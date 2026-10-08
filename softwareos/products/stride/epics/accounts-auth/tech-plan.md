@@ -8,7 +8,15 @@ Auth.js with the Credentials provider; passwords hashed with bcrypt. /signup and
 
 ## Architecture Impact
 
-- New User model + migration (email unique, password hash, name).
+This is the first epic, so it creates the base:
+
+- New Next.js App Router project (TypeScript strict, Tailwind, ESLint/Prettier, Vitest, Playwright, GitHub Actions CI).
+- Prisma + Neon setup (`directUrl` for migrations) and a shared Prisma client module.
+- Shared layout/header.
+
+Auth itself:
+
+- New User model + the first migration (email unique, password hash, name).
 - Auth.js config, /login and /signup routes, middleware for protected routes.
 - New env var AUTH_SECRET (Vercel + local).
 - Header gets a session-aware account/login state.
@@ -20,9 +28,10 @@ Auth.js with the Credentials provider; passwords hashed with bcrypt. /signup and
 - The Auth.js v5 / App Router API changes often, so pin the version and follow its docs.
 - Return-to redirect must only allow internal paths (open-redirect risk).
 - Login brute force: there's no rate limiting in v1. Note it as a known gap.
-- Spike: a short Auth.js Credentials + middleware proof on a Vercel preview before building forms.
+- Spike: a quick Prisma + Neon + Vercel preview smoke test in `app-foundation`, then a short Auth.js Credentials + middleware proof on a Vercel preview before building forms.
 
 ## Candidate Specs
 
+- `app-foundation` — app scaffold, CI, Prisma + Neon setup with shared client, shared layout/header
 - `signup-login` — User model, Auth.js Credentials, sign-up/login/logout with inline errors
 - `protected-routes` — middleware for /checkout, /account, /wishlist with safe return-to redirect, plus header session state

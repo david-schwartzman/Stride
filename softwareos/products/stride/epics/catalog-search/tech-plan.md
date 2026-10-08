@@ -8,12 +8,11 @@ Server Components render Home, Catalog and Product detail, reading through the s
 
 ## Architecture Impact
 
-This is the first epic, so it creates the base:
+Builds on the app base created by Accounts & Auth (`app-foundation`: scaffold, CI, Prisma + Neon, shared client, shared layout/header):
 
-- New Next.js App Router project (TypeScript strict, Tailwind, ESLint/Prettier, Vitest, Playwright, GitHub Actions CI).
-- Prisma + Neon setup, a shared Prisma client module, and the first migration with models Category, Product, ProductVariant (size + stock). Product holds run type, gender, beginner tag, price in cents and slug.
+- Migration adding models Category, Product, ProductVariant (size + stock). Product holds run type, gender, beginner tag, price in cents and slug.
 - Seed script for the catalog. Catalog content lives in its own shared data module (e.g. `prisma/catalog-data.ts`), separate from the seed logic. The seed imports it, and so does Launch & Polish's production catalog load, so the two can't drift apart.
-- Routes `/`, `/catalog`, `/product/[slug]`, plus a shared layout/header.
+- Routes `/`, `/catalog`, `/product/[slug]`, plus catalog links in the shared header.
 - No new external services.
 
 ## Risks & Unknowns
@@ -23,11 +22,11 @@ This is the first epic, so it creates the base:
 - Combined filters + search + sort in one Prisma query: keep it simple (case-insensitive contains) and don't add full-text search.
 - Neon cold starts may slow the first SSR load. Check on a Vercel preview.
 - Size model: half sizes for shoes vs. XS–XL vs. one size. Make sure ProductVariant handles all three cleanly.
-- Spike: none needed beyond a quick Prisma + Neon + Vercel preview smoke test in spec 1.
+- Spike: none needed (the Prisma + Neon + Vercel preview smoke test runs in Accounts & Auth's `app-foundation`).
 
 ## Candidate Specs
 
-- `catalog-foundation` — app scaffold, CI, Prisma schema (Category/Product/ProductVariant, `directUrl` for migrations), shared catalog data file + seed script, shared layout
+- `catalog-foundation` — Prisma schema (Category/Product/ProductVariant), shared catalog data file + seed script
 - `product-catalog` — /catalog grid with search, filters, price range and sort via URL params, plus the no-results state
 - `product-detail` — /product/[slug] with images, beginner tag, size selector, per-size stock, out-of-stock state
 - `home-page` — hero, featured products, shop-by-category / shop-by-run-type entry points; lands the Playwright e2e (landing → catalog → filter → product detail) as the slice that completes the journey
