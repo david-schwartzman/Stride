@@ -12,7 +12,7 @@ This is the first epic, so it creates the base:
 
 - New Next.js App Router project (TypeScript strict, Tailwind, ESLint/Prettier, Vitest, Playwright, GitHub Actions CI).
 - Prisma + Neon setup, a shared Prisma client module, and the first migration with models Category, Product, ProductVariant (size + stock). Product holds run type, gender, beginner tag, price in cents and slug.
-- Seed script for the catalog.
+- Seed script for the catalog. Catalog content lives in its own shared data module (e.g. `prisma/catalog-data.ts`), separate from the seed logic. The seed imports it, and so does Launch & Polish's production catalog load, so the two can't drift apart.
 - Routes `/`, `/catalog`, `/product/[slug]`, plus a shared layout/header.
 - No new external services.
 
@@ -27,7 +27,7 @@ This is the first epic, so it creates the base:
 
 ## Candidate Specs
 
-- `catalog-foundation` — app scaffold, CI, Prisma schema (Category/Product/ProductVariant), seed data, shared layout
+- `catalog-foundation` — app scaffold, CI, Prisma schema (Category/Product/ProductVariant, `directUrl` for migrations), shared catalog data file + seed script, shared layout
 - `product-catalog` — /catalog grid with search, filters, price range and sort via URL params, plus the no-results state
 - `product-detail` — /product/[slug] with images, beginner tag, size selector, per-size stock, out-of-stock state
 - `home-page` — hero, featured products, shop-by-category / shop-by-run-type entry points; lands the Playwright e2e (landing → catalog → filter → product detail) as the slice that completes the journey

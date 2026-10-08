@@ -24,9 +24,13 @@
 
 - PostgreSQL hosted on Neon (serverless Postgres)
 - Prisma ORM with migrations and a seed script for the product catalog
+  - Catalog content lives in one shared catalog data file, imported by both the seed script and the production catalog load
+  - Neon needs two connection strings: pooled `DATABASE_URL` for the app at runtime, and unpooled `DIRECT_URL` (`directUrl` in `schema.prisma`) for `prisma migrate`
+  - Migrations stay backward-compatible with the previous deploy (expand → contract), so a Vercel rollback never needs a database rollback
 - Neon branch per preview deployment: each PR preview gets its own database branch, forked from the `develop` database branch, so preview data and migrations stay isolated
   - CI/preview build runs `prisma migrate deploy` then the seed script against that preview's branch
-  - Production runs migrations only, never the seed script
+  - Production runs migrations only, never the seed script. The seed script refuses to run against the production database.
+  - Exception: production catalog content is loaded by a dedicated, idempotent catalog load (upserts keyed by slug) that reads the shared catalog data file. It loads catalog data only, never test users, orders or other fixture data.
   - The preview branch is deleted when the PR closes
 
 ## Testing
