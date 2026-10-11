@@ -1,0 +1,8 @@
+{
+  "skill_name": "update-arch",
+  "evals": [
+    {"id": 1, "name": "jwt-to-db-sessions", "prompt": "we're switching from JWT sessions to database sessions — Auth.js Prisma adapter with a Session table — so we can revoke sessions server-side (log out everywhere, kill a stolen session). update everything", "expected_output": "Plan grouped by level before any write; architecture.md, accounts-auth tech-plan, signup-login and protected-routes specs updated with Changelog rows and reconciled tasks; specs.index.yml in sync; consistency-check run; chat summary; no commit.", "files": []},
+    {"id": 2, "name": "rate-limit-preedited", "prompt": "I already updated architecture.md to add login/signup rate limiting with Upstash Redis. cascade it down to the rest of the docs", "expected_output": "Detects the uncommitted architecture.md diff as the source; updates tech-stack/dependencies with Upstash + env vars; resolves the 'no rate limiting' risk in accounts-auth tech-plan; amends signup-login (removes Out of Scope gap, adds ACs/tasks) with Changelog; plan before writes; summary; no commit.", "files": []},
+    {"id": 3, "name": "guest-cart-to-db", "prompt": "propagate this decision to the specs and plans: guest carts move out of the cookie and into the database — a Cart row keyed by an anonymous cartId cookie, merged into the user's cart on login. apply it across the project", "expected_output": "Updates architecture.md (Data Flow + Gotchas), cart-checkout tech-plan (Architecture Impact/Risks/Candidate Specs), checks signup-login onSignedIn hook; cart-checkout has no specs so candidate specs are listed not created; plan before writes; summary; no commit.", "files": []}
+  ]
+}
