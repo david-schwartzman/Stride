@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stride — Footer</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/stride/tokens.css">
+<link rel="stylesheet" href="ds/stride/components/bundle.css">
+<script src="ds/stride/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--on-inverse)}a:hover{color:var(--on-inverse);text-decoration:underline!important}
+</style>
+<style>@media (max-width: 760px){.m-pad{padding-left:16px !important;padding-right:16px !important}.m-hide{display:none !important}.m-full{max-width:none !important;position:static !important}.m-hero{min-height:520px !important}}</style>
+</helmet>
+<footer style="background: var(--surface-inverse); color: var(--on-inverse); font-family: var(--font-sans);">
+<div class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 48px 32px 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 40px;">
+<div style="display: flex; flex-wrap: wrap; gap: 48px; justify-content: space-between;">
+<div style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 12px;">
+<span style="font-family: var(--font-display); font-size: 36px; font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px;">Stride<span style="display: inline-block; width: 12px; height: 30px; background: var(--volt); transform: skewX(-18deg);"></span></span>
+<span style="font-size: 14px; line-height: 20px; max-width: 260px;">Less choice. Clearer guidance. Faster decisions. Running gear for your first 5K and 10K.</span>
+</div>
+<sc-for list="{{cols}}" as="col" hint-placeholder-count="3">
+<nav aria-label="{{col.title}}" style="flex: 0 1 180px; display: flex; flex-direction: column; gap: 10px;">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--on-inverse); opacity: 0.75;">{{col.title}}</span>
+<sc-for list="{{col.links}}" as="l" hint-placeholder-count="3">
+<a href="{{l.href}}" style="font-size: 14px; line-height: 20px; text-decoration: none;">{{l.label}}</a>
+</sc-for>
+</nav>
+</sc-for>
+</div>
+<div style="border-top: 1px solid var(--ink-muted); padding-top: 20px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font-size: 12px; line-height: 16px;">
+<span>© 2026 Stride · A Moveo Academy capstone · Prices in USD</span>
+<span>$5 shipping · free on orders over $75</span>
+</div>
+</div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":340}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var c = function (label) { return { label: label, href: 'Catalog.dc.html' }; };
+    return {
+      cols: [
+        { title: 'Shop by run', links: [c('Road'), c('Trail'), c('Race day')] },
+        { title: 'Shop', links: [c('Shoes'), c('Apparel'), c('Gear')] },
+        { title: 'Your account', links: [{ label: 'Sign in', href: 'Login.dc.html' }, { label: 'My orders', href: 'AccountOrders.dc.html' }, { label: 'Wishlist', href: 'Wishlist.dc.html' }] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

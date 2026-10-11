@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stride — Thermal Long-Sleeve Top (out of stock)</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/stride/tokens.css">
+<link rel="stylesheet" href="ds/stride/components/bundle.css">
+<script src="ds/stride/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font-sans)}
+a{color:var(--ink)}a:hover{color:var(--ink-muted)}
+</style>
+<style>@media (max-width: 760px){.m-pad{padding-left:16px !important;padding-right:16px !important}.m-hide{display:none !important}.m-full{max-width:none !important;position:static !important}.m-hero{min-height:520px !important}}</style>
+</helmet>
+<div style="width: 100%; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+
+<x-import component-from-global-scope="Stride.Header" utility="{{utility}}" promo="$5 shipping · free on orders over $75" links="{{navLinks}}" active="Apparel" cart-count="{{cartCount}}" home-href="Main.dc.html" search-href="Catalog.dc.html" account-href="Login.dc.html" wishlist-href="Wishlist.dc.html" cart-href="Cart.dc.html"></x-import>
+<main id="main">
+
+<div class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 24px 32px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px;">
+
+<nav aria-label="Breadcrumb" style="font-size: 14px; color: var(--ink-muted); display: flex; gap: 8px; flex-wrap: wrap;">
+<a href="Catalog.dc.html" style="color: var(--ink-muted);">Shop</a><span>/</span><a href="Catalog.dc.html" style="color: var(--ink-muted);">Apparel</a><span>/</span><span style="color: var(--ink);">Thermal Long-Sleeve Top</span>
+</nav>
+
+<div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+
+<div style="flex: 999 1 520px; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; opacity: 0.7;">
+<sc-for list="{{shots}}" as="s" hint-placeholder-count="2">
+<div style="aspect-ratio: 4 / 5; overflow: hidden;"><x-import component-from-global-scope="Stride.ProductArt" kind="{{s.kind}}" color="{{s.color}}" accent="{{s.accent}}" sole="{{s.sole}}" bg="{{s.bg}}" view="{{s.view}}" label="{{s.label}}"></x-import></div>
+</sc-for>
+</div>
+
+<div class="m-full" style="flex: 1 1 360px; max-width: 460px; display: flex; flex-direction: column; gap: 24px;">
+<div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+<div style="display: flex; gap: 8px; flex-wrap: wrap;">
+<x-import component-from-global-scope="Stride.Badge" tone="guide">For cold mornings</x-import>
+<x-import component-from-global-scope="Stride.Badge">Out of stock</x-import>
+</div>
+<h1 style="margin: 0; font-family: var(--font-display); font-size: 40px; line-height: 1; font-weight: 700; text-transform: uppercase;">Thermal Long-Sleeve Top</h1>
+<span style="font-size: 14px; color: var(--ink-muted);">Apparel · Trail · Unisex</span>
+<x-import component-from-global-scope="Stride.Price" amount="{{price}}" size="lg"></x-import>
+<p style="margin: 0; font-size: 16px; line-height: 24px;">A warm, brushed-inside layer for chilly starts that doesn't trap sweat once you warm up.</p>
+</div>
+
+<!-- Apparel sizes XS–XL, all sold out -->
+<x-import component-from-global-scope="Stride.SizePicker" label="Select size" sizes="{{sizes}}"></x-import>
+
+<div role="status" style="display: flex; flex-direction: column; gap: 4px; padding: 16px; background: var(--surface-alt); font-size: 14px; line-height: 20px;">
+<strong style="font-size: 16px;">Out of stock in every size</strong>
+<span>Save it to your wishlist and check back soon.</span>
+</div>
+
+<x-import component-from-global-scope="Stride.Button" variant="accent" full-width="{{yes}}" disabled="{{yes}}">Out of stock</x-import>
+<x-import component-from-global-scope="Stride.WishlistButton" variant="full"></x-import>
+
+<a href="Catalog.dc.html" style="font-size: 14px; font-weight: 600;">See other apparel in stock</a>
+</div>
+</div>
+</div>
+
+</main>
+<dc-import name="Footer" hint-size="100%,380px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1300}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      utility: [{ label: 'My orders', href: 'AccountOrders.dc.html' }, { label: 'Sign up', href: 'Signup.dc.html' }, { label: 'Log in', href: 'Login.dc.html' }],
+      yes: true, cartCount: 2, price: 55,
+      navLinks: ['Road', 'Trail', 'Race day', 'Shoes', 'Apparel', 'Gear'].map(function (l) { return { label: l, href: 'Catalog.dc.html' }; }),
+      shots: [{ view: 'full', bg: 'stone', label: 'Front' }, { view: 'back', bg: 'stone', label: 'Back' }].map(function (v) { return Object.assign({ kind: 'longsleeve', color: '#3a3d36', accent: '#f2f2ee' }, v); }),
+      sizes: ['XS', 'S', 'M', 'L', 'XL'].map(function (l) { return { label: l, available: false }; })
+    };
+  }
+}
+</script>
+</body>
+</html>

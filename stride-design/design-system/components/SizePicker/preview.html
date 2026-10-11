@@ -1,0 +1,12 @@
+<!-- @dsCard group="Commerce" height=190 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>SizePicker — preview</title></head>
+<body>
+<div id="root" class="st-demo"></div>
+<script>
+  var S = window.Stride, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(React.Fragment,null,h(S.SizePicker,{sizes:['XS','S',{label:'M',available:false},'L','XL','XXL'],defaultValue:'L'})));
+</script>
+</body>
+</html>

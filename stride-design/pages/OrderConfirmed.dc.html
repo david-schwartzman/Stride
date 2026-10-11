@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stride — Order confirmed</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/stride/tokens.css">
+<link rel="stylesheet" href="ds/stride/components/bundle.css">
+<script src="ds/stride/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font-sans)}
+a{color:var(--ink)}a:hover{color:var(--ink-muted)}
+</style>
+<style>@media (max-width: 760px){.m-pad{padding-left:16px !important;padding-right:16px !important}.m-hide{display:none !important}.m-full{max-width:none !important;position:static !important}.m-hero{min-height:520px !important}}</style>
+</helmet>
+<div style="width: 100%; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+
+<x-import component-from-global-scope="Stride.Header" promo="$5 shipping · free on orders over $75" utility="{{utility}}" links="{{navLinks}}" cart-count="{{zero}}" account-name="Dana" home-href="Main.dc.html" search-href="Catalog.dc.html" account-href="AccountOrders.dc.html" wishlist-href="Wishlist.dc.html" cart-href="Cart.dc.html"></x-import>
+<main id="main">
+
+<section style="background: var(--surface-inverse); color: var(--on-inverse);">
+<div class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 56px 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px;">
+<span style="display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 999px; background: var(--success-soft); color: var(--success); font-size: 28px; font-weight: 800;" aria-hidden="true">✓</span>
+<h1 style="margin: 0; font-family: var(--font-display); font-size: clamp(44px, 7vw, 64px); line-height: 0.95; font-weight: 800; text-transform: uppercase;">Thanks, Dana. Order placed.</h1>
+<p style="margin: 0; font-size: 18px; line-height: 28px;">Order number <strong>#STR-10482</strong> · Placed Oct 5, 2026</p>
+</div>
+</section>
+
+<div class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 48px 32px 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+
+<section style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+<h2 style="margin: 0 0 8px; font-family: var(--font-display); font-size: 24px; line-height: 1.1; font-weight: 700; text-transform: uppercase;">Order summary</h2>
+<sc-for list="{{items}}" as="i" hint-placeholder-count="2">
+<div style="display: flex; gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line);">
+<div style="width: 64px; height: 80px; flex: none; overflow: hidden;"><x-import component-from-global-scope="Stride.ProductArt" kind="{{i.art.kind}}" color="{{i.art.color}}" accent="{{i.art.accent}}" bg="{{i.art.bg}}"></x-import></div>
+<div style="flex: 1; display: flex; flex-direction: column; font-size: 14px; line-height: 20px;"><strong style="font-size: 16px;">{{i.name}}</strong><span style="color: var(--ink-muted);">{{i.variant}} · Qty {{i.qty}}</span></div>
+<span style="font-weight: 700; font-variant-numeric: tabular-nums;">{{i.total}}</span>
+</div>
+</sc-for>
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; font-size: 15px;">
+<div style="display: flex; justify-content: space-between;"><span>Subtotal</span><span>$53.00</span></div>
+<div style="display: flex; justify-content: space-between;"><span>Shipping</span><span>$5.00</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 18px;"><strong>Total</strong><strong>$58.00</strong></div>
+</div>
+</section>
+
+<aside style="flex: 1 1 300px; max-width: 420px; display: flex; flex-direction: column; gap: 24px;">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 24px; background: var(--surface-alt); font-size: 14px; line-height: 20px;">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">Shipping to</span>
+<span>Dana Levi<br>245 Park Ave<br>New York, NY 10017</span>
+<span style="margin-top: 8px; color: var(--ink-muted);">Standard shipping · $5, free over $75</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 24px; background: var(--surface-alt); font-size: 14px; line-height: 20px;">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">Payment</span>
+<span>Demo card ending 3456 — nothing was charged</span>
+</div>
+<a href="OrderDetail.dc.html" style="display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 999px; background: var(--ink); color: var(--surface); font-weight: 700; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none;">View in my orders</a>
+<a href="Catalog.dc.html" style="display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 999px; border: 2px solid var(--ink); box-sizing: border-box; font-weight: 700; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none;">Keep shopping</a>
+</aside>
+</div>
+
+</main>
+<dc-import name="Footer" hint-size="100%,380px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1250}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      utility: [{ label: 'Hi, Dana', href: 'AccountOrders.dc.html' }, { label: 'My orders', href: 'AccountOrders.dc.html' }, { label: 'Log out', href: 'Main.dc.html' }],
+      zero: 0,
+      navLinks: ['Road', 'Trail', 'Race day', 'Shoes', 'Apparel', 'Gear'].map(function (l) { return { label: l, href: 'Catalog.dc.html' }; }),
+      items: [
+        { art: { kind: 'tee', color: '#0e0f0c', accent: '#d4ff3a', bg: 'stone' }, name: 'Aero Knit Running Tee', variant: 'Size M', qty: 1, total: '$35.00' },
+        { art: { kind: 'socks', color: '#ffffff', accent: '#0e0f0c', bg: 'stone' }, name: 'Cushion Running Socks 3-Pack', variant: 'One size', qty: 1, total: '$18.00' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
