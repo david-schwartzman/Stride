@@ -60,3 +60,22 @@ specs:
       - src/features/auth/**
       - src/instrumentation.ts
       - prisma/migrations/*_init_auth/**
+  - folder: 2026-10-11-session-management
+    slug: session-management
+    status: shaped
+    branch: feat/accounts-auth/session-management
+    covers:
+      - /account/security
+      - src/app/account/security/**
+      - src/features/account-security/**
+      - src/app/api/cron/cleanup-sessions/**
+      - e2e/session-management.spec.ts
+      - prisma/migrations/*_session_public_id/**
+  - folder: 2026-10-11-auth-event-logging
+    slug: auth-event-logging
+    status: shaped
+    branch: feat/accounts-auth/auth-event-logging
+    covers:
+      - src/lib/auth-events/**
+      - prisma/migrations/*_auth_event/**
+      - e2e/auth-events.spec.ts
