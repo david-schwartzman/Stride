@@ -29,7 +29,7 @@
 - [x] T9 Build src/components/ui/Button per ButtonProps + bundle.css
 - [x] T10 Build src/components/ui/Input (label, hint, error via aria-describedby, aria-invalid)
 - [x] T11 Build src/components/layout/Header (wordmark + volt slash, nav, placeholder search, icons w/ aria-labels, cartCount/accountName props, utility ReactNode slot defaulting to signed-out UtilityLinks My orders · Sign up · Log in, sticky) + client MobileNav drawer below bp-md that also shows the utility items
-- [ ] T12 Build src/components/layout/Footer per AC8's element list (pages/Footer.dc.html) and SkipLink
+- [x] T12 Build src/components/layout/Footer per AC8's element list (pages/Footer.dc.html) and SkipLink
 - [ ] T13 Compose src/app/layout.tsx (SkipLink → Header → main#main → Footer) + placeholder src/app/page.tsx
 
 ## Verification
