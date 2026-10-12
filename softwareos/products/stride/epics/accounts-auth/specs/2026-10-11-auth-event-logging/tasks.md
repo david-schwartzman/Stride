@@ -76,7 +76,7 @@
   - `await getRequestMeta()` and capture `createdAt = new Date()` once.
   - Build the row from the type's allowlist only.
   - Non-throttled: immediately `console.log(JSON.stringify({ evt: "auth", type, reason, count, userId, sessionPublicId, createdAt }))` on one line (no IP/UA), then schedule `after(async () => { try { await prisma.authEvent.create({ data: { ...row, createdAt } }) } catch { console.error(JSON.stringify({ evt: "auth_event_write_failed", type })) } })`.
-  - Throttled: in `after()`, `findFirst` a matching throttled event (same type, same IP or `userId` key, last 15 minutes); if none, write the stdout line and the row as above (AC11).
+  - Throttled: in `after()`, `findFirst` a matching throttled event (same type, same IP or `userId` key, last 15 minutes); if none, write the stdout line and the row as above. When the key is a null IP, skip the `findFirst` and always write (AC11).
   - Wrap the whole body in try/catch so it never rejects (AC1, AC2, AC5, AC7, AC11). T4 goes green.
 - [ ] T15 Add src/lib/auth-events/prune.ts. `pruneAuthEvents(olderThan: Date)` runs `prisma.authEvent.deleteMany({ where: { createdAt: { lt: olderThan } } })` and returns the count (AC8). T5 goes green.
 - [ ] T16 Add src/lib/auth-events/index.ts, exporting only `recordAuthEvent`, `pruneAuthEvents` and the `AuthEventInput` type. Callers must not import `prisma.authEvent` directly.
