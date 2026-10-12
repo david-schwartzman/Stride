@@ -13,7 +13,7 @@
 
 ## Database & previews (spike first)
 
-- [ ] T5 Add prisma/schema.prisma (postgresql, url DATABASE_URL, directUrl DIRECT_URL, no models), src/lib/db.ts globalThis-cached client, and the postinstall: prisma generate script
+- [x] T5 Add prisma/schema.prisma (postgresql, url DATABASE_URL, directUrl DIRECT_URL, no models), src/lib/db.ts globalThis-cached client, and the postinstall: prisma generate script
 - [ ] T6 Link Vercel project + Neon–Vercel integration (preview branch per deploy from develop DB branch); set build to `prisma migrate deploy && next build`; map DIRECT_URL
 - [ ] T6.1 Spike: open a throwaway PR, confirm preview build ran migrate deploy on its own Neon branch and connects (SELECT 1)
 - [ ] T6.2 Delete the preview's Neon branch on PR close (integration setting or delete-branch-action workflow)
