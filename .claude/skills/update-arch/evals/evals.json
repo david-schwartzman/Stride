@@ -1,0 +1,56 @@
+{
+  "skill_name": "update-arch",
+  "evals": [
+    {
+      "id": 1,
+      "name": "sessions-to-redis",
+      "prompt": "we're moving session storage out of Postgres and into Upstash Redis, so session lookups don't hit the database on every request. update everything",
+      "expected_output": "Plan grouped by level before any write; architecture.md, tech-stack.md/dependencies.md, accounts-auth tech-plan and every spec that touches sessions updated with Changelog rows and reconciled tasks; specs.index.yml in sync; consistency-check run on architecture.md; chat summary; no commit.",
+      "files": [],
+      "assertions": [
+        "Shows an impact analysis and a plan grouped by level before writing any file",
+        "Writes nothing until the user approves the plan",
+        "architecture.md is updated to describe Redis-backed sessions",
+        "tech-stack.md or dependencies.md lists Upstash Redis and its env vars",
+        "Every edited spec.md gets a new Changelog row; no existing Changelog rows are rewritten",
+        "tasks.md for each edited spec is reconciled (append-only: new tasks added, superseded ones marked, none deleted)",
+        "specs.index.yml agrees with the edited specs' titles and statuses",
+        "Runs the project consistency-check skill on architecture.md (no global skill or agent is used)",
+        "Ends with a chat summary of files changed per level and does not create a git commit"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "rate-limit-preedited",
+      "prompt": "I already updated architecture.md to add login/signup rate limiting with Upstash Redis. cascade it down to the rest of the docs",
+      "expected_output": "Detects the uncommitted architecture.md diff as the source; updates tech-stack/dependencies with Upstash + env vars; resolves any 'no rate limiting' risk in the accounts-auth tech-plan; amends the signup/login spec (ACs/tasks) with a Changelog row; plan before writes; summary; no commit.",
+      "files": [],
+      "assertions": [
+        "Reads the uncommitted architecture.md diff and treats it as the source of the change",
+        "Does not re-edit architecture.md beyond what the user already changed (unless a contradiction is found and called out)",
+        "Shows a plan grouped by level before writing any file",
+        "tech-stack.md or dependencies.md lists Upstash Redis and its env vars",
+        "The accounts-auth tech-plan no longer lists missing rate limiting as an open risk",
+        "The spec owning login/signup gets rate-limit ACs or tasks and a new Changelog row",
+        "Runs the project consistency-check skill on architecture.md",
+        "Ends with a chat summary and does not create a git commit"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "guest-cart-to-db",
+      "prompt": "propagate this decision to the specs and plans: guest carts move out of the cookie and into the database — a Cart row keyed by an anonymous cartId cookie, merged into the user's cart on login. apply it across the project",
+      "expected_output": "Updates architecture.md (Data Flow + Gotchas), cart-checkout tech-plan (Architecture Impact/Risks/Candidate Specs), checks the login flow's post-sign-in hook; epics with no shaped specs get candidate specs listed, not created; plan before writes; summary; no commit.",
+      "files": [],
+      "assertions": [
+        "Shows a plan grouped by level before writing any file",
+        "architecture.md describes the DB-backed guest cart and the merge on login",
+        "cart-checkout tech plan is updated (architecture impact, risks or candidate specs)",
+        "Checks the login spec for the merge-on-login hook and either amends it with a Changelog row or reports why no change is needed",
+        "Does not create new spec folders for epics that have no shaped specs; lists candidate specs instead",
+        "Runs the project consistency-check skill on architecture.md",
+        "Ends with a chat summary and does not create a git commit"
+      ]
+    }
+  ]
+}
