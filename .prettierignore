@@ -1,0 +1,15 @@
+# Docs, design reference and tooling are not app code.
+softwareos/
+stride-design/
+.claude/
+*.md
+
+# Generated
+package-lock.json
+.next/
+out/
+build/
+coverage/
+playwright-report/
+test-results/
+next-env.d.ts

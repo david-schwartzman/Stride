@@ -7,7 +7,7 @@
 ## Scaffold & tooling
 
 - [x] T1 Scaffold Next.js App Router app (TS strict, Tailwind, ESLint, src/, @/* alias); pin exact versions incl. zod and Prisma 6.x (prisma + @prisma/client — not 7)
-- [ ] T2 Add Prettier + eslint-config-prettier; scripts lint, typecheck, test, test:e2e, db:migrate, db:generate (postinstall comes with the schema in T5)
+- [x] T2 Add Prettier + eslint-config-prettier; scripts lint, typecheck, test, test:e2e, db:migrate, db:generate (postinstall comes with the schema in T5)
 - [ ] T3 Configure Vitest + RTL + jsdom (vitest.config.ts) and Playwright (playwright.config.ts, webServer on built app)
 - [ ] T4 Add .env.example (DATABASE_URL, DIRECT_URL, PASSWORD_PEPPER, GUEST_CART_SECRET placeholders) and gitignore .env* except the example
 
