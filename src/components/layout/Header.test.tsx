@@ -1,5 +1,5 @@
 // covers AC7, T11, T14
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Header } from "./Header";
@@ -9,8 +9,24 @@ vi.mock("next/navigation", () => ({
   usePathname: () => navigation.pathname,
 }));
 
+// jsdom has no matchMedia; this stub lets a test fire a bp-md change.
+const media = vi.hoisted(() => ({
+  listeners: new Set<(event: { matches: boolean }) => void>(),
+}));
+
 beforeEach(() => {
   navigation.pathname = "/";
+  media.listeners.clear();
+  window.matchMedia = vi.fn((query: string) => ({
+    matches: false,
+    media: query,
+    addEventListener: (_: string, fn: (event: { matches: boolean }) => void) =>
+      media.listeners.add(fn),
+    removeEventListener: (
+      _: string,
+      fn: (event: { matches: boolean }) => void,
+    ) => media.listeners.delete(fn),
+  })) as unknown as typeof window.matchMedia;
 });
 
 function linkTargets(container: HTMLElement) {
@@ -168,6 +184,17 @@ describe("Header", () => {
 
       fireEvent.keyDown(document, { key: "Escape" });
       expect(document.body.style.overflow).toBe("");
+    });
+
+    it("closes and releases the page when the viewport widens past bp-md", () => {
+      render(<Header />);
+      fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+      expect(window.matchMedia).toHaveBeenCalledWith("(min-width: 960px)");
+
+      act(() => media.listeners.forEach((fn) => fn({ matches: true })));
+      expect(screen.queryByRole("dialog")).toBeNull();
+      expect(document.body.style.overflow).toBe("");
+      expect(media.listeners.size).toBe(0);
     });
 
     it("closes on a backdrop click", () => {

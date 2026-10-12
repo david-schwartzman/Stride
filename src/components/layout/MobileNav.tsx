@@ -65,13 +65,21 @@ export function MobileNav({ links, utility }: MobileNavProps) {
         first?.focus();
       }
     };
+    // The drawer is only CSS-hidden at bp-md; close it there so the scroll
+    // lock and Tab trap don't outlive it (e.g. a tablet rotated to landscape).
+    const wide = window.matchMedia("(min-width: 960px)");
+    const onWide = (event: MediaQueryListEvent) => {
+      if (event.matches) setOpen(false);
+    };
     // Stop the page scrolling underneath the drawer.
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
+    wide.addEventListener("change", onWide);
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
+      wide.removeEventListener("change", onWide);
     };
   }, [open]);
 
