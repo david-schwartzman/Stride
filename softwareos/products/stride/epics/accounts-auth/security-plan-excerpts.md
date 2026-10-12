@@ -41,3 +41,10 @@ Revoking = deleting the session row. The next request with that token finds noth
 ## Brute force cleanup
 
 - Failed logins insert `AuthAttempt` rows keyed `email:x` and `ip:y`. Success clears the account counter. A nightly cron deletes rows older than a day.
+
+## Logging and audit trail (rated "should")
+
+- Log these events: signup, login success, login failure, logout, logout-all, password change, reset requested and reset completed, and session revoked.
+- Include the user ID, IP, user agent and time.
+- **Never log** passwords, tokens, full cookies, reset links or full card numbers.
+- Error pages show a generic message. Stack traces go to logs only.

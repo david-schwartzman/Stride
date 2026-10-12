@@ -65,3 +65,11 @@ specs:
       - src/app/api/cron/cleanup-sessions/**
       - e2e/session-management.spec.ts
       - prisma/migrations/*_session_public_id/**
+  - folder: 2026-10-11-auth-event-logging
+    slug: auth-event-logging
+    status: shaped
+    branch: feat/accounts-auth/auth-event-logging
+    covers:
+      - src/lib/auth-events/**
+      - prisma/migrations/*_auth_event/**
+      - e2e/auth-events.spec.ts

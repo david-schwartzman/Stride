@@ -22,3 +22,4 @@ Shoppers can sign up and log in with email and password, and protected pages (ch
 | 2026-10-11-protected-routes | shaped | feat/accounts-auth/protected-routes |
 | 2026-10-11-security-headers | shaped | feat/accounts-auth/security-headers |
 | 2026-10-11-session-management | shaped | feat/accounts-auth/session-management |
+| 2026-10-11-auth-event-logging | shaped | feat/accounts-auth/auth-event-logging |
