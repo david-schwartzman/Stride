@@ -1,10 +1,17 @@
 // covers AC7, T11, T14
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Header } from "./Header";
 
-vi.mock("next/navigation", () => ({ usePathname: () => "/" }));
+const navigation = vi.hoisted(() => ({ pathname: "/" }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => navigation.pathname,
+}));
+
+beforeEach(() => {
+  navigation.pathname = "/";
+});
 
 function linkTargets(container: HTMLElement) {
   return within(container)
@@ -136,6 +143,67 @@ describe("Header", () => {
       fireEvent.keyDown(document, { key: "Escape" });
       expect(screen.queryByRole("dialog")).toBeNull();
       expect(menu).toHaveFocus();
+    });
+
+    it("keeps Tab and Shift+Tab inside the open drawer", () => {
+      render(<Header />);
+      fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+      const close = screen.getByRole("button", { name: "Close menu" });
+      const lastLink = within(
+        screen.getByRole("group", { name: "Help and account" }),
+      ).getByRole("link", { name: "Log in" });
+
+      lastLink.focus();
+      fireEvent.keyDown(document, { key: "Tab" });
+      expect(close).toHaveFocus();
+
+      fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+      expect(lastLink).toHaveFocus();
+    });
+
+    it("locks page scroll while open and restores it on close", () => {
+      render(<Header />);
+      fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+      expect(document.body.style.overflow).toBe("hidden");
+
+      fireEvent.keyDown(document, { key: "Escape" });
+      expect(document.body.style.overflow).toBe("");
+    });
+
+    it("closes on a backdrop click", () => {
+      render(<Header />);
+      fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+      const backdrop = screen.getByRole("dialog").previousElementSibling!;
+      fireEvent.click(backdrop);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("closes when the route changes", () => {
+      const { rerender } = render(<Header />);
+      fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+
+      navigation.pathname = "/account";
+      rerender(<Header />);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("closes on any link click, even one that only changes the query", () => {
+      render(
+        <Header
+          utility={
+            <a href="?tab=orders" onClick={(event) => event.preventDefault()}>
+              Orders tab
+            </a>
+          }
+        />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Menu" }));
+      fireEvent.click(
+        within(screen.getByRole("dialog")).getByRole("link", {
+          name: "Orders tab",
+        }),
+      );
+      expect(screen.queryByRole("dialog")).toBeNull();
     });
 
     it("closes from the close button", () => {

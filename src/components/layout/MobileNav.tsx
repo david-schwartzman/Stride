@@ -18,6 +18,7 @@ export function MobileNav({ links, utility }: MobileNavProps) {
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
   const wasOpen = useRef(false);
   const pathname = usePathname();
   const [openedOn, setOpenedOn] = useState(pathname);
@@ -38,10 +39,40 @@ export function MobileNav({ links, utility }: MobileNavProps) {
     if (!open) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") {
+        setOpen(false);
+        return;
+      }
+      if (event.key !== "Tab" || !dialog.current) return;
+      // aria-modal: keep Tab / Shift+Tab inside the drawer.
+      const focusable = dialog.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      if (
+        event.shiftKey &&
+        (active === first || !dialog.current.contains(active))
+      ) {
+        event.preventDefault();
+        last?.focus();
+      } else if (
+        !event.shiftKey &&
+        (active === last || !dialog.current.contains(active))
+      ) {
+        event.preventDefault();
+        first?.focus();
+      }
     };
+    // Stop the page scrolling underneath the drawer.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, [open]);
 
   return (
@@ -68,8 +99,14 @@ export function MobileNav({ links, utility }: MobileNavProps) {
             className="absolute inset-0 bg-surface-inverse/40"
             onClick={() => setOpen(false)}
           />
+          {/* Any link click closes the drawer, including utility-slot links and
+              links that only change the query string (the pathname check misses those). */}
           <div
+            ref={dialog}
             id="mobile-nav"
+            onClick={(event) => {
+              if ((event.target as Element).closest("a")) setOpen(false);
+            }}
             role="dialog"
             aria-modal="true"
             aria-label="Menu"
@@ -89,7 +126,6 @@ export function MobileNav({ links, utility }: MobileNavProps) {
                 <Link
                   key={link.label}
                   href={link.href}
-                  onClick={() => setOpen(false)}
                   className="flex min-h-11 items-center border-b border-line font-display text-2xl font-bold uppercase text-ink focus-visible:outline-none focus-visible:shadow-focus"
                 >
                   {link.label}
