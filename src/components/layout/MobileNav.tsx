@@ -99,7 +99,7 @@ export function MobileNav({ links, utility }: MobileNavProps) {
             <div
               aria-label="Help and account"
               role="group"
-              className="flex flex-col gap-4 text-sm [&_a]:flex [&_a]:min-h-11 [&_a]:items-center"
+              className="flex flex-col text-sm [&_a]:flex [&_a]:min-h-11 [&_a]:items-center"
             >
               {utility}
             </div>
