@@ -33,7 +33,7 @@ Greenfield: no app code exists yet. The references are the sibling specs and the
 - **Key patterns:**
   - `accountName` adds a green dot to the account icon and its label names the user.
   - `accountHref` sets where the account icon links.
-  - The `utility` row is a list of `{ label, href }` links; the designs use "My orders · Sign up · Log in".
+  - The design's `utility` prop is a list of `{ label, href }` links (the designs use "My orders · Sign up · Log in"). That can't hold the logout form, so app-foundation's Header takes `utility` as a ReactNode slot instead (app-foundation AC7).
   - The Header takes props, so session wiring happens in the layout and the Header API stays unchanged.
 
 ### Login banner and header designs

@@ -1,6 +1,6 @@
 # Accounts & Auth: Design Rationale
 
-> Epic: epic.md · Specs: specs/2026-10-08-app-foundation, specs/2026-10-08-signup-login
+> Epic: [epic.md](epic.md) · Specs: [app-foundation](specs/2026-10-08-app-foundation/spec.md), [signup-login](specs/2026-10-08-signup-login/spec.md) · Later: [protected-routes](specs/2026-10-11-protected-routes/spec.md)
 > Written: 2026-10-08
 
 A plain-language explanation of what the first two specs do, why each choice was made, and which alternatives were rejected. Section 5 lists three things that have changed since the stack was chosen. Read those first, because they're the most likely ways to get caught out.
@@ -25,7 +25,7 @@ A plain-language explanation of what the first two specs do, why each choice was
 
 **Rejected: three specs from the start.** The tech plan does list a third spec, `protected-routes` (blocking `/checkout` etc. for logged-out users). It was kept separate on purpose so these two stay small.
 
-**An honest framing:** much of the stack (Next.js, Prisma, Neon, Zod, Vercel) was **already set by the project's tech-stack standard** (`softwareos/standards/global/tech-stack.md`). The specs didn't invent those choices. They applied them and made the detailed decisions the standard left open. If someone asks "why Next.js?", the answer is: "It's the project standard, and here's why it fits." (Auth was originally Auth.js + bcrypt as well; on 2026-10-11 it moved to an in-house session module with Argon2id, see §3.2–3.4.)
+**An honest framing:** much of the stack (Next.js, Prisma, Neon, Zod, Vercel) was **already set by the project's tech-stack standard** ([`standards/global/tech-stack.md`](../../../../standards/global/tech-stack.md)). The specs didn't invent those choices. They applied them and made the detailed decisions the standard left open. If someone asks "why Next.js?", the answer is: "It's the project standard, and here's why it fits." (Auth was originally Auth.js + bcrypt as well; on 2026-10-11 it moved to an in-house session module with Argon2id, see §3.2–3.4.)
 
 ---
 
@@ -94,7 +94,7 @@ A plain-language explanation of what the first two specs do, why each choice was
 
 ### 2.5 Design system → code
 
-**What it does:** the designer's tokens (`stride-design/design-system/tokens.css`) become the Tailwind theme. Only the **Button** and **Input** components are built, plus Header, Footer and a "Skip to content" link.
+**What it does:** the designer's tokens ([`stride-design/design-system/tokens.css`](../../../../../stride-design/design-system/tokens.css)) become the Tailwind theme. Only the **Button** and **Input** components are built, plus Header, Footer and a "Skip to content" link.
 
 **Why:**
 - The colours and fonts have a single source of truth, the design files. That avoids hand-copied hex codes drifting apart over time.
@@ -126,7 +126,7 @@ A plain-language explanation of what the first two specs do, why each choice was
 
 ### 3.2 Auth.js with "Credentials" (email + password)
 
-> Superseded 2026-10-11: Auth.js was replaced by an in-house session module (`src/lib/auth/`), because its Credentials provider only supports JWT sessions, which can't be revoked. The "writing auth ourselves" risk is contained by keeping the module to about 150 lines, following a published pattern (Lucia / The Copenhagen Book) and testing it fully — see softwareos/products/stride/architecture.md
+> Superseded 2026-10-11: Auth.js was replaced by an in-house session module (`src/lib/auth/`), because its Credentials provider only supports JWT sessions, which can't be revoked. The "writing auth ourselves" risk is contained by keeping the module to about 150 lines, following a published pattern (Lucia / The Copenhagen Book) and testing it fully — see [architecture.md](../../architecture.md)
 
 **Why:**
 - It's the project standard, it runs inside the app, and it costs nothing.
@@ -140,7 +140,7 @@ A plain-language explanation of what the first two specs do, why each choice was
 
 ### 3.3 JWT sessions instead of database sessions (the main decision made in these specs)
 
-> Superseded 2026-10-11: database sessions replaced JWT. The cookie holds a random 256-bit token; the `Session` table stores only its SHA-256 hash. Logout or a revoke deletes the row and takes effect on the next request. The cost is one indexed lookup per request — see softwareos/products/stride/architecture.md
+> Superseded 2026-10-11: database sessions replaced JWT. The cookie holds a random 256-bit token; the `Session` table stores only its SHA-256 hash. Logout or a revoke deletes the row and takes effect on the next request. The cost is one indexed lookup per request — see [architecture.md](../../architecture.md)
 
 **What it means:**
 - **JWT session:** the user's ID, email and name are stored *inside* the cookie, signed with `AUTH_SECRET` so nobody can fake or edit it. The server just checks the signature, with no database lookup.
@@ -151,11 +151,13 @@ A plain-language explanation of what the first two specs do, why each choice was
 - It's faster: there's no database lookup on every page view.
 - The upcoming `protected-routes` check can run without touching the database.
 
+> Superseded 2026-10-11: no longer true. With database sessions, logout deletes the session row and `invalidateAllSessions(userId)` force-logs-out a user everywhere (PR #10; "sign out of other devices" is the session-management spec). Kept below only as the original reasoning.
+
 **The trade-off (say it before they do):** we **can't force-log-out** one specific user. For example, if a session is stolen, it stays valid until it expires. Another small issue: if the user changes their name, the cookie still shows the old name until they log in again. Both are listed in Out of Scope. For a v1 shop with mock payments, this is acceptable.
 
 ### 3.4 Passwords: bcrypt (`bcryptjs`, cost 12)
 
-> Superseded 2026-10-11: passwords are hashed with Argon2id (19 MiB, t=2, p=1) + per-user salt + a server-side pepper (`PASSWORD_PEPPER`) via `@node-rs/argon2`, a prebuilt native module that runs on Vercel, so the native-build concern below no longer applies — see softwareos/products/stride/architecture.md
+> Superseded 2026-10-11: passwords are hashed with Argon2id (19 MiB, t=2, p=1) + per-user salt + a server-side pepper (`PASSWORD_PEPPER`) via `@node-rs/argon2`, a prebuilt native module that runs on Vercel, so the native-build concern below no longer applies — see [architecture.md](../../architecture.md)
 
 **What it does:** turns a password into a one-way scrambled "hash". Even if the database leaks, the real passwords aren't in it.
 
@@ -196,7 +198,7 @@ A plain-language explanation of what the first two specs do, why each choice was
 
 ### 3.8 Two config files (`auth.config.ts` + `auth.ts`)
 
-> Superseded 2026-10-11: with Auth.js gone there are no config files to split. The proxy only checks that the session cookie is present, so it never loads Prisma or Argon2 — see softwareos/products/stride/architecture.md
+> Superseded 2026-10-11: with Auth.js gone there are no config files to split. The proxy only checks that the session cookie is present, so it never loads Prisma or Argon2 — see [architecture.md](../../architecture.md)
 
 **Why:** the route-blocking check in `protected-routes` might run in Next's "edge" runtime, which can't load Prisma or bcrypt. So the lightweight part (session rules) sits in one file, and the database and password part sits in the other. This is the split the Auth.js docs recommend. (Section 5 covers whether it's still needed.)
 
@@ -210,7 +212,7 @@ A plain-language explanation of what the first two specs do, why each choice was
 
 **Why:** the browser test needs a real database. A `postgres:16` container inside GitHub Actions is free and fast, and it needs **no Neon credentials in CI**.
 
-**Rejected: a Neon branch per CI run.** That needs API secrets in CI and adds more moving parts. The foundation spec had planned this, and the change is recorded in `references.md`.
+**Rejected: a Neon branch per CI run.** That needs API secrets in CI and adds more moving parts. The foundation spec had planned this, and the change is recorded in [signup-login's `references.md`](specs/2026-10-08-signup-login/references.md).
 
 **Trade-off:** CI runs plain Postgres, not Neon. In practice both are Postgres 16 and behave the same for this code. The preview deploys still test the real Neon setup.
 
@@ -218,11 +220,11 @@ A plain-language explanation of what the first two specs do, why each choice was
 
 ## 4. Questions they might ask, with short answers
 
-- **"Can someone brute-force passwords?"** → Failed logins are throttled in Postgres: 5 failures in 15 minutes per email gives an increasing delay, 30 per IP blocks that IP, and sign-up is limited per IP. Argon2id also makes each offline guess expensive. (This used to be a documented v1 gap; closed 2026-10-11.)
+- **"Can someone brute-force passwords?"** → Failed logins are throttled in Postgres: 5 failures in 15 minutes per email starts a back-off of 1, 2, 4, 8, then 15 minutes; 30 failures per IP in 15 minutes block that IP for 15 minutes; sign-up is capped at 10 per hour per IP. Unknown emails are throttled exactly like real ones, so the throttle doesn't reveal which accounts exist. Argon2id also makes each offline guess expensive. (This used to be a documented v1 gap; closed 2026-10-11.)
 - **"Why redirect to `/` instead of back to where they came from?"** → Return-to with `callbackUrl` belongs to `protected-routes`, because it needs a safe-redirect check (an open-redirect risk). Doing it right was moved there on purpose.
 - **"Why are there links that 404?"** → The header links point to pages that later epics build. This is documented as not a QA failure.
 - **"Why no email verification or password reset?"** → Both are explicitly out of v1 scope in the mission.
-- **"How do you log out in the e2e test?"** → It calls the logout action, which deletes the session row, and also checks that an old copy of the cookie is rejected. The real logout button arrives with `protected-routes`.
+- **"How do you log out in the e2e test?"** → signup-login's e2e doesn't log out: it has no logout control, and Playwright can't call a Server Action directly. There, logout and "an old token is rejected" are integration tests. The browser journey (log out with the header button, then check that an old copy of the cookie is rejected) is in `protected-routes`, where the button ships.
 
 ---
 
@@ -230,21 +232,21 @@ A plain-language explanation of what the first two specs do, why each choice was
 
 All three are about things that changed after the tech-stack standard was written.
 
-1. > Resolved 2026-10-11: the project pins Prisma 6, so the app-foundation spec works as written — see softwareos/standards/global/tech-stack.md
+1. > Resolved 2026-10-11: the project pins Prisma 6, so the app-foundation spec works as written — see [standards/global/tech-stack.md](../../../../standards/global/tech-stack.md)
 
    **Prisma 7 removed `directUrl` from `schema.prisma`.** The connection URL now lives in a new `prisma.config.ts` file, and Prisma Client now needs a "driver adapter" (for Postgres, typically `@prisma/adapter-pg`). The app-foundation spec says to scaffold with current versions **and** to put `directUrl = env("DIRECT_URL")` in the schema. With Prisma 7 that won't work as written.
    - **Fix:** either pin Prisma 6 (simplest, and the spec stays as written), or update AC4 and the Technical Approach for Prisma 7 via `/spec-changes`.
 
-2. > Superseded 2026-10-11: Auth.js is no longer used — see softwareos/products/stride/architecture.md
+2. > Superseded 2026-10-11: Auth.js is no longer used — see [architecture.md](../../architecture.md)
 
    **Auth.js is now maintained by the Better Auth team** (announced September 2025). They still ship security fixes for Auth.js but **recommend Better Auth for new projects**.
    - **Defence:** Auth.js is the project standard. It is still maintained for security. Exact-pinning limits surprises. It matches the JWT-only design, which is the use case the Better Auth team themselves list as Auth.js's remaining strength.
    - Expect this question. If the team is open to it, it's a good topic to raise proactively.
 
 3. **Next.js 16 renamed `middleware` to `proxy`, and it now runs on Node.js by default**, not edge.
-   - This mostly affects `protected-routes`. But the reason given for the split `auth.config.ts` (that it must be edge-safe) is weaker now.
-   - **Defence:** the split is still harmless and still the pattern the Auth.js docs show.
-   - **Done:** Next.js docs warn that the proxy is **not** a full security boundary. The proxy now only checks that the cookie is present, and every page with private data and every Server Action calls `requireUser()` (standard `global/auth-security`).
+   - This mostly affects `protected-routes`.
+   - > Superseded 2026-10-11: the `auth.config.ts` split and its defence no longer apply, because Auth.js was removed (PR #10). The proxy only checks that the session cookie is present and loads no Prisma or Argon2, so the edge-vs-Node question doesn't matter — see [architecture.md](../../architecture.md).
+   - **Done:** Next.js docs warn that the proxy is **not** a full security boundary. The proxy now only checks that the cookie is present, and every page with private data and every Server Action calls `requireUser()` (standard [`global/auth-security`](../../../../standards/global/auth-security.md)).
 
 ---
 
