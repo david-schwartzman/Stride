@@ -20,4 +20,4 @@ No application code exists yet (`src/` not scaffolded).
 ### External guidance
 
 - **Next.js CSP guide, "Without Nonces":** static CSP set in `next.config` `headers()`, with `script-src 'self' 'unsafe-inline'` (plus `'unsafe-eval'` in dev). It also notes that Cache-Control set in `next.config` is overwritten for pages, which is why T5 sets it in the proxy.
-- **Vercel Toolbar CSP allowlist:** the origins preview deployments need (`vercel.live` and related). Used only when `VERCEL_ENV === "preview"`.
+- **Vercel Toolbar CSP allowlist:** the origins preview deployments need, pinned exactly in AC7 (`vercel.live`, `vercel.com`, `assets.vercel.com`, `wss://ws-us3.pusher.com`). Used only when `VERCEL_ENV === "preview"`.
