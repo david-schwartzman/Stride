@@ -20,7 +20,7 @@
 
 ## CI
 
-- [ ] T7 Add .github/workflows/ci.yml on pull_request: branches: [develop] — npm ci, lint, typecheck, vitest, playwright chromium, build, e2e
+- [x] T7 Add .github/workflows/ci.yml on pull_request: branches: [develop] — npm ci, lint, typecheck, vitest, playwright chromium, build, e2e
 
 ## Design system & layout
 
