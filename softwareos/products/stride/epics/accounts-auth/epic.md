@@ -20,3 +20,4 @@ Shoppers can sign up and log in with email and password, and protected pages (ch
 | 2026-10-08-app-foundation | shaped | feat/accounts-auth/app-foundation |
 | 2026-10-08-signup-login | shaped | feat/accounts-auth/signup-login |
 | 2026-10-11-protected-routes | shaped | feat/accounts-auth/protected-routes |
+| 2026-10-11-security-headers | shaped | feat/accounts-auth/security-headers |
