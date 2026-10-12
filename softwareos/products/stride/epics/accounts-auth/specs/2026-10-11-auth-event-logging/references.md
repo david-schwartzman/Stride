@@ -15,7 +15,7 @@ No application code exists yet (`src/` not scaffolded).
 ### Sibling specs
 
 - **Location:** `../2026-10-08-signup-login/spec.md`, `../2026-10-11-session-management/spec.md`
-- **Relevance:** they define the actions that emit events, `throttle.ts` and its `x-forwarded-for` IP parsing, the cleanup cron and `Session.publicId`.
+- **Relevance:** they define the actions that emit events, `throttle.ts`, the shared `getClientIp()` helper (`src/lib/request-ip.ts`), the cleanup cron and `Session.publicId`.
 - **Key patterns:** signup-login AC11/AC12 (no secrets in logs, form state or the DB; `Session.id` is `sha256(token)`); session-management AC8 (only `publicId` leaves the server), AC13 (cron auth and counts), AC14 (no secrets in logs).
 
 ### Product architecture and standards
@@ -25,7 +25,7 @@ No application code exists yet (`src/` not scaffolded).
 
 ### Stride Auth & Session Security Plan
 
-- **Location:** https://claude.ai/artifact/QL1DDEEN6QERM6GsZP4a8h, § "Logging and audit trail" (rated "should")
+- **Location:** [../../security-plan-excerpts.md](../../security-plan-excerpts.md), § "Logging and audit trail" (rated "should"), copied from the private artifact https://claude.ai/artifact/QL1DDEEN6QERM6GsZP4a8h
 - **Relevance:** the event list (signup, login success and failure, logout, logout-all, password change, session revoked; reset events deferred with password reset), the fields (user ID, IP, user agent, time) and the never-log list.
 
 ### Next.js `after()`
@@ -45,6 +45,6 @@ No application code exists yet (`src/` not scaffolded).
 
 ## Planner assumptions
 
-- Trusting the first `x-forwarded-for` entry is safe only because Vercel overwrites the header at its edge. This assumes Vercel is the only ingress.
+- The IP comes only from `x-real-ip` via `getClientIp()`, never the leftmost `x-forwarded-for`, which the client controls. Trusting `x-real-ip` assumes Vercel is the only ingress, because Vercel sets it at its edge.
 - The AC10 e2e test reads `AuthEvent` rows through a test-only Prisma client on the CI `DATABASE_URL` (the Postgres service container signup-login adds).
 - The `password_change` count comes from the in-transaction session delete. If `changePasswordAction` uses `invalidateAllSessions`, that helper must return a count (T17).
