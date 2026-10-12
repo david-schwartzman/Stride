@@ -66,4 +66,4 @@ is treated as `setup`.
   `meetings/` and hands /plan-epic or /shape-spec an ordered list of what to build.
 
 Status anytime: /project-status. Skills: testing, qa, audit-log, pr, process-meeting,
-explain-os, skill-creator.
+explain-os, skill-creator, consistency-check, project-audit, update-arch.
