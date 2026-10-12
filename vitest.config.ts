@@ -8,7 +8,5 @@ export default defineConfig({
     environment: "jsdom",
     include: ["src/**/*.test.{ts,tsx}"],
     setupFiles: ["./vitest.setup.ts"],
-    // Component tests arrive in T14; keep `npm test` green until then.
-    passWithNoTests: true,
   },
 });

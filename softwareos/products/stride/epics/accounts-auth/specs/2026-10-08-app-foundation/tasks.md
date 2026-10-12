@@ -34,5 +34,5 @@
 
 ## Verification
 
-- [ ] T14 Write Vitest tests for Button, Input (error/aria wiring), Header (cart count hidden at 0, aria-labels, default utility row links, custom utility node rendered), Footer (AC8 columns, links and bottom row) and the Playwright smoke (layout, skip link, 375px no h-scroll) (testing skill)
+- [x] T14 Write Vitest tests for Button, Input (error/aria wiring), Header (cart count hidden at 0, aria-labels, default utility row links, custom utility node rendered), Footer (AC8 columns, links and bottom row) and the Playwright smoke (layout, skip link, 375px no h-scroll) (testing skill)
 - [ ] T15 Run QA against acceptance criteria (qa skill)
