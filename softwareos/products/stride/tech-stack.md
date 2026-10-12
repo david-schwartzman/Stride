@@ -18,14 +18,16 @@ Same technologies as `softwareos/standards/global/tech-stack.md`.
 
 ## Auth
 
-- Auth.js (NextAuth) with email + password credentials
-- Passwords hashed with bcrypt
-- Session stored in an httpOnly cookie
+- In-house session module (`src/lib/auth/`) with email + password — no auth library
+- Opaque database sessions: random 256-bit token in an HttpOnly `__Host-stride_session` cookie; only its SHA-256 hash is stored in the `Session` table (30-day sliding, 90-day absolute)
+- Passwords hashed with Argon2id + per-user salt + server-side pepper (`@node-rs/argon2`); 12–128 characters
+- Login throttling per account and per IP, stored in Postgres
+- `@oslojs/crypto` + `@oslojs/encoding` for token generation and hashing
 
 ## Database
 
 - PostgreSQL hosted on Neon (serverless Postgres)
-- Prisma ORM with migrations and a seed script for the product catalog
+- Prisma 6 ORM (pinned major; Prisma 7 moves `directUrl` to `prisma.config.ts` and needs a driver adapter) with migrations and a seed script for the product catalog
 
 ## Testing
 
@@ -51,7 +53,9 @@ Same technologies as `softwareos/standards/global/tech-stack.md`.
 | PostgreSQL | MongoDB | Orders, items, products and stock are relational and need consistency |
 | Neon | Local Docker Postgres | Free, no local setup, works with Vercel previews |
 | Prisma | Drizzle | Type-safe, easy migrations and seeding, more beginner-friendly |
-| Auth.js | Clerk | No paid external service; auth logic stays in the app |
+| Own session module | Auth.js, Clerk | Auth.js email + password (Credentials) supports JWT sessions only, which can't be revoked; Clerk is a paid external service. About 150 lines we own and test |
+| Database sessions | JWT sessions | Instant logout and revoke per device; a leaked DB holds only token hashes. Costs one indexed lookup per request |
+| Argon2id + pepper | bcrypt | OWASP's first choice, memory-hard; bcrypt silently ignores bytes past 72 |
 | Vercel | Netlify / Render | Built for Next.js; preview link per PR |
 | Images in `/public` | Cloudinary | ~30 products don't need an image service |
 | Mock payment | Stripe test mode | Real payments are OUT for v1 |

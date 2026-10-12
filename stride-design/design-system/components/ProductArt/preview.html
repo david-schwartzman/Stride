@@ -1,0 +1,13 @@
+<!-- @dsCard group="Commerce" height=300 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>ProductArt — preview</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var S = window.Stride, h = React.createElement;
+  var items = [['shoe','#0e0f0c','#d4ff3a','stone'],['tee','#0e0f0c','#d4ff3a','stone'],['shorts','#0e0f0c','#ffffff','volt'],['jacket','#d4ff3a','#0e0f0c','stone'],['cap','#0e0f0c','#d4ff3a','stone'],['socks','#ffffff','#0e0f0c','stone']];
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{display:'grid',gridTemplateColumns:'repeat(6, minmax(0,1fr))',gap:'var(--space-2)',padding:'var(--space-6)'}}, items.map(function(i,n){ return h('div',{key:n,style:{aspectRatio:'4/5'}}, h(S.ProductArt,{kind:i[0],color:i[1],accent:i[2],bg:i[3],label:i[0]})); })));
+</script>
+</body>
+</html>

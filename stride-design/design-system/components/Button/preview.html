@@ -1,0 +1,12 @@
+<!-- @dsCard group="Actions" height=120 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Button — preview</title></head>
+<body>
+<div id="root" class="st-demo"></div>
+<script>
+  var S = window.Stride, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(React.Fragment,null,h(S.Button,{arrow:true},'Shop shoes'), h(S.Button,{variant:'accent'},'Add to bag'), h(S.Button,{variant:'stone',arrow:true},'Find your shoe'), h(S.Button,{variant:'outline'},'View details'), h(S.Button,{variant:'ghost'},'Size guide'), h(S.Button,{size:'sm'},'Apply'), h(S.Button,{disabled:true},'Sold out')));
+</script>
+</body>
+</html>

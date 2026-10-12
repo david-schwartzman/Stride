@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stride — My account</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/stride/tokens.css">
+<link rel="stylesheet" href="ds/stride/components/bundle.css">
+<script src="ds/stride/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font-sans)}
+a{color:var(--ink)}a:hover{color:var(--ink-muted)}
+</style>
+<style>@media (max-width: 760px){.m-pad{padding-left:16px !important;padding-right:16px !important}.m-hide{display:none !important}.m-full{max-width:none !important;position:static !important}.m-hero{min-height:520px !important}}</style>
+</helmet>
+<div style="width: 100%; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+
+<x-import component-from-global-scope="Stride.Header" promo="$5 shipping · free on orders over $75" utility="{{utility}}" links="{{navLinks}}" cart-count="{{zero}}" account-name="Dana" home-href="Main.dc.html" search-href="Catalog.dc.html" account-href="AccountOrders.dc.html" wishlist-href="Wishlist.dc.html" cart-href="Cart.dc.html"></x-import>
+<main id="main">
+
+<div class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 40px 32px 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+
+<nav aria-label="Account" style="flex: 1 1 200px; max-width: 240px; display: flex; flex-direction: column; gap: 4px;">
+<span style="font-family: var(--font-display); font-size: 28px; line-height: 1; font-weight: 800; text-transform: uppercase; margin-bottom: 16px;">Hi, Dana</span>
+<a href="AccountOrders.dc.html" aria-current="page" style="padding: 10px 12px; background: var(--surface-alt); font-weight: 700; text-decoration: none;">Profile &amp; orders</a>
+<a href="Wishlist.dc.html" style="padding: 10px 12px; text-decoration: none;">Wishlist</a>
+<a href="Main.dc.html" style="padding: 10px 12px; color: var(--ink-muted);">Log out</a>
+</nav>
+
+<div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 40px;">
+<h1 style="margin: 0; font-family: var(--font-display); font-size: clamp(40px, 6vw, 56px); line-height: 0.95; font-weight: 800; text-transform: uppercase;">My account</h1>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px;">
+<!-- Profile -->
+<form style="flex: 1 1 320px; border: 1px solid var(--line); padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+<h2 style="margin: 0; font-family: var(--font-display); font-size: 24px; line-height: 1.1; font-weight: 700; text-transform: uppercase;">Profile</h2>
+<x-import component-from-global-scope="Stride.Input" label="Name" auto-complete="name" default-value="Dana Levi" style="min-width: 0;"></x-import>
+<x-import component-from-global-scope="Stride.Input" label="Email" type="email" auto-complete="email" default-value="dana.levi@example.com" style="min-width: 0;"></x-import>
+<x-import component-from-global-scope="Stride.Button" variant="outline" type="submit" style="align-self: flex-start;">Save profile</x-import>
+</form>
+
+<!-- Saved shipping address -->
+<form style="flex: 1 1 320px; border: 1px solid var(--line); padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+<h2 style="margin: 0; font-family: var(--font-display); font-size: 24px; line-height: 1.1; font-weight: 700; text-transform: uppercase;">Shipping address</h2>
+<x-import component-from-global-scope="Stride.Input" label="Street address" auto-complete="address-line1" default-value="245 Park Ave" style="min-width: 0;"></x-import>
+<div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px;">
+<x-import component-from-global-scope="Stride.Input" label="City" default-value="New York" style="min-width: 0;"></x-import>
+<x-import component-from-global-scope="Stride.Input" label="State" default-value="NY" style="min-width: 0;"></x-import>
+<x-import component-from-global-scope="Stride.Input" label="ZIP" default-value="10017" style="min-width: 0;"></x-import>
+</div>
+<x-import component-from-global-scope="Stride.Button" variant="outline" type="submit" style="align-self: flex-start;">Save address</x-import>
+<span style="font-size: 13px; color: var(--ink-muted);">Used to fill in checkout for you.</span>
+</form>
+</div>
+
+<!-- Order history -->
+<section style="display: flex; flex-direction: column; gap: 12px;">
+<h2 style="margin: 0 0 4px; font-family: var(--font-display); font-size: 32px; line-height: 1; font-weight: 700; text-transform: uppercase;">Order history</h2>
+<sc-if value="{{noOrders}}" hint-placeholder-val="{{no}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 28px 24px; background: var(--surface-alt);">
+<div style="display: flex; flex-direction: column; gap: 4px;"><strong style="font-size: 18px;">Your orders will show up here</strong><span style="font-size: 15px; color: var(--ink-muted);">Once you place an order you can open it any time to see sizes, prices and totals.</span></div>
+<a href="Catalog.dc.html" class="st-btn st-btn--accent st-btn--md">Start shopping</a>
+</div>
+</sc-if>
+<sc-for list="{{orders}}" as="o" hint-placeholder-count="3">
+<a href="OrderDetail.dc.html" style="display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: center; padding: 20px 24px; border: 1px solid var(--line); text-decoration: none; color: var(--ink);">
+<div style="display: flex; flex-direction: column; font-size: 14px;"><span style="color: var(--ink-muted);">Order</span><strong>{{o.id}}</strong></div>
+<div style="display: flex; flex-direction: column; font-size: 14px;"><span style="color: var(--ink-muted);">Placed</span><strong>{{o.date}}</strong></div>
+<div style="display: flex; flex-direction: column; font-size: 14px;"><span style="color: var(--ink-muted);">Items</span><strong>{{o.count}}</strong></div>
+<div style="display: flex; flex-direction: column; font-size: 14px;"><span style="color: var(--ink-muted);">Total</span><strong>{{o.total}}</strong></div>
+<span style="margin-left: auto; font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px;">View order</span>
+</a>
+</sc-for>
+</section>
+</div>
+</div>
+
+</main>
+<dc-import name="Footer" hint-size="100%,380px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"noOrders":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":1450}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      utility: [{ label: 'Hi, Dana', href: 'AccountOrders.dc.html' }, { label: 'My orders', href: 'AccountOrders.dc.html' }, { label: 'Log out', href: 'Main.dc.html' }],
+      zero: 0, no: false, noOrders: !!this.props.noOrders,
+      navLinks: ['Road', 'Trail', 'Race day', 'Shoes', 'Apparel', 'Gear'].map(function (l) { return { label: l, href: 'Catalog.dc.html' }; }),
+      orders: this.props.noOrders ? [] : [
+        { id: '#STR-10482', date: 'Oct 5, 2026', count: '2 items', total: '$58.00' },
+        { id: '#STR-10311', date: 'Sep 21, 2026', count: '1 item', total: '$110.00' },
+        { id: '#STR-09874', date: 'Aug 2, 2026', count: '3 items', total: '$97.00' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

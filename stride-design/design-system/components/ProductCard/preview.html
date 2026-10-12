@@ -1,0 +1,12 @@
+<!-- @dsCard group="Commerce" height=500 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>ProductCard — preview</title></head>
+<body>
+<div id="root"></div>
+<script>
+  var S = window.Stride, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h('div',{style:{display:'grid',gridTemplateColumns:'repeat(3, 220px)',gap:'var(--space-6)',padding:'var(--space-6)'}}, h(S.ProductCard,{name:'Stride Glide Road Shoe',category:'Shoes · Road',price:110,badge:'New',tag:'Good for your first 5K',placeholder:'Shoe'}), h(S.ProductCard,{name:'Pace 5" Running Shorts',category:'Apparel · Road',price:38,tag:'Light and breathable',defaultWishlisted:true,placeholder:'Shorts'}), h(S.ProductCard,{name:'Trail Hydration Vest',category:'Gear · Trail',price:65,soldOut:true,placeholder:'Vest'})));
+</script>
+</body>
+</html>

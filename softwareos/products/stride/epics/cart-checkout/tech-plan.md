@@ -18,8 +18,8 @@ The cart has two backends behind one interface: a signed cookie for guests and C
 
 - Race conditions on stock: two orders for the last unit. Use a conditional update (stock >= qty) inside the transaction.
 - Guest cart merge rules: what if the same variant is in both carts, or the merged quantity exceeds stock? Decide the rule (sum, capped at stock).
-- Merge-on-login hook dependency: the accounts-auth epic's plan doesn't define a post-login hook yet. Agree on where the merge runs (Auth.js callback vs. login Server Action) with accounts-auth before `guest-cart-merge`.
-- Cookie size/tampering: store only variant IDs + quantities, sign them, and always re-price on the server.
+- Merge-on-login hook: resolved. accounts-auth's signup-login defines `onSignedIn(userId)` in `src/features/auth/hooks.ts`, called from the login and sign-up Server Actions. `guest-cart-merge` implements it and does the whole merge in one transaction.
+- Cookie size/tampering: an HttpOnly cookie of `{variantId, qty}` only (no prices or names), HMAC-signed with `GUEST_CART_SECRET`, Zod-parsed on read (drop bad or unknown entries), capped at about 50 lines; always re-price on the server.
 - Price changes between cart and checkout: the server price at order time wins, and it's snapshotted.
 - Card data leaking into logs or error reports: strip it before anything is logged.
 - Spike: none, but test the stock transaction early.

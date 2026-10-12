@@ -13,7 +13,7 @@
 - Server Actions for mutations (cart, wishlist, checkout, auth)
 - Route Handlers only where an HTTP endpoint is needed
 - Zod for input validation on both client and server
-- Auth: Auth.js (NextAuth) with email + password credentials, passwords hashed with bcrypt, session stored in an httpOnly cookie
+- Auth: in-house session module with email + password — opaque database sessions (token hash in Postgres, token in an HttpOnly `__Host-` cookie), passwords hashed with Argon2id + salt + pepper
 
 ## Data
 

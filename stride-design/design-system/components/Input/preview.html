@@ -1,0 +1,12 @@
+<!-- @dsCard group="Forms" height=230 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Input — preview</title></head>
+<body>
+<div id="root" class="st-demo"></div>
+<script>
+  var S = window.Stride, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(React.Fragment,null,h(S.Input,{label:'Email',type:'email',placeholder:'you@example.com',hint:"We'll send your order confirmation here."}), h(S.Input,{label:'Postcode',defaultValue:'12',error:'Enter a valid postcode.'})));
+</script>
+</body>
+</html>

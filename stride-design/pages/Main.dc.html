@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stride — Running gear for beginners</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/stride/tokens.css">
+<link rel="stylesheet" href="ds/stride/components/bundle.css">
+<script src="ds/stride/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font-sans)}
+a{color:var(--ink)}a:hover{color:var(--ink-muted)}
+.run-tile:hover .st-btn{background:var(--ink);color:var(--surface)}
+</style>
+<style>@media (max-width: 760px){.m-pad{padding-left:16px !important;padding-right:16px !important}.m-hide{display:none !important}.m-full{max-width:none !important;position:static !important}.m-hero{min-height:520px !important}}</style>
+</helmet>
+<div style="width: 100%; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+
+<x-import component-from-global-scope="Stride.Header" utility="{{utility}}" promo="$5 shipping · free on orders over $75" links="{{navLinks}}" cart-count="{{cartCount}}" home-href="Main.dc.html" search-href="Catalog.dc.html" account-href="Login.dc.html" wishlist-href="Wishlist.dc.html" cart-href="Cart.dc.html"></x-import>
+
+<main id="main">
+
+<!-- HERO — full-bleed image block, one all-caps line bottom-left, two short CTAs (Nike / adidas pattern) -->
+<section aria-label="Featured" style="position: relative; background: var(--surface-alt); color: var(--ink); overflow: hidden;">
+<div style="position: relative; max-width: 1440px; margin: 0 auto; min-height: 640px;">
+<svg viewBox="0 0 1440 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%;">
+<circle cx="1010" cy="300" r="260" fill="#ffffff"></circle>
+<path d="M-20 600 C320 470 760 520 1460 330" fill="none" stroke="rgba(14,15,12,0.08)" stroke-width="3"></path>
+<path d="M-20 640 C320 510 760 560 1460 370" fill="none" stroke="rgba(14,15,12,0.08)" stroke-width="3"></path>
+<path d="M-20 680 C320 550 760 600 1460 410" fill="none" stroke="rgba(14,15,12,0.08)" stroke-width="3"></path>
+</svg>
+<div aria-hidden="true" class="m-hide" style="position: absolute; right: 4%; top: 4%; width: 52%; height: 88%;">
+<x-import component-from-global-scope="Stride.ProductArt" kind="shoe" color="#0e0f0c" accent="#d4ff3a" sole="#ffffff" bg="transparent" view="angle"></x-import>
+</div>
+<div class="m-pad m-hero" style="position: relative; max-width: 1280px; margin: 0 auto; padding: 0 32px 64px; min-height: 640px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; gap: 20px;">
+<span style="font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted);">For first-time runners</span>
+<h1 style="margin: 0; max-width: 620px; font-family: var(--font-display); font-size: clamp(56px, 9vw, 112px); line-height: 0.86; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em;">Your first 5K starts here</h1>
+<p style="margin: 0; max-width: 460px; font-size: 18px; line-height: 27px;">About 30 hand-picked shoes, clothes and gear for your first 5K or 10K — each one tells you in plain words if it's right for you.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px;">
+<a href="Catalog.dc.html" class="st-btn st-btn--accent st-btn--md">Shop beginner picks</a>
+<a href="Catalog.dc.html" class="st-btn st-btn--outline st-btn--md">Shop by run</a>
+</div>
+</div>
+</div>
+</section>
+
+<!-- SHOP BY RUN — sport tiles (On "sport categories") -->
+<section class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 96px 32px 0; box-sizing: border-box;">
+<p style="margin: 0 0 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--volt-text);">Start with where you'll run</p>
+<h2 style="margin: 0 0 24px; font-family: var(--font-display); font-size: 40px; line-height: 0.95; font-weight: 800; text-transform: uppercase;">Shop by run</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px;">
+<sc-for list="{{runs}}" as="r" hint-placeholder-count="3">
+<a href="Catalog.dc.html" class="run-tile" style="display: flex; flex-direction: column; gap: 16px; text-decoration: none; color: var(--ink);">
+<span style="display: block; aspect-ratio: 4 / 3; overflow: hidden;"><x-import component-from-global-scope="Stride.ProductArt" kind="{{r.art.kind}}" color="{{r.art.color}}" accent="{{r.art.accent}}" sole="{{r.art.sole}}" bg="{{r.art.bg}}" view="full"></x-import></span>
+<span style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-family: var(--font-display); font-size: 36px; line-height: 1; font-weight: 800; text-transform: uppercase;">{{r.name}}</span>
+<span style="font-size: 16px; line-height: 24px; color: var(--ink-muted);">{{r.desc}}</span>
+</span>
+<span class="st-btn st-btn--outline st-btn--sm" style="align-self: flex-start;">Shop {{r.name}}</span>
+</a>
+</sc-for>
+</div>
+</section>
+
+<!-- SMALLER ON PURPOSE — the reason to shop here instead of a big store -->
+<section class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 96px 32px 0; box-sizing: border-box;">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 16px;">
+<div style="display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; padding: 28px; background: var(--surface-inverse); color: var(--on-inverse); min-height: 220px;">
+<span style="font-family: var(--font-display); font-size: 48px; line-height: 0.9; font-weight: 800; text-transform: uppercase;">Smaller<br>on purpose</span>
+<span style="font-size: 14px; line-height: 20px;">Big stores have hundreds of running shoes. We have the ones a beginner actually needs.</span>
+</div>
+<sc-for list="{{pillars}}" as="p" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 28px; background: var(--surface-alt); min-height: 220px; box-sizing: border-box;">
+<span style="font-family: var(--font-display); font-size: 56px; line-height: 0.9; font-weight: 800;">{{p.stat}}</span>
+<strong style="font-size: 18px; line-height: 24px;">{{p.title}}</strong>
+<span style="font-size: 15px; line-height: 22px; color: var(--ink-muted);">{{p.text}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<!-- TRENDING RAIL with tabs -->
+<section class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 96px 32px 0; box-sizing: border-box;">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 24px;">
+<div style="display: flex; flex-direction: column; gap: 16px;">
+<h2 style="margin: 0; font-family: var(--font-display); font-size: 40px; line-height: 0.95; font-weight: 800; text-transform: uppercase;">Featured for beginners</h2>
+<div role="group" aria-label="Show products for" style="display: flex; flex-wrap: wrap; gap: 8px;">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+<button type="button" aria-pressed="{{t.on}}" onClick="{{t.pick}}" style="height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.fg}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">{{t.label}}</button>
+</sc-for>
+</div>
+</div>
+<a href="Catalog.dc.html" style="font-size: 14px; font-weight: 700; text-underline-offset: 4px;">Shop all</a>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr)); gap: 40px 20px;">
+<sc-for list="{{rail}}" as="p" hint-placeholder-count="4">
+<x-import component-from-global-scope="Stride.ProductCard" name="{{p.name}}" category="{{p.meta}}" price="{{p.price}}" tag="{{p.tag}}" art="{{p.art}}" href="Product.dc.html"></x-import>
+</sc-for>
+</div>
+</section>
+
+<!-- NO JARGON — plain-language translation band -->
+<section style="margin-top: 96px; background: var(--surface-alt); color: var(--ink);">
+<div class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 64px 32px; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 48px; align-items: center;">
+<div style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 20px;">
+<span style="font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted);">No jargon</span>
+<h2 style="margin: 0; font-family: var(--font-display); font-size: clamp(48px, 7vw, 88px); line-height: 0.86; font-weight: 800; text-transform: uppercase;">Drop? Pronation? Stack height? Skip it.</h2>
+<p style="margin: 0; max-width: 460px; font-size: 18px; line-height: 27px;">Every product tells you who it's for in one plain sentence. You don't need to learn running-shop words to buy the right thing.</p>
+<a href="Catalog.dc.html" class="st-btn st-btn--accent st-btn--md" style="align-self: flex-start;">Shop beginner picks</a>
+</div>
+<div style="flex: 1 1 440px; display: flex; flex-direction: column; gap: 10px;">
+<sc-for list="{{jargon}}" as="j" hint-placeholder-count="3">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 18px 20px; background: var(--surface); color: var(--ink);">
+<span style="font-size: 15px; color: var(--ink-muted); text-decoration: line-through; min-width: 170px;">{{j.tech}}</span>
+<span aria-hidden="true" style="font-weight: 800;">→</span>
+<x-import component-from-global-scope="Stride.Badge" tone="guide">{{j.plain}}</x-import>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<!-- SHOP BY CATEGORY (mission: shop-by-category entry point) -->
+<section class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 96px 32px 0; box-sizing: border-box;">
+<h2 style="margin: 0 0 24px; font-family: var(--font-display); font-size: 40px; line-height: 0.95; font-weight: 800; text-transform: uppercase;">Shop by category</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 40px 20px;">
+<sc-for list="{{categories}}" as="c" hint-placeholder-count="3">
+<a href="Catalog.dc.html" class="run-tile" style="display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: var(--ink);">
+<span style="display: block; aspect-ratio: 4 / 3; overflow: hidden;"><x-import component-from-global-scope="Stride.ProductArt" kind="{{c.art.kind}}" color="{{c.art.color}}" accent="{{c.art.accent}}" bg="stone"></x-import></span>
+<span style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;"><span style="font-size: 20px; font-weight: 700;">{{c.name}}</span><span style="font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px;">Shop {{c.name}}</span></span>
+<span style="font-size: 16px; line-height: 24px; color: var(--ink-muted); margin-top: -4px;">{{c.text}}</span>
+</a>
+</sc-for>
+</div>
+</section>
+
+<!-- TRUST STRIP -->
+<section aria-label="Why Stride" style="max-width: 1280px; margin: 72px auto 0; padding: 0 32px; box-sizing: border-box;">
+<div style="border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 28px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+<sc-for list="{{perks}}" as="k" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 12px; font-size: 14px; line-height: 20px;">
+<span aria-hidden="true" style="display: grid; place-items: center; width: 40px; height: 40px; flex: none; border-radius: 999px; background: var(--surface-alt); color: var(--ink);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{k.icon}}"></path></svg></span>
+<span><strong>{{k.title}}</strong><br><span style="color: var(--ink-muted);">{{k.text}}</span></span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<div style="height: 72px;"></div>
+</main>
+<dc-import name="Footer" hint-size="100%,380px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":4100}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { tab: 'Beginner picks', page: 0 }; }
+  renderVals() {
+    var self = this, tab = this.state.tab, page = this.state.page;
+    var A = function (kind, color, accent, bg, sole) { return { kind: kind, color: color, accent: accent, bg: bg || 'stone', sole: sole }; };
+    var all = [
+      { name: 'Stride Glide Road Shoe', meta: 'Unisex road running shoe', cat: 'Shoes', pick: true, price: 110, tag: 'Good for your first 5K', art: A('shoe', '#0e0f0c', '#d4ff3a') },
+      { name: 'Aero Knit Running Tee', meta: 'Men’s running top', cat: 'Apparel', pick: true, price: 35, tag: 'Stays dry on hot runs', art: A('tee', '#d4ff3a', '#0e0f0c') },
+      { name: 'Cushion Running Socks 3-Pack', meta: 'Unisex running socks', cat: 'Gear', pick: true, price: 18, tag: 'Blister-free first miles', art: A('socks', '#ffffff', '#0e0f0c') },
+      { name: 'Pace 5" Running Shorts', meta: 'Women’s running shorts', cat: 'Apparel', pick: true, price: 38, tag: 'Light and breathable', art: A('shorts', '#0e0f0c', '#d4ff3a') },
+      { name: 'Cloudstep Cushion Shoe', meta: 'Women’s road running shoe', cat: 'Shoes', price: 125, tag: 'Extra cushion for new runners', art: A('shoe', '#f2f2ee', '#0e0f0c') },
+      { name: 'Ridge Trail Shoe', meta: 'Men’s trail running shoe', cat: 'Shoes', price: 135, tag: 'Great for trails', art: A('shoe', '#3a3d36', '#d4ff3a') },
+      { name: 'Tempo Race Shoe', meta: 'Unisex racing shoe', cat: 'Shoes', price: 150, tag: 'Race-day ready', art: A('shoe', '#d4ff3a', '#0e0f0c', 'stone', '#0e0f0c') },
+      { name: 'Packable Wind Jacket', meta: 'Unisex running jacket', cat: 'Apparel', price: 85, tag: 'Light rain? No problem', art: A('jacket', '#0e0f0c', '#d4ff3a') },
+      { name: 'Reflect Running Cap', meta: 'Unisex running cap', cat: 'Gear', price: 24, tag: 'Be seen at dawn', art: A('cap', '#d4ff3a', '#0e0f0c') },
+      { name: 'Race Belt with Gel Loops', meta: 'Unisex race belt', cat: 'Gear', price: 20, tag: 'Holds your bib and gels', art: A('belt', '#0e0f0c', '#d4ff3a') }
+    ];
+    var drops = [
+      { title: 'The first-5K kit', text: 'Shoes, socks and a tee — everything for week one.', art: A('shoe', '#0e0f0c', '#d4ff3a', 'volt') },
+      { title: 'Cold-morning layers', text: 'Long sleeves and a light jacket for early starts.', art: A('longsleeve', '#0e0f0c', '#d4ff3a', 'stone') },
+      { title: 'Race-day essentials', text: 'Fast shoes, a race belt and a cap for the big day.', art: A('belt', '#d4ff3a', '#ffffff', 'ink') },
+      { title: 'Trail starter', text: 'More grip for park paths and gentle hills.', art: A('shoe', '#3a3d36', '#d4ff3a', 'stone') },
+      { title: 'Under $40', text: 'Useful extras that won’t break the bank.', art: A('cap', '#0e0f0c', '#d4ff3a', 'volt') }
+    ];
+    var per = 3, maxPage = drops.length - per;
+    var rail = all.filter(function (p) { return tab === 'Beginner picks' ? p.pick : p.cat === tab; }).slice(0, 3);
+    return {
+      cartCount: 2,
+      utility: [{ label: 'My orders', href: 'AccountOrders.dc.html' }, { label: 'Sign up', href: 'Signup.dc.html' }, { label: 'Log in', href: 'Login.dc.html' }],
+      navLinks: ['Road', 'Trail', 'Race day', 'Shoes', 'Apparel', 'Gear'].map(function (l) { return { label: l, href: 'Catalog.dc.html' }; }),
+      drops: drops.slice(page, page + per),
+      atStart: page === 0, atEnd: page >= maxPage,
+      prevOpacity: page === 0 ? 0.4 : 1, nextOpacity: page >= maxPage ? 0.4 : 1,
+      prev: function () { self.setState({ page: Math.max(0, page - 1) }); },
+      next: function () { self.setState({ page: Math.min(maxPage, page + 1) }); },
+      tabs: ['Beginner picks', 'Shoes', 'Apparel', 'Gear'].map(function (t) {
+        var on = t === tab;
+        return { label: t, on: on, bg: on ? 'var(--ink)' : 'var(--surface)', fg: on ? 'var(--surface)' : 'var(--ink)', border: on ? 'var(--ink)' : 'var(--line-strong)', pick: function () { self.setState({ tab: t }); } };
+      }),
+      rail: rail,
+      runs: [
+        { name: 'Road', desc: 'Pavement, parks and the treadmill. Where most first 5Ks happen.', fg: 'var(--ink)', btn: 'st-btn--primary', art: A('shoe', '#ffffff', '#0e0f0c', 'stone', '#0e0f0c') },
+        { name: 'Trail', desc: 'Dirt paths and gentle hills. Extra grip so you feel steady.', fg: 'var(--ink)', btn: 'st-btn--primary', art: A('shoe', '#3a3d36', '#d4ff3a', 'stone') },
+        { name: 'Race day', desc: 'Light shoes, a bib belt and a cap for the big morning.', fg: 'var(--ink)', btn: 'st-btn--primary', art: A('shoe', '#d4ff3a', '#0e0f0c', 'stone', '#0e0f0c') }
+      ],
+      pillars: [
+        { stat: '~30', title: 'Less choice', text: 'A small range of shoes, apparel and gear. No scrolling through hundreds of pairs.' },
+        { stat: '1 line', title: 'Clearer guidance', text: 'Every product gets a plain tag like \u201cgood for your first 5K\u201d.' },
+        { stat: '<3 min', title: 'Faster decisions', text: 'From this page to a confirmed order in under three minutes.' }
+      ],
+      jargon: [
+        { tech: '10 mm heel-to-toe drop', plain: 'Soft, steady landing' },
+        { tech: 'Neutral, no pronation control', plain: 'Fine for most new runners' },
+        { tech: '38 mm stack height', plain: 'Extra cushion for longer runs' },
+        { tech: 'Aggressive 4 mm lugs', plain: 'Grip for muddy paths' }
+      ],
+      steps: [
+        { n: '01', title: 'Shoes that fit', text: 'cushioned, comfortable, in your usual size.' },
+        { n: '02', title: 'Socks that don’t rub', text: 'blisters end more first runs than tired legs.' },
+        { n: '03', title: 'A tee that breathes', text: 'skip cotton; it holds sweat.' }
+      ],
+      categories: [
+        { name: 'Shoes', text: 'Road, trail and race-day pairs.', art: A('shoe', '#0e0f0c', '#d4ff3a') },
+        { name: 'Apparel', text: 'Tees, shorts and layers that don’t rub.', art: A('longsleeve', '#d4ff3a', '#0e0f0c') },
+        { name: 'Gear', text: 'Socks, caps, belts and vests.', art: A('vest', '#0e0f0c', '#d4ff3a') }
+      ],
+      perks: [
+        { title: '$5 shipping', text: 'Free on orders over $75', icon: 'M3 7h11v9H3z M14 10h4l3 3v3h-7 M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z' },
+        { title: 'Stock shown per size', text: 'See what’s left before you buy', icon: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M12 7v5l3 2' },
+        { title: 'Save it for later', text: 'Heart anything to keep it on your wishlist', icon: 'M5 11h14v10H5z M8 11V7a4 4 0 0 1 8 0v4' },
+        { title: 'Hand-picked for beginners', text: 'Every product says who it’s for', icon: 'M12 20s-7.5-4.6-9.3-9.2C1.6 7.8 3.6 4.5 7 4.5c2 0 3.3 1.1 5 3 1.7-1.9 3-3 5-3 3.4 0 5.4 3.3 4.3 6.3C19.5 15.4 12 20 12 20z' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

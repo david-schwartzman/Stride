@@ -1,0 +1,318 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "AccountOrders.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "7 \u00b7 Account: profile, address, order history  /account",
+      "w": 1280,
+      "x": 2720,
+      "y": 7100
+    },
+    "Cart.dc.html": {
+      "expand": "fill",
+      "h": 1150,
+      "is_interactive": true,
+      "title": "4 \u00b7 Cart  /cart (guest)",
+      "w": 1280,
+      "x": 5440,
+      "y": 0
+    },
+    "CartEmpty.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "title": "State \u00b7 Cart with nothing in it",
+      "w": 1280,
+      "x": 1360,
+      "y": 8900,
+      "is_interactive": true
+    },
+    "Catalog.dc.html": {
+      "expand": "fill",
+      "h": 6700,
+      "is_interactive": true,
+      "title": "2 \u00b7 Catalog  /catalog (all 30 products, try search + filters)",
+      "w": 1280,
+      "x": 1360,
+      "y": 0
+    },
+    "CatalogEmpty.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "title": "State \u00b7 Catalog, no results",
+      "w": 1280,
+      "x": 0,
+      "y": 8900,
+      "is_interactive": true
+    },
+    "Checkout.dc.html": {
+      "expand": "fill",
+      "h": 1550,
+      "is_interactive": true,
+      "title": "5 \u00b7 Checkout  /checkout (login required)",
+      "w": 1280,
+      "x": 6800,
+      "y": 0
+    },
+    "Footer.dc.html": {
+      "expand": "fill",
+      "h": 380,
+      "title": "Shared footer",
+      "w": 1280,
+      "x": 10880,
+      "y": 8900,
+      "is_interactive": true
+    },
+    "Login.dc.html": {
+      "expand": "fill",
+      "h": 1250,
+      "is_interactive": true,
+      "title": "6 \u00b7 Login  /login (wrong-password error shown)",
+      "w": 1280,
+      "x": 0,
+      "y": 7100
+    },
+    "Main.dc.html": {
+      "expand": "fill",
+      "h": 4100,
+      "is_interactive": true,
+      "title": "1 \u00b7 Home  /",
+      "w": 1280,
+      "x": 0,
+      "y": 0
+    },
+    "OrderConfirmed.dc.html": {
+      "expand": "fill",
+      "h": 1250,
+      "is_interactive": true,
+      "title": "5b \u00b7 Confirmation  /checkout/confirmation/[orderId]",
+      "w": 1280,
+      "x": 8160,
+      "y": 0
+    },
+    "OrderDetail.dc.html": {
+      "expand": "fill",
+      "h": 1200,
+      "is_interactive": true,
+      "title": "7b \u00b7 Order detail  /account/orders/[orderId]",
+      "w": 1280,
+      "x": 4080,
+      "y": 7100
+    },
+    "Product.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "3 \u00b7 Product detail  /product/[slug] (pick a size)",
+      "w": 1280,
+      "x": 2720,
+      "y": 0
+    },
+    "ProductSoldOut.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "title": "3b \u00b7 Product, fully sold out",
+      "w": 1280,
+      "x": 4080,
+      "y": 0
+    },
+    "Signup.dc.html": {
+      "expand": "fill",
+      "h": 1250,
+      "is_interactive": true,
+      "title": "6b \u00b7 Sign-up  /signup (existing-email error shown)",
+      "w": 1280,
+      "x": 1360,
+      "y": 7100
+    },
+    "Wishlist.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "title": "8 \u00b7 Wishlist  /wishlist (try Move to cart \u2192 pick a size)",
+      "w": 1280,
+      "x": 5440,
+      "y": 7100
+    },
+    "WishlistEmpty.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "title": "State \u00b7 Wishlist with nothing saved",
+      "w": 1280,
+      "x": 2720,
+      "y": 8900,
+      "is_interactive": true
+    },
+    "MobileHome.dc.html": {
+      "x": 0,
+      "y": 11100,
+      "w": 375,
+      "h": 4400,
+      "title": "Phone \u00b7 Home (375px)",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MobileCatalog.dc.html": {
+      "x": 475,
+      "y": 11100,
+      "w": 375,
+      "h": 3600,
+      "title": "Phone \u00b7 Catalog (375px)",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MobileProduct.dc.html": {
+      "x": 950,
+      "y": 11100,
+      "w": 375,
+      "h": 2600,
+      "title": "Phone \u00b7 Product (375px)",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MobileCart.dc.html": {
+      "x": 1425,
+      "y": 11100,
+      "w": 375,
+      "h": 1700,
+      "title": "Phone \u00b7 Cart (375px)",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "AccountNoOrders.dc.html": {
+      "x": 4080,
+      "y": 8900,
+      "h": 1250,
+      "w": 1280,
+      "title": "State \u00b7 Account, no orders yet",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CheckoutErrors.dc.html": {
+      "x": 5440,
+      "y": 8900,
+      "h": 1600,
+      "w": 1280,
+      "title": "State \u00b7 Checkout validation + sold-out errors",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "NotFound.dc.html": {
+      "x": 6800,
+      "y": 8900,
+      "h": 1000,
+      "w": 1280,
+      "title": "State \u00b7 404 not found",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ErrorPage.dc.html": {
+      "x": 8160,
+      "y": 8900,
+      "h": 1000,
+      "w": 1280,
+      "title": "State \u00b7 Something went wrong",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CatalogLoading.dc.html": {
+      "x": 9520,
+      "y": 8900,
+      "h": 1900,
+      "w": 1280,
+      "title": "State \u00b7 Loading (catalog)",
+      "expand": "fill",
+      "is_interactive": true
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-04T13:55:00Z",
+    "v": 1
+  },
+  "designSystems": [
+    {
+      "artifact": "https://claude.ai/artifact/NqwgCXzqxuXjd1mTCU9t1m",
+      "copiedAt": "2026-10-06T12:40:00Z",
+      "namespace": "stride",
+      "title": "Stride",
+      "version": "1791282712-6799"
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "legend": {
+      "fill": "green",
+      "maxH": 560,
+      "text": "Matches the Stride repo: mission.md, roadmap and the 5 epics (Catalog & Search, Accounts & Auth, Cart & Checkout, Account & Wishlist, Launch & Polish).\n\nFor: a beginner preparing for their first 5K/10K. Goal: landing \u2192 confirmed order in under 3 minutes.\n\n\u2022 8 pages, 11 routes (titles show each route).\n\u2022 ~30 products: Shoes / Apparel / Gear \u00d7 Road / Trail / Race day \u00d7 Men / Women / Unisex, prices in USD.\n\u2022 Sizes: shoes US 6\u201313 with halves, apparel XS\u2013XL, gear one size. Sold-out sizes disabled.\n\u2022 $5 shipping, free over $75. Mock payment only.\n\u2022 Login needed for checkout, account and wishlist. Guest cart merges on login.\n\u2022 Lime #D4FF3A only for actions.\n\nLeft out on purpose (v1 OUT): reviews, recommendations, coupons, taxes, colour variants, size guide, password reset, social login, emails.\n\nPress Play to click through the flow.",
+      "w": 420,
+      "x": -520,
+      "y": 0
+    },
+    "row2": {
+      "kind": "title1",
+      "maxW": 6720,
+      "text": "Accounts & wishlist (v1)",
+      "w": 240,
+      "x": 0,
+      "y": 6800
+    },
+    "row3": {
+      "kind": "title1",
+      "maxW": 12240,
+      "text": "Empty, error and loading states",
+      "w": 240,
+      "x": 0,
+      "y": 8600
+    },
+    "title": {
+      "kind": "title1",
+      "maxW": 8000,
+      "text": "Shopping flow (v1)",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "row4": {
+      "kind": "title1",
+      "maxW": 6720,
+      "text": "Phone size (375px)",
+      "w": 240,
+      "x": 0,
+      "y": 10800
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Catalog.dc.html",
+    "Product.dc.html",
+    "ProductSoldOut.dc.html",
+    "Cart.dc.html",
+    "Checkout.dc.html",
+    "OrderConfirmed.dc.html",
+    "Login.dc.html",
+    "Signup.dc.html",
+    "AccountOrders.dc.html",
+    "OrderDetail.dc.html",
+    "Wishlist.dc.html",
+    "CatalogEmpty.dc.html",
+    "CartEmpty.dc.html",
+    "WishlistEmpty.dc.html",
+    "AccountNoOrders.dc.html",
+    "CheckoutErrors.dc.html",
+    "NotFound.dc.html",
+    "ErrorPage.dc.html",
+    "CatalogLoading.dc.html",
+    "Footer.dc.html",
+    "MobileHome.dc.html",
+    "MobileCatalog.dc.html",
+    "MobileProduct.dc.html",
+    "MobileCart.dc.html"
+  ],
+  "pages": [],
+  "title": "Stride Store Pages"
+}

@@ -16,14 +16,15 @@
 
 ## Auth
 
-- Auth.js (NextAuth) with email + password credentials
-- Passwords hashed with bcrypt
-- Session stored in an httpOnly cookie
+- In-house session module (`src/lib/auth/`) with email + password — no auth library
+- Opaque database sessions: random token in an HttpOnly `__Host-stride_session` cookie, only its SHA-256 hash stored in Postgres
+- Passwords hashed with Argon2id + per-user salt + server-side pepper (`@node-rs/argon2`)
+- Rules for using it: `standards/global/auth-security.md`
 
 ## Database
 
 - PostgreSQL hosted on Neon (serverless Postgres)
-- Prisma ORM with migrations and a seed script for the product catalog
+- Prisma 6 ORM (pinned major; Prisma 7 moves `directUrl` to `prisma.config.ts` and needs a driver adapter) with migrations and a seed script for the product catalog
   - Catalog content lives in one shared catalog data file, imported by both the seed script and the production catalog load
   - Neon needs two connection strings: pooled `DATABASE_URL` for the app at runtime, and unpooled `DIRECT_URL` (`directUrl` in `schema.prisma`) for `prisma migrate`
   - Migrations stay backward-compatible with the previous deploy (expand → contract), so a Vercel rollback never needs a database rollback

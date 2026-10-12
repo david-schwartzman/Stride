@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stride — Wishlist</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/stride/tokens.css">
+<link rel="stylesheet" href="ds/stride/components/bundle.css">
+<script src="ds/stride/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font-sans)}
+a{color:var(--ink)}a:hover{color:var(--ink-muted)}
+</style>
+<style>@media (max-width: 760px){.m-pad{padding-left:16px !important;padding-right:16px !important}.m-hide{display:none !important}.m-full{max-width:none !important;position:static !important}.m-hero{min-height:520px !important}}</style>
+<style>.next-step{display:flex;flex-direction:column;gap:4px;padding:24px;background:var(--surface-alt);text-decoration:none;color:var(--ink)}.next-step strong{font-family:var(--font-display);font-size:32px;line-height:1;font-weight:800;text-transform:uppercase}.next-step span{font-size:15px;color:var(--ink-muted)}.next-step:hover{box-shadow:inset 0 0 0 2px var(--ink)}</style>
+</helmet>
+<div style="width: 100%; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+
+<x-import component-from-global-scope="Stride.Header" promo="$5 shipping · free on orders over $75" utility="{{utility}}" links="{{navLinks}}" cart-count="{{cartCount}}" account-name="Dana" home-href="Main.dc.html" search-href="Catalog.dc.html" account-href="AccountOrders.dc.html" wishlist-href="Wishlist.dc.html" cart-href="Cart.dc.html"></x-import>
+<main id="main">
+
+<div class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 40px 32px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px;">
+<div style="display: flex; align-items: baseline; gap: 16px;">
+<h1 style="margin: 0; font-family: var(--font-display); font-size: clamp(40px, 6vw, 56px); line-height: 0.95; font-weight: 800; text-transform: uppercase;">Wishlist</h1>
+<sc-if value="{{hasItems}}" hint-placeholder-val="{{yes}}"><span style="font-size: 14px; color: var(--ink-muted);">{{countLabel}}</span></sc-if>
+</div>
+
+<sc-if value="{{hasItems}}" hint-placeholder-val="{{yes}}">
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 40px 20px;">
+<sc-for list="{{items}}" as="p" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<x-import component-from-global-scope="Stride.ProductCard" name="{{p.name}}" category="{{p.meta}}" price="{{p.price}}" tag="{{p.tag}}" sold-out="{{p.soldOut}}" art="{{p.art}}" href="{{p.href}}" wishlisted="{{yes}}" on-wishlist="{{p.remove}}"></x-import>
+<sc-if value="{{p.canStart}}" hint-placeholder-val="{{yes}}">
+<x-import component-from-global-scope="Stride.Button" size="sm" full-width="{{yes}}" on-click="{{p.start}}">Move to cart</x-import>
+</sc-if>
+<sc-if value="{{p.picking}}" hint-placeholder-val="{{no}}">
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; background: var(--surface-alt);">
+<x-import component-from-global-scope="Stride.SizePicker" label="{{p.sizeLabel}}" sizes="{{p.sizes}}" value="{{p.size}}" on-change="{{p.pick}}"></x-import>
+<div style="display: flex; gap: 8px;">
+<x-import component-from-global-scope="Stride.Button" variant="accent" size="sm" disabled="{{p.noSize}}" on-click="{{p.move}}" style="flex: 1;">Add to cart</x-import>
+<x-import component-from-global-scope="Stride.Button" variant="outline" size="sm" on-click="{{p.cancel}}">Cancel</x-import>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{p.soldOut}}" hint-placeholder-val="{{no}}">
+<x-import component-from-global-scope="Stride.Button" size="sm" full-width="{{yes}}" disabled="{{yes}}">Out of stock</x-import>
+</sc-if>
+<button type="button" onClick="{{p.remove}}" style="align-self: center; background: none; border: 0; padding: 4px; font: inherit; font-size: 14px; color: var(--ink-muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;">Remove</button>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<!-- No saved items: a hint and picks to start from — no "empty" message -->
+<sc-if value="{{empty}}" hint-placeholder-val="{{no}}">
+<div style="display: flex; flex-direction: column; gap: 24px;">
+<p style="margin: 0; display: flex; align-items: center; gap: 10px; font-size: 16px; line-height: 24px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.5-4.6-9.3-9.2C1.6 7.8 3.6 4.5 7 4.5c2 0 3.3 1.1 5 3 1.7-1.9 3-3 5-3 3.4 0 5.4 3.3 4.3 6.3C19.5 15.4 12 20 12 20z"></path></svg>Tap the heart on any product to keep it here while you decide.</p>
+<nav aria-label="Shop by run" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px;">
+<a href="Catalog.dc.html" class="next-step"><strong>Road</strong><span>Pavement, parks and the treadmill</span></a>
+<a href="Catalog.dc.html" class="next-step"><strong>Trail</strong><span>Dirt paths and gentle hills</span></a>
+<a href="Catalog.dc.html" class="next-step"><strong>Race day</strong><span>Everything for the big morning</span></a>
+</nav>
+<a href="Catalog.dc.html" class="st-btn st-btn--accent st-btn--md" style="align-self: flex-start;">Browse the catalog</a>
+</div>
+</sc-if>
+</div>
+
+</main>
+<dc-import name="Footer" hint-size="100%,380px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"empty":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":1250}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { ids: props.empty ? [] : ['glide', 'tee', 'top'], moved: 0, picking: null, size: null };
+  }
+  renderVals() {
+    var self = this;
+    var all = {
+      glide: { art: { kind: 'shoe', color: '#0e0f0c', accent: '#d4ff3a', bg: 'stone' }, name: 'Stride Glide Road Shoe', meta: 'Shoes · Road', price: 110, tag: 'Good for your first 5K', ph: 'Shoe', href: 'Product.dc.html' },
+      tee: { art: { kind: 'tee', color: '#0e0f0c', accent: '#d4ff3a', bg: 'stone' }, name: 'Aero Knit Running Tee', meta: 'Apparel · Road', price: 35, tag: 'Stays dry on hot runs', ph: 'Tee', href: 'Product.dc.html' },
+      top: { art: { kind: 'longsleeve', color: '#3a3d36', accent: '#f2f2ee', bg: 'stone' }, name: 'Thermal Long-Sleeve Top', meta: 'Apparel · Trail', price: 55, tag: 'For cold mornings', ph: 'Top', href: 'ProductSoldOut.dc.html', soldOut: true }
+    };
+    var drop = function (id, moved) { return function () {
+      self.setState({ ids: self.state.ids.filter(function (x) { return x !== id; }), moved: self.state.moved + (moved ? 1 : 0) });
+    }; };
+    var items = this.state.ids.map(function (id) {
+      var p = all[id];
+      var isShoe = p.art.kind === 'shoe', picking = self.state.picking === id;
+      var sizes = isShoe ? ['6','6.5','7','7.5','8','8.5','9','9.5','10','10.5','11','11.5','12','12.5','13'].map(function (l) { return l === '7.5' || l === '11' ? { label: l, available: false } : l; }) : ['XS','S','M','L','XL'].map(function (l) { return l === 'XS' ? { label: l, available: false } : l; });
+      return Object.assign({ soldOut: false }, p, { inStock: !p.soldOut, canStart: !p.soldOut && !picking, picking: picking, sizes: sizes, sizeLabel: isShoe ? 'Pick a size (US)' : 'Pick a size',
+        size: picking ? self.state.size : null, noSize: !(picking && self.state.size),
+        start: function () { self.setState({ picking: id, size: null }); }, pick: function (s) { self.setState({ size: s }); }, cancel: function () { self.setState({ picking: null, size: null }); },
+        remove: drop(id, false), move: function () { self.setState({ ids: self.state.ids.filter(function (x) { return x !== id; }), moved: self.state.moved + 1, picking: null, size: null }); } });
+    });
+    return {
+      utility: [{ label: 'Hi, Dana', href: 'AccountOrders.dc.html' }, { label: 'My orders', href: 'AccountOrders.dc.html' }, { label: 'Log out', href: 'Main.dc.html' }],
+      yes: true, no: false,
+      cartCount: 2 + this.state.moved,
+      navLinks: ['Road', 'Trail', 'Race day', 'Shoes', 'Apparel', 'Gear'].map(function (l) { return { label: l, href: 'Catalog.dc.html' }; }),
+      items: items, hasItems: items.length > 0, empty: items.length === 0,
+      picks: [
+        { name: 'Stride Glide Road Shoe', meta: 'Unisex road running shoe', price: 110, tag: 'Good for your first 5K', art: { kind: 'shoe', color: '#0e0f0c', accent: '#d4ff3a', bg: 'stone' } },
+        { name: 'Cushion Running Socks 3-Pack', meta: 'Unisex running socks', price: 18, tag: 'Blister-free first miles', art: { kind: 'socks', color: '#ffffff', accent: '#0e0f0c', bg: 'stone' } },
+        { name: 'Aero Knit Running Tee', meta: 'Men\u2019s running top', price: 35, tag: 'Stays dry on hot runs', art: { kind: 'tee', color: '#d4ff3a', accent: '#0e0f0c', bg: 'stone' } },
+        { name: 'Reflect Running Cap', meta: 'Unisex running cap', price: 24, tag: 'Be seen at dawn', art: { kind: 'cap', color: '#0e0f0c', accent: '#d4ff3a', bg: 'stone' } }
+      ],
+      countLabel: items.length + (items.length === 1 ? ' item' : ' items')
+    };
+  }
+}
+</script>
+</body>
+</html>

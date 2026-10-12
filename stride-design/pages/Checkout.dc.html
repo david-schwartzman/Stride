@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stride — Checkout</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/stride/tokens.css">
+<link rel="stylesheet" href="ds/stride/components/bundle.css">
+<script src="ds/stride/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font-sans)}
+a{color:var(--ink)}a:hover{color:var(--ink-muted)}
+</style>
+<style>@media (max-width: 760px){.m-pad{padding-left:16px !important;padding-right:16px !important}.m-hide{display:none !important}.m-full{max-width:none !important;position:static !important}.m-hero{min-height:520px !important}}</style>
+</helmet>
+<div style="width: 100%; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+
+<!-- Checkout: login required (middleware redirects guests to /login). Minimal header. -->
+<header style="border-bottom: 1px solid var(--line);">
+<div style="max-width: 1280px; margin: 0 auto; height: 64px; padding: 0 32px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+<a href="Main.dc.html" aria-label="Stride home" style="font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase; text-decoration: none; color: var(--ink); display: inline-flex; align-items: center; gap: 6px;">Stride<span style="display: inline-block; width: 10px; height: 26px; background: var(--volt); transform: skewX(-18deg); box-shadow: inset 0 0 0 1px var(--on-volt);"></span></a>
+<span style="font-size: 14px; color: var(--ink-muted);">Signed in as <strong style="color: var(--ink);">Dana Levi</strong></span>
+</div>
+</header>
+
+<main id="main" style="max-width: 1280px; margin: 0 auto; padding: 40px 32px 64px; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+
+<form style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 40px;">
+<h1 style="margin: 0; font-family: var(--font-display); font-size: clamp(40px, 6vw, 56px); line-height: 0.95; font-weight: 800; text-transform: uppercase;">Checkout</h1>
+
+<section style="display: flex; flex-direction: column; gap: 16px;">
+<h2 style="margin: 0; font-family: var(--font-display); font-size: 24px; line-height: 1.1; font-weight: 700; text-transform: uppercase;">1 · Shipping address</h2>
+<p style="margin: -4px 0 0; font-size: 14px; color: var(--ink-muted);">Filled in from your saved address.</p>
+<x-import component-from-global-scope="Stride.Input" label="Full name" auto-complete="name" default-value="Dana Levi"></x-import>
+<x-import component-from-global-scope="Stride.Input" label="Street address" auto-complete="address-line1" default-value="245 Park Ave"></x-import>
+<x-import component-from-global-scope="Stride.Input" label="Apartment, suite (optional)" auto-complete="address-line2"></x-import>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+<x-import component-from-global-scope="Stride.Input" label="City" auto-complete="address-level2" default-value="New York" style="min-width: 0;"></x-import>
+<x-import component-from-global-scope="Stride.Input" label="State" auto-complete="address-level1" default-value="NY" style="min-width: 0;"></x-import>
+<x-import component-from-global-scope="Stride.Input" label="ZIP code" auto-complete="postal-code" default-value="{{zip}}" error="{{zipErr}}" style="min-width: 0;"></x-import>
+</div>
+<x-import component-from-global-scope="Stride.Input" label="Phone" type="tel" auto-complete="tel" hint="Only used if there's a problem with delivery."></x-import>
+<label style="display: flex; align-items: center; gap: 10px; font-size: 14px;"><input type="checkbox" checked="{{yes}}" style="width: 18px; height: 18px; accent-color: var(--ink);"> Save as my shipping address</label>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 12px;">
+<h2 style="margin: 0; font-family: var(--font-display); font-size: 24px; line-height: 1.1; font-weight: 700; text-transform: uppercase;">2 · Shipping</h2>
+<div style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid var(--ink); border-radius: 2px;">
+<span style="flex: 1; display: flex; flex-direction: column;"><strong style="font-size: 16px;">Standard shipping</strong><span style="font-size: 14px; color: var(--ink-muted);">3–5 working days · free on orders over $75</span></span>
+<span style="font-weight: 700; font-variant-numeric: tabular-nums;">$5.00</span>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px;">
+<h2 style="margin: 0; font-family: var(--font-display); font-size: 24px; line-height: 1.1; font-weight: 700; text-transform: uppercase;">3 · Payment</h2>
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; background: var(--volt-soft); font-size: 14px; line-height: 20px;">
+<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px;"><rect x="5" y="11" width="14" height="10" rx="1"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+<span><strong>Demo payment.</strong> Nothing is charged and card details are never saved. We only check the format.</span>
+</div>
+<x-import component-from-global-scope="Stride.Input" label="Card number" inputmode="numeric" auto-complete="cc-number" placeholder="1234 5678 9012 3456" default-value="{{card}}" error="{{cardErr}}"></x-import>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
+<x-import component-from-global-scope="Stride.Input" label="Expiry" auto-complete="cc-exp" placeholder="MM / YY" style="min-width: 0;"></x-import>
+<x-import component-from-global-scope="Stride.Input" label="CVC" inputmode="numeric" auto-complete="cc-csc" placeholder="3 digits" style="min-width: 0;"></x-import>
+</div>
+<x-import component-from-global-scope="Stride.Input" label="Name on card" auto-complete="cc-name"></x-import>
+</section>
+
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<a href="OrderConfirmed.dc.html" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 999px; background: var(--volt); color: var(--on-volt); font-weight: 700; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none;">Place order · $58.00</a>
+<sc-if value="{{showErrors}}" hint-placeholder-val="{{no}}">
+<div role="alert" style="display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; background: var(--sale-soft); color: var(--sale); font-size: 14px; line-height: 20px;"><strong>Size M of the Aero Knit Running Tee just sold out.</strong><span style="color: var(--ink);">Remove it or <a href="Cart.dc.html">pick another size in your cart</a>. Nothing was charged.</span></div>
+</sc-if>
+<span style="font-size: 13px; line-height: 18px; color: var(--ink-muted); text-align: center;">If an item sells out before you place the order, we'll let you know here and nothing is reserved.</span>
+</div>
+</form>
+
+<aside aria-label="Order summary" class="m-full" style="flex: 1 1 340px; max-width: 420px; background: var(--surface-alt); padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; position: sticky; top: 24px;">
+<div style="display: flex; justify-content: space-between; align-items: baseline;">
+<h2 style="margin: 0; font-family: var(--font-display); font-size: 24px; line-height: 1.1; font-weight: 700; text-transform: uppercase;">In your cart</h2>
+<a href="Cart.dc.html" style="font-size: 14px;">Edit</a>
+</div>
+<sc-for list="{{items}}" as="i" hint-placeholder-count="2">
+<div style="display: flex; gap: 12px; align-items: center;">
+<div style="position: relative; width: 56px; height: 70px; background: var(--surface); flex: none;"><x-import component-from-global-scope="Stride.ProductArt" kind="{{i.art.kind}}" color="{{i.art.color}}" accent="{{i.art.accent}}" bg="{{i.art.bg}}"></x-import>
+<span style="position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; border-radius: 999px; background: var(--ink); color: var(--surface); font-size: 11px; font-weight: 700; display: grid; place-items: center;">{{i.qty}}</span>
+</div>
+<div style="flex: 1; display: flex; flex-direction: column; font-size: 14px; line-height: 20px;"><strong>{{i.name}}</strong><span style="color: var(--ink-muted);">{{i.variant}}</span></div>
+<span style="font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums;">{{i.total}}</span>
+</div>
+</sc-for>
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid var(--line-strong); font-size: 14px;">
+<div style="display: flex; justify-content: space-between;"><span>Subtotal</span><span>$53.00</span></div>
+<div style="display: flex; justify-content: space-between;"><span>Shipping</span><span>$5.00</span></div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 8px;"><strong style="font-size: 16px;">Total</strong><strong style="font-size: 24px;">$58.00</strong></div>
+</div>
+</aside>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"errors":{"editor":"boolean","default":false},"$preview":{"width":1280,"height":1550}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var e = !!this.props.errors;
+    return {
+      yes: true, no: false, showErrors: e, zip: e ? '1001' : '10017', zipErr: e ? 'Enter a 5-digit ZIP code.' : '', card: e ? '4242 4242 4242' : '', cardErr: e ? 'Card number should be 16 digits.' : '',
+      items: [
+        { art: { kind: 'tee', color: '#0e0f0c', accent: '#d4ff3a', bg: 'stone' }, name: 'Aero Knit Running Tee', variant: 'Size M', qty: 1, total: '$35.00' },
+        { art: { kind: 'socks', color: '#ffffff', accent: '#0e0f0c', bg: 'stone' }, name: 'Cushion Running Socks 3-Pack', variant: 'One size', qty: 1, total: '$18.00' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
