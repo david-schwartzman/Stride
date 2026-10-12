@@ -1,0 +1,55 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stride</title>
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--surface); color:var(--ink); font-family:var(--font-sans); overflow:hidden; }
+  .cover { position:relative; height:288px; overflow:hidden; }
+  .art { position:absolute; top:0; left:480px; width:480px; height:288px; overflow:hidden; }
+  .art svg { display:block; width:480px; height:288px; }
+  .red { fill:var(--volt); }
+  .deep { fill:var(--ink); }
+  .cob { fill:var(--surface-alt); }
+  .bar-ground { fill:var(--surface); }
+  .bar-ink { fill:var(--on-volt); }
+  .sharp { rx:var(--radius-none); }
+  .words { position:absolute; left:var(--space-8); bottom:var(--space-8); max-width:440px; }
+  .name { margin:0; font-family:var(--font-display); font-size:120px; line-height:.9; font-weight:800; letter-spacing:-.01em; color:var(--ink); }
+  .tag { margin:var(--space-2) 0 0 4px; font-size:14px; line-height:20px; color:var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      volt 176×240 slab bled off the top (act) · stone 176×56 band under it bleeding off the bottom · ink 208×248 bled off right and bottom — ≈37% of 960×288
+  arrangement one tall volt slab with a stone band beneath, beside a heavy ink block staggered down by space-8; gutter space-4
+  pattern     speed stripes, from "loud, bold, poster type": space-3-wide bars skewed like the logo slash at a space-6 pitch — ground cut through the ink block, on-volt through the slab
+  scales      gutters space-4; bar width space-3, pitch space-6, bar height 2×space-12; corners radius-none (Stride is sharp)
+-->
+<rect class="red sharp" x="80" y="-16" width="176" height="240"/>
+<rect class="deep sharp" x="272" y="40" width="208" height="248"/>
+<rect class="cob sharp" x="80" y="240" width="176" height="56"/>
+<polygon class="bar-ink" points="128,40 140,40 116,136 104,136"/>
+<polygon class="bar-ink" points="152,40 164,40 140,136 128,136"/>
+<polygon class="bar-ink" points="176,40 188,40 164,136 152,136"/>
+<polygon class="bar-ink" points="200,40 212,40 188,136 176,136"/>
+<polygon class="bar-ground" points="320,120 332,120 308,216 296,216"/>
+<polygon class="bar-ground" points="344,120 356,120 332,216 320,216"/>
+<polygon class="bar-ground" points="368,120 380,120 356,216 344,216"/>
+<polygon class="bar-ground" points="392,120 404,120 380,216 368,216"/>
+<polygon class="bar-ground" points="416,120 428,120 404,216 392,216"/>
+<polygon class="bar-ground" points="440,120 452,120 428,216 416,216"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">Stride</h1>
+<p class="tag">Gear that keeps up.</p>
+</div>
+</div>
+</body>
+</html>

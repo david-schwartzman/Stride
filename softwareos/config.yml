@@ -2,7 +2,7 @@
 version: 1.4.1
 customer: stride
 # customer_root: ../<customer>-os   # uncomment if customer docs live in a hub repo
-default_branch: main
+default_branch: develop
 
 # Project mode — setup | production
 #   setup      lightweight gates; tests/QA/security review are optional

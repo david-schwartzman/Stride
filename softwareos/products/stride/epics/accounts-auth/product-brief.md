@@ -20,7 +20,7 @@ Checkout, order history and wishlist all need to know who the shopper is.
 
 ## Success Criteria
 
-- Sign-up creates a user with a bcrypt-hashed password. Plain passwords are never stored or logged.
+- Sign-up creates a user with an Argon2id-hashed password (salted and peppered). Plain passwords are never stored or logged.
 - Login sets an httpOnly session cookie, and the header shows logged-in state.
 - The wrong-password and existing-email errors show inline and match Figma.
 - Middleware protects /checkout, /account, /wishlist, with a working return-to redirect.
