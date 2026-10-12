@@ -41,6 +41,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      # --pass-with-no-tests until T14 adds the smoke spec.
       - name: E2E smoke
         run: npm run test:e2e
