@@ -29,4 +29,3 @@ Greenfield — no app code exists yet. The references are the design handoff, us
 - **Location:** `stride-design/pages/Footer.dc.html`, `Main.dc.html`, `MobileHome.dc.html`
 - **Relevance:** Footer layout (AC8) and header/footer at desktop + 375px (AC10). Visual reference only — rebuild, don't copy.
 
-> Note: `stride-design/` is untracked at shaping time — commit it so these references resolve for everyone.

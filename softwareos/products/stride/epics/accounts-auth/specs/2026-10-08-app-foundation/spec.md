@@ -3,7 +3,7 @@
 > Epic: ../../epic.md
 > Status: shaped
 > Branch: feat/accounts-auth/app-foundation
-> Covers: package.json, next.config.ts, tsconfig.json, eslint.config.mjs, .prettierrc, postcss.config.mjs, vitest.config.ts, playwright.config.ts, .github/workflows/**, prisma/schema.prisma, src/lib/db.ts, src/app/layout.tsx, src/app/globals.css, src/styles/**, src/components/layout/**, src/components/ui/**, vercel.json, .env.example
+> Covers: package.json, next.config.ts, tsconfig.json, eslint.config.mjs, .prettierrc, postcss.config.mjs, vitest.config.ts, playwright.config.ts, .github/workflows/**, prisma/schema.prisma, src/lib/db.ts, src/app/layout.tsx, src/app/globals.css, src/styles/**, src/components/layout/**, src/components/ui/**, vercel.json, .env.example, .gitignore
 
 ## Overview
 
@@ -71,5 +71,6 @@ Includes the tech plan's spike: Prisma + Neon + Vercel preview smoke test. The U
 |---|---|---|---|---|
 | 2026-10-08 | david-schwartzman | created | Initial shaping | — |
 | 2026-10-11 | david-schwartzman | change | AC11 + Env: `.env.example` lists PASSWORD_PEPPER, GUEST_CART_SECRET instead of AUTH_SECRET; scaffold pins no Auth.js; Out of Scope wording — adopt Stride Auth & Session Security Plan: Auth.js Credentials is JWT-only (no revocation); move to own DB-session module + Argon2id | https://claude.ai/artifact/QL1DDEEN6QERM6GsZP4a8h |
-| 2026-10-11 | david-schwartzman | change | Technical Approach + T1: pin Prisma 6 (latest 6.x) explicitly — Prisma 7 removes `directUrl` from schema.prisma, so "current stable" would make AC4 unbuildable; project decision recorded in standards/global/tech-stack.md | INFRA_PLAN.md Step 2 (added to the repo by a separate chore PR) |
+| 2026-10-11 | david-schwartzman | change | Technical Approach + T1: pin Prisma 6 (latest 6.x) explicitly — Prisma 7 removes `directUrl` from schema.prisma, so "current stable" would make AC4 unbuildable; project decision recorded in standards/global/tech-stack.md | [INFRA_PLAN.md](../../../../../../../INFRA_PLAN.md) Step 2 |
 | 2026-10-12 | david-schwartzman | change | AC7 + Technical Approach: Header utility row (My orders · Sign up · Log in) defined, as a `utility` ReactNode slot so protected-routes can place the logout form; AC8: Footer made checkable (listed elements instead of "matches Footer.dc.html"); T11/T12/T14 updated — PR #12 review | https://github.com/david-schwartzman/Stride/pull/12 |
+| 2026-10-12 | david-schwartzman | change | Covers adds `.gitignore` (AC11, T4 edit it); Changelog ref to `INFRA_PLAN.md` now links the file (on `develop` since #13); references.md drops the stale "stride-design/ is untracked" note — PR #12 review (2nd round) | https://github.com/david-schwartzman/Stride/pull/12 |
