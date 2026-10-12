@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stride — Stride Glide Road Shoe</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/stride/tokens.css">
+<link rel="stylesheet" href="ds/stride/components/bundle.css">
+<script src="ds/stride/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font-sans)}
+a{color:var(--ink)}a:hover{color:var(--ink-muted)}
+</style>
+<style>@media (max-width: 760px){.m-pad{padding-left:16px !important;padding-right:16px !important}.m-hide{display:none !important}.m-full{max-width:none !important;position:static !important}.m-hero{min-height:520px !important}}</style>
+</helmet>
+<div style="width: 100%; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+
+<x-import component-from-global-scope="Stride.Header" utility="{{utility}}" promo="$5 shipping · free on orders over $75" links="{{navLinks}}" active="Shoes" cart-count="{{cartCount}}" home-href="Main.dc.html" search-href="Catalog.dc.html" account-href="Login.dc.html" wishlist-href="Wishlist.dc.html" cart-href="Cart.dc.html"></x-import>
+<main id="main">
+
+<div class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 24px 32px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px;">
+
+<nav aria-label="Breadcrumb" style="font-size: 14px; color: var(--ink-muted); display: flex; gap: 8px; flex-wrap: wrap;">
+<a href="Catalog.dc.html" style="color: var(--ink-muted);">Shop</a><span>/</span><a href="Catalog.dc.html" style="color: var(--ink-muted);">Shoes</a><span>/</span><span style="color: var(--ink);">Stride Glide Road Shoe</span>
+</nav>
+
+<div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start;">
+
+<div style="flex: 999 1 520px; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+<sc-for list="{{shots}}" as="s" hint-placeholder-count="4">
+<div style="aspect-ratio: 4 / 5; overflow: hidden;"><x-import component-from-global-scope="Stride.ProductArt" kind="{{s.kind}}" color="{{s.color}}" accent="{{s.accent}}" sole="{{s.sole}}" bg="{{s.bg}}" view="{{s.view}}" label="{{s.label}}"></x-import></div>
+</sc-for>
+</div>
+
+<div class="m-full" style="flex: 1 1 360px; max-width: 460px; display: flex; flex-direction: column; gap: 24px; position: sticky; top: 120px; align-self: flex-start;">
+<div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start;">
+<h1 style="margin: 4px 0 0; font-family: var(--font-display); font-size: 44px; line-height: 0.95; font-weight: 800; text-transform: uppercase;">Stride Glide Road Shoe</h1>
+<span style="font-size: 16px; color: var(--ink-muted);">Unisex road running shoe</span>
+<x-import component-from-global-scope="Stride.Price" amount="{{price}}" size="lg"></x-import>
+<x-import component-from-global-scope="Stride.Badge" tone="guide">Good for your first 5K</x-import>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px;">
+<x-import component-from-global-scope="Stride.SizePicker" label="Select size (US)" sizes="{{sizes}}" value="{{size}}" on-change="{{pickSize}}"></x-import>
+<span aria-live="polite" style="font-size: 14px; line-height: 20px; font-weight: 600; color: {{stockColor}};">{{stockText}}</span>
+</div>
+
+
+<div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+<x-import component-from-global-scope="Stride.QuantityStepper" default-value="{{one}}" max="{{maxQty}}"></x-import>
+<sc-if value="{{hasSize}}" hint-placeholder-val="{{no}}">
+<a href="Cart.dc.html" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 24px; border-radius: 999px; background: var(--volt); color: var(--on-volt); font-weight: 700; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none;">Add to cart</a>
+</sc-if>
+<sc-if value="{{noSize}}" hint-placeholder-val="{{yes}}">
+<x-import component-from-global-scope="Stride.Button" variant="accent" disabled="{{yes}}" style="flex: 1;">Select a size</x-import>
+</sc-if>
+</div>
+<x-import component-from-global-scope="Stride.WishlistButton" variant="full"></x-import>
+
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; background: var(--surface-alt); font-size: 14px; line-height: 20px;">
+<span><strong>Free shipping</strong> on orders over $75 · $5 otherwise</span>
+<span>Demo checkout: nothing is charged.</span>
+</div>
+
+<div style="display: flex; flex-direction: column; border-top: 1px solid var(--line);">
+<details open style="border-bottom: 1px solid var(--line); padding: 16px 0;">
+<summary style="cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">Description</summary>
+<p style="margin: 12px 0 0; font-size: 16px; line-height: 24px;">A soft, stable everyday shoe that makes easy miles feel easy. If you're training for your first 5K, start here.</p>
+</details>
+<details style="border-bottom: 1px solid var(--line); padding: 16px 0;">
+<summary style="cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">Why it's good for beginners</summary>
+<ul style="margin: 12px 0 0; padding-left: 20px; font-size: 16px; line-height: 24px; display: flex; flex-direction: column; gap: 4px;">
+<li>Plenty of cushioning for your first weeks of running</li>
+<li>Stable, wide base — forgiving if your form isn't perfect yet</li>
+<li>Padded heel and soft tongue, so nothing rubs on longer runs</li>
+</ul>
+</details>
+<details style="border-bottom: 1px solid var(--line); padding: 16px 0;">
+<summary style="cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">Details, in plain words</summary>
+<dl style="margin: 12px 0 0; display: grid; grid-template-columns: max-content 1fr; gap: 10px 24px; font-size: 14px; line-height: 20px;">
+<dt style="color: var(--ink-muted);">Best for</dt><dd style="margin: 0;">Pavement, park paths and the treadmill</dd>
+<dt style="color: var(--ink-muted);">How it feels</dt><dd style="margin: 0;">Soft landing, steady push-off — easy on legs that are new to running</dd>
+<dt style="color: var(--ink-muted);">Good if you…</dt><dd style="margin: 0;">run 2–3 times a week, up to about 10K</dd>
+<dt style="color: var(--ink-muted);">Fit</dt><dd style="margin: 0;">True to size, roomy toe box</dd>
+<dt style="color: var(--ink-muted);">Weight</dt><dd style="margin: 0;">Light — about the same as an everyday sneaker</dd>
+</dl>
+<p style="margin: 12px 0 0; font-size: 13px; line-height: 18px; color: var(--ink-muted);">For the technical crowd: 10 mm drop, 255 g in US 9. You don't need these numbers to choose.</p>
+</details>
+</div>
+</div>
+</div>
+</div>
+
+</main>
+<dc-import name="Footer" hint-size="100%,380px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { size: null }; }
+  renderVals() {
+    var self = this;
+    // stock per size (US 6–13, half sizes included); 0 = sold out
+    var stock = { '6': 4, '6.5': 6, '7': 8, '7.5': 0, '8': 9, '8.5': 12, '9': 2, '9.5': 7, '10': 10, '10.5': 5, '11': 0, '11.5': 3, '12': 4, '12.5': 1, '13': 2 };
+    var labels = ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13'];
+    var size = this.state.size, left = size ? stock[size] : null;
+    return {
+      utility: [{ label: 'My orders', href: 'AccountOrders.dc.html' }, { label: 'Sign up', href: 'Signup.dc.html' }, { label: 'Log in', href: 'Login.dc.html' }],
+      yes: true, no: false, one: 1, cartCount: 2, price: 110,
+      navLinks: ['Road', 'Trail', 'Race day', 'Shoes', 'Apparel', 'Gear'].map(function (l) { return { label: l, href: 'Catalog.dc.html' }; }),
+      shots: [
+        { view: 'full', bg: 'stone', label: 'Side view' }, { view: 'angle', bg: 'stone', label: 'Angled view' },
+        { view: 'zoom', bg: 'stone', label: 'Detail of the upper' }, { view: 'back', bg: 'stone', label: 'Other side' }
+      ].map(function (v) { return Object.assign({ kind: 'shoe', color: '#0e0f0c', accent: '#d4ff3a', sole: '#f5f5f0' }, v); }),
+      sizes: labels.map(function (l) { return stock[l] === 0 ? { label: l, available: false } : l; }),
+      size: size, hasSize: !!size, noSize: !size,
+      pickSize: function (s) { self.setState({ size: s }); },
+      maxQty: left || 10,
+      stockText: !size ? 'Sold-out sizes are crossed out.' : (left <= 3 ? 'Only ' + left + ' left in US ' + size : 'In stock in US ' + size),
+      stockColor: !size ? 'var(--ink-muted)' : (left <= 3 ? 'var(--ink)' : 'var(--success)')
+    };
+  }
+}
+</script>
+</body>
+</html>

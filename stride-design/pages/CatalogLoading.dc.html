@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stride — Loading</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/stride/tokens.css">
+<link rel="stylesheet" href="ds/stride/components/bundle.css">
+<script src="ds/stride/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font-sans)}
+a{color:var(--ink)}a:hover{color:var(--ink-muted)}
+</style>
+<style>@media (max-width: 760px){.m-pad{padding-left:16px !important;padding-right:16px !important}.m-hide{display:none !important}.m-full{max-width:none !important;position:static !important}.m-hero{min-height:520px !important}}</style>
+<style>@keyframes sk{0%{opacity:1}50%{opacity:.55}100%{opacity:1}}.sk{background:var(--surface-alt);animation:sk 1.4s ease-in-out infinite}@media (prefers-reduced-motion: reduce){.sk{animation:none}}</style>
+</helmet>
+<div style="width: 100%; background: var(--surface); color: var(--ink); font-family: var(--font-sans);">
+
+<x-import component-from-global-scope="Stride.Header" promo="$5 shipping · free on orders over $75" utility="{{utility}}" links="{{navLinks}}" cart-count="{{cartCount}}" home-href="Main.dc.html" search-href="Catalog.dc.html" account-href="Login.dc.html" wishlist-href="Wishlist.dc.html" cart-href="Cart.dc.html"></x-import>
+
+<main id="main" aria-busy="true">
+<div class="m-pad" style="max-width: 1280px; margin: 0 auto; padding: 24px 32px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px;">
+<p role="status" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Loading products</p>
+<div class="sk" style="width: 220px; height: 32px;"></div>
+<div style="display: flex; gap: 12px;"><div class="sk" style="flex: 1; height: 96px;"></div><div class="sk" style="flex: 1; height: 96px;"></div><div class="sk" style="flex: 1; height: 96px;"></div></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 40px 20px;">
+<sc-for list="{{cards}}" as="c" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 12px;"><div class="sk" style="aspect-ratio: 4 / 5;"></div><div class="sk" style="width: 60%; height: 22px;"></div><div class="sk" style="width: 40%; height: 18px;"></div></div>
+</sc-for>
+</div>
+</div>
+</main>
+<dc-import name="Footer" hint-size="100%,380px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      utility: [{ label: 'My orders', href: 'AccountOrders.dc.html' }, { label: 'Sign up', href: 'Signup.dc.html' }, { label: 'Log in', href: 'Login.dc.html' }],
+      cartCount: 2, cards: [1, 2, 3, 4, 5, 6],
+      navLinks: ['Road', 'Trail', 'Race day', 'Shoes', 'Apparel', 'Gear'].map(function (l) { return { label: l, href: 'Catalog.dc.html' }; })
+    };
+  }
+}
+</script>
+</body>
+</html>

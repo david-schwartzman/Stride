@@ -1,0 +1,12 @@
+<!-- @dsCard group="Status" height=72 -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Badge — preview</title></head>
+<body>
+<div id="root" class="st-demo"></div>
+<script>
+  var S = window.Stride, h = React.createElement;
+  ReactDOM.createRoot(document.getElementById('root')).render(h(React.Fragment,null,h(S.Badge,{tone:'guide'},'Good for your first 5K'), h(S.Badge,{tone:'new'},'New'), h(S.Badge,null,'Out of stock'), h(S.Badge,{tone:'success'},'In stock'), h(S.Badge,{tone:'inverse'},'Race day')));
+</script>
+</body>
+</html>
