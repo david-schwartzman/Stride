@@ -13,9 +13,12 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  // Runs against the production build, not the dev server.
+  // Runs against the production build, not the dev server. CI has already
+  // built the app in an earlier step, so it only starts it.
   webServer: {
-    command: `npm run build && npm run start -- --port ${port}`,
+    command: process.env.CI
+      ? `npm run start -- --port ${port}`
+      : `npm run build && npm run start -- --port ${port}`,
     url: `http://localhost:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
