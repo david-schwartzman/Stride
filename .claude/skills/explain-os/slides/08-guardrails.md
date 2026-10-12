@@ -14,7 +14,7 @@ good ones back to the house profile: `sync-to-profile.sh --profile moveo`.
 
 **Skills** — procedures you repeat the same way every time:
 `testing` · `qa` · `audit-log` · `pr` · `process-meeting` · `explain-os` ·
-`skill-creator`
+`skill-creator` · `consistency-check` · `project-audit` · `update-arch`
 
 **Agents** — focused sub-agents the commands dispatch:
 `planner` · `code-explorer` · `code-reviewer` · `security-reviewer` ·

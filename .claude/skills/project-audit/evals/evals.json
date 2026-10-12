@@ -1,0 +1,64 @@
+{
+  "skill_name": "project-audit",
+  "evals": [
+    {
+      "id": 1,
+      "name": "full-audit-before-build",
+      "prompt": "health check the docs before we start building \u2014 audit the whole project for gaps and contradictions",
+      "setup": "Before running, seed the project copy with two defects: (a) in one shaped spec's tasks.md, delete the task that covers its last AC; (b) in that epic's specs.index.yml, change the spec's status to a value that differs from its spec.md.",
+      "expected_output": "Read-only full-project audit in chat: top line with files checked, verdict and severity counts; high/med findings grouped by level with both sides quoted path:line, downstream impact and fix command; low as one-liners; checked-no-issues list by level; ends by asking which findings to fix. No files modified.",
+      "files": [],
+      "assertions": [
+        "Top line states files checked, a verdict (CLEAN or ISSUES FOUND) and counts by severity",
+        "Findings are grouped by severity (high / med / low)",
+        "Every high and med finding quotes at least two path:line locations",
+        "Every finding names a fix (a slash command or 'manual edit')",
+        "Report includes a 'checked, no issues' list by level",
+        "Report ends by asking which findings to fix (and does not claim to have fixed anything)",
+        "No project file in the copy was modified (read-only)",
+        "Detects seeded defect (a): reports the AC with no covering task, quoting the spec.md line",
+        "Detects seeded defect (b): reports the status mismatch between specs.index.yml and spec.md",
+        "Covers root-level docs (any *.md at the repo root outside softwareos/) in what was checked"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "epic-scoped-audit",
+      "prompt": "/project-audit accounts-auth",
+      "setup": "Before running, seed the project copy with two defects: (a) in one accounts-auth spec.md, add a reference to a standards file that does not exist; (b) in a spec of a different epic, add the same defect (it must NOT be reported, since it is out of scope).",
+      "expected_output": "Audit scoped to the accounts-auth epic (its epic.md, tech-plan, brief, specs, specs.index.yml) checked against product docs and standards; cross-epic ownership collisions involving its specs; same report format; asks which to fix. No files modified.",
+      "files": [],
+      "assertions": [
+        "Top line states files checked, a verdict (CLEAN or ISSUES FOUND) and counts by severity",
+        "Findings are grouped by severity (high / med / low)",
+        "Every high and med finding quotes at least two path:line locations",
+        "Every finding names a fix (a slash command or 'manual edit')",
+        "Report includes a 'checked, no issues' list by level",
+        "Report ends by asking which findings to fix (and does not claim to have fixed anything)",
+        "No project file in the copy was modified (read-only)",
+        "Stays scoped to accounts-auth: no findings that live only in other epics' files",
+        "Detects seeded defect (a): reports the broken standards reference in the accounts-auth spec with its path:line",
+        "Does not report seeded defect (b) in the other epic"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "after-infra-plan-fallthrough",
+      "prompt": "we've been applying the stuff in INFRA_PLAN.md to the docs over the last few days. did anything fall through? is the softwareos folder still consistent with itself and with the root docs?",
+      "setup": "Before running, seed the project copy with one partially-cascaded decision: add a new env var (e.g. REDIS_URL) to INFRA_PLAN.md and to architecture.md, but not to dependencies.md or tech-stack.md.",
+      "expected_output": "Full audit that specifically checks INFRA_PLAN.md and design-rationale.md against product docs and specs, flags partially-cascaded decisions with /update-arch as fix, same report format, asks which to fix. No files modified.",
+      "files": [],
+      "assertions": [
+        "Top line states files checked, a verdict (CLEAN or ISSUES FOUND) and counts by severity",
+        "Findings are grouped by severity (high / med / low)",
+        "Every high and med finding quotes at least two path:line locations",
+        "Every finding names a fix (a slash command or 'manual edit')",
+        "Report includes a 'checked, no issues' list by level",
+        "Report ends by asking which findings to fix (and does not claim to have fixed anything)",
+        "No project file in the copy was modified (read-only)",
+        "Explicitly checks INFRA_PLAN.md against softwareos docs and reports what was/wasn't cascaded",
+        "Detects the seeded partial cascade: the env var is in INFRA_PLAN.md/architecture.md but missing from dependencies.md or tech-stack.md, with /update-arch as the fix"
+      ]
+    }
+  ]
+}
