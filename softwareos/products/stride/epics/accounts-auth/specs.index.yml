@@ -54,3 +54,14 @@ specs:
       - src/lib/security-headers.ts
       - src/lib/security-headers.test.ts
       - e2e/security-headers.spec.ts
+  - folder: 2026-10-11-session-management
+    slug: session-management
+    status: shaped
+    branch: feat/accounts-auth/session-management
+    covers:
+      - /account/security
+      - src/app/account/security/**
+      - src/features/account-security/**
+      - src/app/api/cron/cleanup-sessions/**
+      - e2e/session-management.spec.ts
+      - prisma/migrations/*_session_public_id/**
