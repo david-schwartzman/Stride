@@ -7,7 +7,7 @@ _None._ The pre-flight coverage search (cross-epic) found no overlaps. These spe
 - **[Related]** [2026-10-08-app-foundation](../2026-10-08-app-foundation/spec.md) owns `prisma/schema.prisma`, `vercel.json` and `.env.example`. This spec adds `Session.publicId` (T1), the `crons` entry and `CRON_SECRET=` (T18). It stays separate because app-foundation owns the config files as a whole; this spec claims only its own migration folder.
 - **[Related]** [2026-10-08-signup-login](../2026-10-08-signup-login/spec.md) owns `src/lib/auth/**`. This spec extends `session.ts` (10-session cap, hourly `lastSeenAt`, list/revoke-by-`publicId`, cleanup helpers; T8) and `throttle.ts` (`pwchange:<userId>` key, `pruneAuthAttempts`; T9), and leaves `password.ts` unchanged. It stays separate because only `src/lib/auth/` may touch tokens and hashes (auth-security standard); the device and password-change features live in `src/features/account-security/`.
 - **[Related]** [2026-10-11-protected-routes](../2026-10-11-protected-routes/spec.md) owns `requireUser()`, the `/account` prefix guard and the throwaway `src/app/account/page.tsx` placeholder. This spec adds a temporary "Security" link to that placeholder (T19). It stays separate because the guard and session header are protected-routes' concern.
-- **[Related]** [2026-10-11-security-headers](../2026-10-11-security-headers/spec.md) (uncommitted at shaping time) gives `/account/security` `Cache-Control: private, no-store` via `isPrivatePath` (the `/account` prefix) and the CSP's `form-action 'self'`. This spec adds no header code and only checks the result (T22, AC15).
+- **[Related]** [2026-10-11-security-headers](../2026-10-11-security-headers/spec.md) (PR #14, merged before this spec) gives `/account/security` `Cache-Control: private, no-store` via `isPrivatePath` (the `/account` prefix) and the CSP's `form-action 'self'`. This spec adds no header code and only checks the result (T22, AC15).
 
 ## Similar Implementations
 
@@ -26,7 +26,7 @@ No application code exists yet (`src/` not scaffolded).
 
 ### Stride Auth & Session Security Plan
 
-- **Location:** https://claude.ai/artifact/QL1DDEEN6QERM6GsZP4a8h
+- **Location:** [../../security-plan-excerpts.md](../../security-plan-excerpts.md) (the sections this epic builds from, copied into the repo). The full plan is the private artifact https://claude.ai/artifact/QL1DDEEN6QERM6GsZP4a8h.
 - **Relevance:** the "Second device", "Expiry & renewal", "Change password" flows and the revocation table. Sources for: `lastSeenAt` at most hourly, the optional 10-session cap (oldest evicted), the nightly Vercel Cron cleanup, and password change = current password + revoke all + new session.
 
 ### External guidance
