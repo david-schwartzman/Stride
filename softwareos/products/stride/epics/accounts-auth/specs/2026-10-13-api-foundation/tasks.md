@@ -82,7 +82,7 @@
   - `apps/web/src/lib/api-proxy.ts`: `apiRewrite(request)` strips `/api`, keeps the query, and returns `NextResponse.rewrite(\`${API_URL}${path}\`, { request: { headers: trustedProxyHeaders(request.headers) } })` (T35), passing the whole `Cookie` header through. On Preview it adds `x-vercel-protection-bypass` when `API_PROTECTION_BYPASS_SECRET` is set
   - outside production, `API_URL` defaults to `http://localhost:4000`; in production a missing `API_URL` or `WEB_PROXY_SECRET` makes `/api/*` answer 503 and logs the variable name only
   - create `apps/web/src/proxy.ts` (Next 16.4) as a thin adapter: matcher includes `/api/:path*`, `/api/*` → `apiRewrite`, everything else → `NextResponse.next()`. This is a wiring edit, not claimed: protected-routes owns the file and later adds the page guard
-- [ ] T18 Add a `no-restricted-imports` rule in `apps/web/eslint.config.mjs` for `@prisma/client` and `@/lib/db` (AC6):
+- [x] T18 Add a `no-restricted-imports` rule in `apps/web/eslint.config.mjs` for `@prisma/client` and `@/lib/db` (AC6):
   - an override allows them only in `src/lib/db.ts`, `src/lib/auth/**`, `src/features/auth/actions.ts` and `src/features/auth/actions.test.ts` (#20's action tests import the db module)
   - a comment names candidate `auth-api-migration`
   - `npm run lint` passes on the existing auth files, and an import anywhere else fails
