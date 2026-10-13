@@ -47,4 +47,4 @@
 ## Verification
 
 - [x] T13 Write tests first (testing skill), module tests are T19: Vitest for schemas and signup/login/signOut actions (duplicate email, P2002, wrong password, unknown email uses dummy hash, unknown email hits "Too many attempts" after 5 failures like a real one, 5 wrong passwords as `a@x.com` then ` A@X.com ` gets "Too many attempts", too many attempts, signup limit message, new token per login, hook called once, hook throwing still signs in, no password in returned state, signOut deletes the row + clears the cookie); RTL for form error wiring; Playwright e2e sign up → session holds across reload → fresh context log in → session holds (logout e2e is protected-routes T11)
-- [ ] T14 Run QA against acceptance criteria (qa skill)
+- [x] T14 Run QA against acceptance criteria (qa skill)
