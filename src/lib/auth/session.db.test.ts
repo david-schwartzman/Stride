@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 const url = process.env.TEST_DATABASE_URL;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 describe.skipIf(!url)("session (Postgres)", () => {
   let auth: typeof import("./session");
@@ -57,5 +58,42 @@ describe.skipIf(!url)("session (Postgres)", () => {
     expect(
       await db.session.count({ where: { id: auth.hashToken(token) } }),
     ).toBe(0);
+  });
+
+  it("slides expiry to 30 days once under 15 are left, in the database", async () => {
+    const token = auth.generateSessionToken();
+    await auth.createSession(token, userId, {});
+    const id = auth.hashToken(token);
+    await db.session.update({
+      where: { id },
+      data: { expiresAt: new Date(Date.now() + 10 * DAY_MS) },
+    });
+
+    const before = Date.now();
+    const result = await auth.validateSessionToken(token);
+
+    const row = await db.session.findUniqueOrThrow({ where: { id } });
+    expect(row.expiresAt.getTime()).toBeGreaterThanOrEqual(
+      before + auth.SESSION_TTL_MS,
+    );
+    expect(result?.session.expiresAt).toEqual(row.expiresAt);
+  });
+
+  it("never renews past createdAt + 90 days, in the database", async () => {
+    const token = auth.generateSessionToken();
+    await auth.createSession(token, userId, {});
+    const id = auth.hashToken(token);
+    const createdAt = new Date(Date.now() - 80 * DAY_MS);
+    await db.session.update({
+      where: { id },
+      data: { createdAt, expiresAt: new Date(Date.now() + 5 * DAY_MS) },
+    });
+
+    await auth.validateSessionToken(token);
+
+    const row = await db.session.findUniqueOrThrow({ where: { id } });
+    expect(row.expiresAt.getTime()).toBe(
+      createdAt.getTime() + auth.SESSION_MAX_AGE_MS,
+    );
   });
 });
