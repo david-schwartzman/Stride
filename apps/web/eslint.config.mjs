@@ -8,9 +8,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   prettier,
   // The web app talks to the database only through the API (api-foundation
-  // AC6). TEMPORARY exception: the signup-login auth code below still uses
-  // Prisma here; candidate spec `auth-api-migration` moves it into the API and
-  // removes the override.
+  // AC6), with no exceptions (auth-api-migration AC11).
   {
     rules: {
       "no-restricted-imports": [
@@ -33,15 +31,6 @@ const eslintConfig = defineConfig([
         },
       ],
     },
-  },
-  {
-    files: [
-      "src/lib/db.ts",
-      "src/lib/auth/**",
-      "src/features/auth/actions.ts",
-      "src/features/auth/actions.test.ts",
-    ],
-    rules: { "no-restricted-imports": "off" },
   },
   // Override default ignores of eslint-config-next.
   globalIgnores([

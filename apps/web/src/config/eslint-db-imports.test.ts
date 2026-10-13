@@ -1,4 +1,4 @@
-// covers AC6 (api-foundation T31)
+// covers AC6 (api-foundation T31); auth-api-migration AC11 (T23)
 // @vitest-environment node
 import path from "node:path";
 
@@ -18,32 +18,20 @@ describe("no-restricted-imports for the database (eslint.config.mjs)", () => {
   it.each([
     ["@prisma/client", 'import { PrismaClient } from "@prisma/client";'],
     ["@/lib/db", 'import { db } from "@/lib/db";'],
-  ])("rejects %s outside the allowed files", async (_name, code) => {
+  ])("rejects %s anywhere in apps/web", async (_name, code) => {
     for (const file of [
       "src/features/cart/actions.ts",
       "src/app/page.tsx",
       "src/lib/api-client.ts",
+      // The former auth-api-migration exception is gone (its AC11).
+      "src/lib/db.ts",
+      "src/lib/auth/session.ts",
+      "src/features/auth/actions.ts",
+      "src/features/auth/actions.test.ts",
     ]) {
       expect(
         await restrictedImportErrors(`${code}\nvoid 0;\n`, file),
       ).toHaveLength(1);
     }
   });
-
-  it.each([
-    "src/lib/db.ts",
-    "src/lib/auth/session.ts",
-    "src/features/auth/actions.ts",
-    "src/features/auth/actions.test.ts",
-  ])(
-    "allows @prisma/client in %s (temporary, auth-api-migration)",
-    async (file) => {
-      expect(
-        await restrictedImportErrors(
-          'import { PrismaClient } from "@prisma/client";\nvoid 0;\n',
-          file,
-        ),
-      ).toEqual([]);
-    },
-  );
 });
