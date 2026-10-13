@@ -7,7 +7,7 @@
 ## Data & passwords
 
 - [x] T1 Add User (incl. pepperVersion), Session and AuthAttempt models to prisma/schema.prisma and generate migration prisma/migrations/<ts>_init_auth/
-- [ ] T2 Add @node-rs/argon2 (exact pin) and src/lib/auth/password.ts (hashPassword / verifyPassword / verifyDummy; Argon2id m=19456 t=2 p=1, secret = PASSWORD_PEPPER via getPepper(), which throws when the pepper is missing, empty or decodes to < 32 bytes); src/instrumentation.ts runs the same check at server start
+- [x] T2 Add @node-rs/argon2 (exact pin) and src/lib/auth/password.ts (hashPassword / verifyPassword / verifyDummy; Argon2id m=19456 t=2 p=1, secret = PASSWORD_PEPPER via getPepper(), which throws when the pepper is missing, empty or decodes to < 32 bytes); src/instrumentation.ts runs the same check at server start
 
 ## Auth module
 
@@ -18,7 +18,7 @@
 
 ## Auth module tests (before T5)
 
-- [ ] T19 Write Vitest tests test-first for the auth module (testing skill), passing before T5 starts: password.ts (hash, verify, wrong password, wrong pepper, verifyDummy, missing / empty / < 32-byte pepper throws); session.ts (create, validate, sliding renewal, 90-day cap, expired deleted, invalidate, invalidateAll, only hash stored, old token rejected after invalidateSession — AC16); throttle.ts (each back-off step delay(5..9+), per-IP 30/15 min block, signup 10/60 min limit, clear on success, unknown-email failures counted per email and per IP, 5 failures as `a@x.com` then ` A@X.com ` is refused, a refused attempt isn't recorded as a failure, per-IP checks skipped when the IP is null); request-ip.ts (valid IPv4/IPv6 `x-real-ip` returned; missing, empty or garbage → null; a spoofed `x-forwarded-for` is ignored)
+- [~] T19 Write Vitest tests test-first for the auth module (testing skill), passing before T5 starts: password.ts (hash, verify, wrong password, wrong pepper, verifyDummy, missing / empty / < 32-byte pepper throws); session.ts (create, validate, sliding renewal, 90-day cap, expired deleted, invalidate, invalidateAll, only hash stored, old token rejected after invalidateSession — AC16); throttle.ts (each back-off step delay(5..9+), per-IP 30/15 min block, signup 10/60 min limit, clear on success, unknown-email failures counted per email and per IP, 5 failures as `a@x.com` then ` A@X.com ` is refused, a refused attempt isn't recorded as a failure, per-IP checks skipped when the IP is null); request-ip.ts (valid IPv4/IPv6 `x-real-ip` returned; missing, empty or garbage → null; a spoofed `x-forwarded-for` is ignored)
 
 ## Auth.js
 
