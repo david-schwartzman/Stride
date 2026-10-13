@@ -4,11 +4,11 @@
 
 ## Approach
 
-/account, /account/orders/[orderId] and /wishlist are server-rendered and protected by the existing middleware. They read through Prisma, scoped to the session user. Profile/address updates and wishlist add/remove/move-to-cart are Server Actions with Zod validation. The heart is a small Client Component with an optimistic toggle that calls a Server Action and redirects guests to login. Move-to-cart reuses the cart Server Action from cart-checkout. Order history reads Order/OrderItem snapshots, so it never recalculates prices.
+/account, /account/orders/[orderId] and /wishlist are server-rendered and protected by the existing middleware. They read through the NestJS API (`AuthGuard`, queries scoped to the session user). Profile/address updates and wishlist add/remove/move-to-cart are API endpoints with shared Zod validation, called from client components via `/api/*`. The heart is a small Client Component with an optimistic toggle that calls `POST /api/wishlist` and redirects guests to login on 401. Move-to-cart reuses the cart endpoint from cart-checkout. Order history reads Order/OrderItem snapshots, so it never recalculates prices.
 
 ## Architecture Impact
 
-- New WishlistItem model + migration (user + product, unique pair).
+- New API wishlist and account modules, and WishlistItem model + migration in `apps/api` (user + product, unique pair).
 - Routes `/account`, `/account/orders/[orderId]`, `/wishlist`.
 - Uses the existing User, Address, Order, OrderItem and Cart from earlier epics.
 - Adds the heart toggle to product cards and product detail (catalog-search components).
@@ -20,6 +20,7 @@
 - Showing heart state on the SSR catalog grid means a per-user query on a page that's otherwise the same for everyone. Keep it to one query of the user's wishlisted IDs.
 - Authorization: every order/address query must filter by session user ID (IDOR risk).
 - Depends on cart-checkout being done for move-to-cart and real order history.
+- Depends on accounts-auth `api-foundation` (the NestJS API, monorepo and `/api` rewrite) — the backend moved to a separate NestJS service on 2026-10-13 (`../../architecture.md`).
 
 ## Candidate Specs
 

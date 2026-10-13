@@ -12,10 +12,10 @@ The sections of the Stride Auth & Session Security Plan (Oct 2026) that accounts
 ## Expiry & renewal
 
 - New session: `expiresAt = now + 30 days`, cookie `Max-Age` 30 days.
-- When fewer than 15 days remain, extend `expiresAt` to now + 30 days and re-send the cookie (from the proxy on GET, or a Server Action; Server Components can't set cookies).
+- When fewer than 15 days remain, extend `expiresAt` to now + 30 days and re-send the cookie (from the web proxy on GET, or an API response; Server Components can't set cookies).
 - Absolute limit: never extend beyond `createdAt + 90 days`.
 - `lastSeenAt` is updated at most once an hour so reads don't turn into writes.
-- An expired session is treated as missing (row deleted, cookie cleared). A nightly Vercel Cron job deletes `WHERE expiresAt < now()`.
+- An expired session is treated as missing (row deleted, cookie cleared). A nightly Vercel Cron job on the API project deletes `WHERE expiresAt < now()`.
 
 ## Change password (signed in)
 
