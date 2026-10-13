@@ -3,24 +3,25 @@
 > Epic: accounts-auth
 > Spec: 2026-10-08-app-foundation
 > Branch: feat/accounts-auth/app-foundation
+> PR: https://github.com/david-schwartzman/Stride/pull/17
 
 ## Scaffold & tooling
 
-- [ ] T1 Scaffold Next.js App Router app (TS strict, Tailwind, ESLint, src/, @/* alias); pin exact versions incl. zod and Prisma 6.x (prisma + @prisma/client — not 7)
-- [ ] T2 Add Prettier + eslint-config-prettier; scripts lint, typecheck, test, test:e2e, db:migrate, db:generate, postinstall
-- [ ] T3 Configure Vitest + RTL + jsdom (vitest.config.ts) and Playwright (playwright.config.ts, webServer on built app)
-- [ ] T4 Add .env.example (DATABASE_URL, DIRECT_URL, PASSWORD_PEPPER, GUEST_CART_SECRET placeholders) and gitignore .env* except the example
+- [x] T1 Scaffold Next.js App Router app (TS strict, Tailwind, ESLint, src/, @/* alias); pin exact versions incl. zod and Prisma 6.x (prisma + @prisma/client — not 7)
+- [x] T2 Add Prettier + eslint-config-prettier; scripts lint, typecheck, test, test:e2e, db:migrate, db:generate (postinstall comes with the schema in T5)
+- [x] T3 Configure Vitest + RTL + jsdom (vitest.config.ts) and Playwright (playwright.config.ts, webServer on built app)
+- [x] T4 Add .env.example (DATABASE_URL, DIRECT_URL, PASSWORD_PEPPER, GUEST_CART_SECRET placeholders) and gitignore .env* except the example
 
 ## Database & previews (spike first)
 
-- [ ] T5 Add prisma/schema.prisma (postgresql, url DATABASE_URL, directUrl DIRECT_URL, no models) and src/lib/db.ts globalThis-cached client
-- [ ] T6 Link Vercel project + Neon–Vercel integration (preview branch per deploy from develop DB branch); set build to `prisma migrate deploy && next build`; map DIRECT_URL
-- [ ] T6.1 Spike: open a throwaway PR, confirm preview build ran migrate deploy on its own Neon branch and connects (SELECT 1)
-- [ ] T6.2 Delete the preview's Neon branch on PR close (integration setting or delete-branch-action workflow)
+- [x] T5 Add prisma/schema.prisma (postgresql, url DATABASE_URL, directUrl DIRECT_URL, no models), src/lib/db.ts globalThis-cached client, and the postinstall: prisma generate script
+- [x] T6 Link Vercel project + Neon–Vercel integration (preview branch per deploy from develop DB branch); set build to `prisma migrate deploy && next build`; map DIRECT_URL
+- [x] T6.1 Spike: open a throwaway PR, confirm preview build ran migrate deploy on its own Neon branch and connects (SELECT 1) — verified 2026-10-12: SELECT 1 OK, _prisma_migrations present on PR #17 preview branch
+- [x] T6.2 Delete the preview's Neon branch on PR close (integration setting or delete-branch-action workflow) — confirmed done by user 2026-10-12
 
 ## CI
 
-- [ ] T7 Add .github/workflows/ci.yml on pull_request: branches: [develop] — npm ci, lint, typecheck, vitest, playwright chromium, build, e2e
+- [x] T7 Add .github/workflows/ci.yml on pull_request: branches: [develop] — npm ci, lint, typecheck, vitest, playwright chromium, build, e2e
 
 ## Design system & layout
 
