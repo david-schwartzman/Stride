@@ -3,6 +3,7 @@
 > Epic: accounts-auth
 > Spec: 2026-10-08-signup-login
 > Branch: feat/accounts-auth/signup-login
+> PR: https://github.com/david-schwartzman/Stride/pull/20
 
 ## Data & passwords
 
