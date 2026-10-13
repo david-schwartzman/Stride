@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { existsSync } from "node:fs";
 
 import { NestFactory } from "@nestjs/core";
+import type { NestExpressApplication } from "@nestjs/platform-express";
 
 import { AppModule } from "./app.module";
 
@@ -10,7 +11,8 @@ import { AppModule } from "./app.module";
 if (existsSync(".env")) process.loadEnvFile(".env");
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.disable("x-powered-by");
   app.enableShutdownHooks();
   await app.listen(Number(process.env.PORT ?? 4000));
 }

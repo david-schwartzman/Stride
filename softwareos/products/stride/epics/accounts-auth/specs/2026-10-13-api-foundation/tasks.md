@@ -3,6 +3,8 @@
 > Epic: accounts-auth
 > Spec: 2026-10-13-api-foundation
 > Branch: feat/accounts-auth/api-foundation
+> Reviewed: 2026-10-13 APPROVE
+> SecurityReviewed: 2026-10-13 APPROVE
 
 ## Gate & spike
 

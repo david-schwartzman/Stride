@@ -33,20 +33,28 @@ export function apiBaseUrl(): string | null {
 }
 
 /**
+ * The env var names the API calls need but lack in production (none outside
+ * it: the local defaults apply). Names only, never values, so they're safe to log.
+ */
+export function missingApiEnv(): string[] {
+  if (process.env.NODE_ENV !== "production") return [];
+  const missing: string[] = [];
+  if (!apiBaseUrl()) missing.push("API_URL");
+  if (!process.env.WEB_PROXY_SECRET) missing.push("WEB_PROXY_SECRET");
+  return missing;
+}
+
+/**
  * Same-origin `/api/*` → the API (AC4): strips `/api`, keeps the query and
  * passes the whole request (Cookie included) with the trusted headers.
  */
 export function apiRewrite(request: NextRequest): NextResponse {
-  const base = apiBaseUrl();
-  const secret = process.env.WEB_PROXY_SECRET;
-  if (process.env.NODE_ENV === "production" && (!base || !secret)) {
-    // Name the variable, never its value.
-    const missing = [!base && "API_URL", !secret && "WEB_PROXY_SECRET"];
-    console.error(
-      `API proxy disabled: ${missing.filter(Boolean).join(", ")} not set`,
-    );
+  const missing = missingApiEnv();
+  if (missing.length > 0) {
+    console.error(`API proxy disabled: ${missing.join(", ")} not set`);
     return new NextResponse(null, { status: 503 });
   }
+  const base = apiBaseUrl();
 
   const { pathname, search } = request.nextUrl;
   const path = pathname.slice("/api".length) || "/";

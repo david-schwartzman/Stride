@@ -43,5 +43,20 @@ describe("apiFetch", () => {
     expect(sent.get("x-stride-client-ip")).toBe("203.0.113.7");
     expect(sent.get("x-stride-forwarded-host")).toBe("shop.example");
     expect(sent.get("accept")).toBe("application/json");
+    expect(sent.get("origin")).toBe("https://shop.example");
+  });
+
+  it("refuses paths that could move the request to another host", async () => {
+    for (const path of ["@evil.example/x", "//evil.example/x", "health"]) {
+      await expect(apiFetch(path)).rejects.toThrow("single /");
+    }
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("refuses to call the API in production without WEB_PROXY_SECRET", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("WEB_PROXY_SECRET", "");
+    await expect(apiFetch("/health")).rejects.toThrow("WEB_PROXY_SECRET");
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
