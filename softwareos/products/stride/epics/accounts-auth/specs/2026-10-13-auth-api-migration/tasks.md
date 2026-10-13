@@ -46,7 +46,7 @@
 
 ## Web switch to /api
 
-- [ ] T19 Point the web at the shared contract: `apps/web/src/features/auth/` imports schemas and `MESSAGES` from `@stride/shared`; delete `features/auth/schemas.ts`; `form-state.ts` keeps only the `AuthFormState` type (AC8)
+- [x] T19 Point the web at the shared contract: `apps/web/src/features/auth/` imports schemas and `MESSAGES` from `@stride/shared`; delete `features/auth/schemas.ts`; `form-state.ts` keeps only the `AuthFormState` type (AC8)
 - [ ] T20 Add client `features/auth/submit-auth.ts` (POST JSON, map the response into `AuthFormState`) and use it as the `useActionState` action in `LoginForm.tsx`, `SignupForm.tsx` and `use-auth-form.ts`; `SubmitButton`'s pending state keeps working. T6 goes green (AC9)
 - [ ] T21 `RedirectIfSignedIn.tsx` calls `apiFetch("/auth/me")` and redirects to `/` on 200 (AC10)
 

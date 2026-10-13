@@ -1,5 +1,7 @@
 // @vitest-environment node
 import { randomBytes } from "node:crypto";
+
+import { MESSAGES } from "@stride/shared";
 import {
   afterEach,
   beforeAll,
@@ -14,7 +16,7 @@ import * as password from "@/lib/auth/password";
 import { hashToken, validateSessionToken } from "@/lib/auth/session";
 import { createFakeDb, type FakeDb } from "@/lib/auth/testing/fake-db";
 
-import { MESSAGES, type AuthFormState } from "./form-state";
+import type { AuthFormState } from "./form-state";
 
 const mocks = vi.hoisted(() => ({
   db: undefined as unknown as FakeDb,

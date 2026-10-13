@@ -6,10 +6,10 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
+import { MESSAGES } from "@stride/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { AuthFormState } from "./form-state";
-import { MESSAGES } from "./form-state";
 
 const signupAction = vi.hoisted(() =>
   vi.fn<(prev: AuthFormState, data: FormData) => Promise<AuthFormState>>(),

@@ -1,6 +1,12 @@
 "use server";
 
 import { Prisma } from "@prisma/client";
+import {
+  MESSAGES,
+  fieldErrorsOf,
+  loginSchema,
+  signupSchema,
+} from "@stride/shared";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -16,9 +22,8 @@ import {
 import { db } from "@/lib/db";
 import { getClientIp } from "@/lib/request-ip";
 
-import { MESSAGES, type AuthFormState } from "./form-state";
+import type { AuthFormState } from "./form-state";
 import { runOnSignedIn } from "./run-on-signed-in";
-import { fieldErrorsOf, loginSchema, signupSchema } from "./schemas";
 
 function field(formData: FormData, name: string): string {
   const value = formData.get(name);

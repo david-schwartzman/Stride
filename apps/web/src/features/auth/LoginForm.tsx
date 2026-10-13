@@ -1,5 +1,6 @@
 "use client";
 
+import { loginSchema } from "@stride/shared";
 import { useActionState } from "react";
 
 import { Input } from "@/components/ui/Input";
@@ -7,7 +8,6 @@ import { Input } from "@/components/ui/Input";
 import { loginAction } from "./actions";
 import type { AuthFormState } from "./form-state";
 import { FormError } from "./FormError";
-import { loginSchema } from "./schemas";
 import { SubmitButton } from "./SubmitButton";
 import { useAuthForm } from "./use-auth-form";
 

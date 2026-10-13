@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { MESSAGES, signupSchema } from "@stride/shared";
 import { useActionState } from "react";
 
 import { Input } from "@/components/ui/Input";
 
 import { signupAction } from "./actions";
-import { MESSAGES, type AuthFormState } from "./form-state";
+import type { AuthFormState } from "./form-state";
 import { FormError } from "./FormError";
-import { signupSchema } from "./schemas";
 import { SubmitButton } from "./SubmitButton";
 import { useAuthForm } from "./use-auth-form";
 

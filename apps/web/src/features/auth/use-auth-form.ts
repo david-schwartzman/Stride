@@ -8,7 +8,7 @@ import type { AuthFormState } from "./form-state";
 type Field = keyof NonNullable<AuthFormState["fieldErrors"]>;
 
 /**
- * Client-side validation with the same Zod schema the Server Action uses:
+ * Client-side validation with the same shared Zod schema the API uses:
  * a field is checked on blur (Input README: not on every keystroke) and the
  * whole form on submit, which is blocked while anything is invalid. Server
  * errors show until the shopper re-checks that field or submits again.
