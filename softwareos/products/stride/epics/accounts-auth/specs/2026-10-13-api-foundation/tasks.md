@@ -72,7 +72,7 @@
   - failure: 503 `{status:"error",db:"down"}`, with no error message, connection string or stack in the body
   - typed with `HealthResponse` from `@stride/shared`
 - [x] T34 Add `apps/api/src/common/proxy-secret.middleware.ts`: compare `x-stride-proxy-secret` with `WEB_PROXY_SECRET` using `crypto.timingSafeEqual` after a length check; reject with 401 and an empty body when it's missing, wrong, or `WEB_PROXY_SECRET` is unset; skip `/cron/*`. Register it first in `AppModule.configure()` for all routes, before the origin check. T36 goes green (AC13)
-- [ ] T15 Add `apps/api/src/common/origin-check.middleware.ts`. For POST/PUT/PATCH/DELETE, `Origin` must equal `https://` + `x-stride-forwarded-host` (`http://` also accepted when `NODE_ENV` isn't `production`). A mismatching or missing `Origin`, or a missing forwarded host, → 403, and the handler never runs; GET/HEAD pass. Apply it to all routes in `AppModule.configure()` with `forRoutes('*')`, after the T34 proxy-secret middleware (AC8)
+- [x] T15 Add `apps/api/src/common/origin-check.middleware.ts`. For POST/PUT/PATCH/DELETE, `Origin` must equal `https://` + `x-stride-forwarded-host` (`http://` also accepted when `NODE_ENV` isn't `production`). A mismatching or missing `Origin`, or a missing forwarded host, → 403, and the handler never runs; GET/HEAD pass. Apply it to all routes in `AppModule.configure()` with `forRoutes('*')`, after the T34 proxy-secret middleware (AC8)
 - [ ] T16 Add `apps/api/src/common/request-ip.ts`, exporting `getClientIp(req)`. It reads only `x-stride-client-ip` (trusted because T34 runs first), validates the value with `node:net` `isIP`, and returns `null` for a missing or invalid value. It never reads `x-forwarded-for`, `x-real-ip` or the socket address (AC9)
 
 ## Web wiring
