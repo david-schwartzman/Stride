@@ -58,7 +58,7 @@
   - `src/instrumentation.ts` (empty once the pepper check goes)
   - `ipThrottleBucket` and its tests from `src/lib/request-ip.ts` (wiring edit; `getClientIp` stays)
 - [x] T23 Remove the ESLint override in `apps/web/eslint.config.mjs` and update `src/config/eslint-db-imports.test.ts` so no file is allowed (wiring edits to api-foundation files) (AC11)
-- [ ] T24 (wiring edits to api-foundation files) Remove `@prisma/client`, `@node-rs/argon2` and `@oslojs/*` from `apps/web/package.json` and regenerate the root lockfile; remove `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER` and `TEST_DATABASE_URL` from `apps/web/.env.example` (AC11)
+- [~] T24 (wiring edits to api-foundation files) Remove `@prisma/client`, `@node-rs/argon2` and `@oslojs/*` from `apps/web/package.json` and regenerate the root lockfile; remove `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER` and `TEST_DATABASE_URL` from `apps/web/.env.example` (AC11)
 
 ## Docs
 
