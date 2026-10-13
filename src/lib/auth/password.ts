@@ -56,14 +56,19 @@ export async function verifyPassword(
   }
 }
 
-let dummyHash: Promise<string> | undefined;
+/**
+ * A throwaway Argon2id hash with the production cost (m=19456, t=2, p=1) made
+ * once with a random password and secret that were discarded. Precomputed, so
+ * the first unknown-email login on a cold instance doesn't also pay for a hash.
+ * Verify cost depends only on the parameters, never on whether the pepper matches.
+ */
+export const DUMMY_HASH =
+  "$argon2id$v=19$m=19456,t=2,p=1$7rQ1eTsMNWdR5tcot3PyqQ$vcga3PmPPsvv4XysWBkIRLBhdEhH9Ya+Q4C9+9AM5BQ";
 
 /**
  * Spends the same Argon2 work as a real login for an email with no account, so
  * response time doesn't reveal whether the account exists (AC15).
  */
 export async function verifyDummy(): Promise<void> {
-  const opts = options();
-  dummyHash ??= hash("stride-dummy-password", opts);
-  await verify(await dummyHash, "stride-not-the-password", opts);
+  await verify(DUMMY_HASH, "stride-not-the-password", options());
 }

@@ -2,6 +2,11 @@
 import { randomBytes } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("@node-rs/argon2", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@node-rs/argon2")>();
+  return { ...actual, hash: vi.fn(actual.hash), verify: vi.fn(actual.verify) };
+});
+
 const PEPPER = randomBytes(32).toString("base64");
 const OTHER_PEPPER = randomBytes(32).toString("base64");
 
@@ -72,6 +77,24 @@ describe("password", () => {
     const { verifyDummy } = await loadPassword(PEPPER);
 
     await expect(verifyDummy()).resolves.toBeUndefined();
+  });
+
+  it("verifyDummy runs one verify against a precomputed hash with the production cost, never a hash", async () => {
+    const { DUMMY_HASH, hashPassword, verifyDummy } =
+      await loadPassword(PEPPER);
+    const argon2 = await import("@node-rs/argon2");
+    const real = await hashPassword("correct horse battery");
+    vi.mocked(argon2.hash).mockClear();
+    vi.mocked(argon2.verify).mockClear();
+
+    await verifyDummy();
+
+    // Same algorithm and cost parameters, so the verify costs the same as a real one.
+    const params = (h: string) => h.split("$").slice(1, 4).join("$");
+    expect(params(DUMMY_HASH)).toBe(params(real));
+    expect(argon2.hash).not.toHaveBeenCalled();
+    expect(argon2.verify).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(argon2.verify).mock.calls[0][0]).toBe(DUMMY_HASH);
   });
 
   it("verifyDummy still needs a valid pepper", async () => {
