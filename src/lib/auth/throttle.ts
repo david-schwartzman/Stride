@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { db } from "@/lib/db";
 
 import { normalizeEmail } from "./email";
@@ -39,14 +41,19 @@ function within(ms: number) {
   return { gt: new Date(Date.now() - ms) };
 }
 
-/** Checks only; a refused attempt is never recorded as a failure. */
+/**
+ * Checks only. `exclude` is this request's own pending attempt (from
+ * recordLoginFailure), so it doesn't count against itself while every other
+ * in-flight attempt does.
+ */
 export async function checkLoginThrottle(
   email: string,
   ip: string | null,
+  exclude: string[] = [],
 ): Promise<ThrottleResult> {
   const until = Math.max(
-    await emailBlockedUntil(email),
-    ip ? await ipBlockedUntil(ip) : 0,
+    await emailBlockedUntil(email, exclude),
+    ip ? await ipBlockedUntil(ip, exclude) : 0,
   );
   const left = until - Date.now();
   return left > 0
@@ -54,14 +61,30 @@ export async function checkLoginThrottle(
     : { allowed: true };
 }
 
-/** One failed password check. Called for unknown emails too, so they throttle alike (AC15). */
+/**
+ * Records one failed password check (per email, and per IP when known) and
+ * returns the row ids. Unknown emails are recorded alike (AC15).
+ *
+ * loginAction records *before* checking the throttle and the password, so
+ * concurrent attempts see each other instead of all passing the check while
+ * the slow Argon2 verify runs. A refused or successful attempt is then taken
+ * back with withdrawLoginAttempt, so only failed password checks remain.
+ */
 export async function recordLoginFailure(
   email: string,
   ip: string | null,
-): Promise<void> {
-  await db.authAttempt.createMany({
-    data: [{ key: emailKey(email) }, ...(ip ? [{ key: ipKey(ip) }] : [])],
-  });
+): Promise<string[]> {
+  const rows = [
+    { id: randomUUID(), key: emailKey(email) },
+    ...(ip ? [{ id: randomUUID(), key: ipKey(ip) }] : []),
+  ];
+  await db.authAttempt.createMany({ data: rows });
+  return rows.map((row) => row.id);
+}
+
+/** Takes back attempt rows recorded up front (refused or successful login). */
+export async function withdrawLoginAttempt(ids: string[]): Promise<void> {
+  await db.authAttempt.deleteMany({ where: { id: { in: ids } } });
 }
 
 /** After a successful login: clears the email's failures, not the IP's. */
@@ -69,7 +92,11 @@ export async function clearLoginFailures(email: string): Promise<void> {
   await db.authAttempt.deleteMany({ where: { key: emailKey(email) } });
 }
 
-/** Checks, then records the attempt when allowed. Skipped when the IP is unknown. */
+/**
+ * Records the attempt, then counts (its own row included), so concurrent
+ * sign-ups from one IP can't all pass a count taken before any of them
+ * inserted. A refused attempt is taken back. Skipped when the IP is unknown.
+ */
 export async function checkSignupThrottle(
   ip: string | null,
 ): Promise<{ allowed: boolean }> {
@@ -77,18 +104,29 @@ export async function checkSignupThrottle(
 
   const { windowMs, maxPerIp } = THROTTLE.signup;
   const key = signupIpKey(ip);
+  const id = randomUUID();
+  await db.authAttempt.create({ data: { id, key } });
+
   const recent = await db.authAttempt.count({
     where: { key, createdAt: within(windowMs) },
   });
-  if (recent >= maxPerIp) return { allowed: false };
-
-  await db.authAttempt.create({ data: { key } });
+  if (recent > maxPerIp) {
+    await db.authAttempt.deleteMany({ where: { id } });
+    return { allowed: false };
+  }
   return { allowed: true };
 }
 
-async function emailBlockedUntil(email: string): Promise<number> {
+async function emailBlockedUntil(
+  email: string,
+  exclude: string[],
+): Promise<number> {
   const { windowMs, emailMinFailures, emailDelaysMs } = THROTTLE.login;
-  const where = { key: emailKey(email), createdAt: within(windowMs) };
+  const where = {
+    key: emailKey(email),
+    createdAt: within(windowMs),
+    id: { notIn: exclude },
+  };
 
   const failures = await db.authAttempt.count({ where });
   if (failures < emailMinFailures) return 0;
@@ -101,13 +139,17 @@ async function emailBlockedUntil(email: string): Promise<number> {
   return last!.createdAt.getTime() + emailDelaysMs[step];
 }
 
-async function ipBlockedUntil(ip: string): Promise<number> {
+async function ipBlockedUntil(ip: string, exclude: string[]): Promise<number> {
   const { windowMs, ipMaxFailures, ipBlockMs } = THROTTLE.login;
 
   // The block runs 15 minutes from the 30th failure, so it can outlast the
   // failures that caused it; look back far enough to still see them.
   const failures = await db.authAttempt.findMany({
-    where: { key: ipKey(ip), createdAt: within(windowMs + ipBlockMs) },
+    where: {
+      key: ipKey(ip),
+      createdAt: within(windowMs + ipBlockMs),
+      id: { notIn: exclude },
+    },
     orderBy: { createdAt: "asc" },
     select: { createdAt: true },
   });

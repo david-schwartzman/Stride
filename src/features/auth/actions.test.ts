@@ -340,3 +340,26 @@ describe("signOutAction", () => {
     await expect(signOutAction()).rejects.toThrow("REDIRECT:/");
   });
 });
+
+describe("throttling under concurrency", () => {
+  it("parallel wrong-password logins for one email get at most 5 password checks", async () => {
+    await addUser();
+
+    const results = await Promise.all(
+      Array.from({ length: 12 }, () => login("ada@x.com", "wrong password!!")),
+    );
+
+    expect(
+      vi.mocked(password.verifyPassword).mock.calls.length,
+    ).toBeLessThanOrEqual(5);
+    expect(results.filter((r) => r.formError).length).toBeGreaterThanOrEqual(7);
+  });
+
+  it("parallel sign-ups from one IP create at most 10 users", async () => {
+    await Promise.allSettled(
+      Array.from({ length: 15 }, (_, i) => signup({ email: `user${i}@x.com` })),
+    );
+
+    expect(mocks.db.tables.user.length).toBeLessThanOrEqual(10);
+  });
+});

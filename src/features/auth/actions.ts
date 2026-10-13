@@ -11,6 +11,7 @@ import {
   checkSignupThrottle,
   clearLoginFailures,
   recordLoginFailure,
+  withdrawLoginAttempt,
 } from "@/lib/auth/throttle";
 import { db } from "@/lib/db";
 import { getClientIp } from "@/lib/request-ip";
@@ -85,8 +86,12 @@ export async function loginAction(
   const { email, password } = parsed.data;
   const ip = getClientIp(requestHeaders);
 
-  const throttle = await checkLoginThrottle(email, ip);
+  // Recorded as a failure up front, so parallel attempts count against each
+  // other; withdrawn below if this one is refused or succeeds.
+  const attempt = await recordLoginFailure(email, ip);
+  const throttle = await checkLoginThrottle(email, ip, attempt);
   if (!throttle.allowed) {
+    await withdrawLoginAttempt(attempt);
     return {
       formError: MESSAGES.tooManyAttempts(throttle.retryAfterMinutes),
       values,
@@ -98,11 +103,11 @@ export async function loginAction(
   // work, same failure records, same message (AC15).
   if (!user) await verifyDummy();
   if (!user || !(await verifyPassword(user.passwordHash, password))) {
-    await recordLoginFailure(email, ip);
     return { fieldErrors: { password: MESSAGES.wrongPassword }, values };
   }
 
   await clearLoginFailures(email);
+  await withdrawLoginAttempt(attempt);
   await startSession(user.id, requestHeaders);
   await runOnSignedIn(user.id);
   redirect("/");
