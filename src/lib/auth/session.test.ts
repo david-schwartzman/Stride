@@ -185,3 +185,32 @@ describe("session", () => {
     expect(await validateSessionToken(bobToken)).not.toBeNull();
   });
 });
+
+describe("session renewal race", () => {
+  beforeEach(() => {
+    fake.db = createFakeDb();
+    vi.useFakeTimers();
+    vi.setSystemTime(START);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("treats a session deleted mid-renewal (sign-out in another tab) as logged out instead of throwing", async () => {
+    addUser();
+    const token = generateSessionToken();
+    await createSession(token, "user_1", {});
+    at(16 * DAY);
+
+    // Another request signs out right after this one reads the row.
+    const read = fake.db.session.findUnique.bind(fake.db.session);
+    vi.spyOn(fake.db.session, "findUnique").mockImplementation(async (args) => {
+      const row = await read(args);
+      await fake.db.session.deleteMany({ where: { id: hashToken(token) } });
+      return row;
+    });
+
+    await expect(validateSessionToken(token)).resolves.toBeNull();
+  });
+});

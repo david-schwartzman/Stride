@@ -89,10 +89,13 @@ export async function validateSessionToken(
     );
     if (renewed > expiresAt.getTime()) {
       expiresAt = new Date(renewed);
-      await db.session.update({
+      // updateMany, not update: the row may have been deleted (sign-out in
+      // another tab) since it was read; that's a logged-out request, not an error.
+      const { count } = await db.session.updateMany({
         where: { id },
         data: { expiresAt, lastSeenAt: new Date(now) },
       });
+      if (count === 0) return null;
     }
   }
 

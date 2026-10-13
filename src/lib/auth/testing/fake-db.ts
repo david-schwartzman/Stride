@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 
 type Row = Record<string, unknown>;
 type Range = { gt?: Date; gte?: Date; lt?: Date };
+type Membership = { in?: unknown[]; notIn?: unknown[] };
 type Where = Record<string, unknown>;
 
 function matches(row: Row, where: Where = {}): boolean {
@@ -13,6 +14,17 @@ function matches(row: Row, where: Where = {}): boolean {
     const value = row[field];
     if (condition instanceof Date)
       return (value as Date).getTime() === condition.getTime();
+    if (
+      condition &&
+      typeof condition === "object" &&
+      ("in" in condition || "notIn" in condition)
+    ) {
+      const { in: within, notIn } = condition as Membership;
+      return (
+        (!within || within.includes(value)) &&
+        (!notIn || !notIn.includes(value))
+      );
+    }
     if (condition && typeof condition === "object") {
       const { gt, gte, lt } = condition as Range;
       const time = (value as Date).getTime();
@@ -116,6 +128,11 @@ export function createFakeDb() {
         if (!row) throw new Error(`fake-db: no ${name} to update`);
         Object.assign(row, data);
         return { ...row };
+      },
+      async updateMany({ where, data }: { where: Where; data: Row }) {
+        const found = rows().filter((r) => matches(r, where));
+        for (const row of found) Object.assign(row, data);
+        return { count: found.length };
       },
       async deleteMany({ where }: { where?: Where } = {}) {
         const before = rows().length;
