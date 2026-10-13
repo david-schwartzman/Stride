@@ -33,6 +33,8 @@ A plain-language explanation of what the first two specs do, why each choice was
 
 ### 2.1 Next.js (App Router) + TypeScript strict + Tailwind
 
+> Superseded 2026-10-13: the backend is now a separate NestJS API (`apps/api`) in the same monorepo as the Next.js frontend (`apps/web`), reached through a same-origin `/api` rewrite — tech-lead decision for a clear frontend / backend split. The "one codebase, no separate API server" argument and the rejection of a separate API below are kept as history — see [architecture.md](../../architecture.md)
+
 **What it does:** Next.js is the framework. It handles the pages, the server code and the build. "App Router" is its modern way of organising pages. "Strict" TypeScript catches more mistakes before the code runs.
 
 **Why:**
@@ -58,7 +60,7 @@ A plain-language explanation of what the first two specs do, why each choice was
 - On Vercel, the app runs as many short-lived small servers. If each one opened its own database connection, the database would run out of connections. The **pooled** URL goes through a "connection sharer".
 - Migrations need a **direct** connection, because the sharer can't handle them. So there are two URLs, one for each job.
 
-**One shared Prisma client (`src/lib/db.ts`):** in development, the app reloads on every file save. Without this, each reload would open a new database client until you hit the connection limit. Caching the client on `globalThis` prevents that.
+**One shared Prisma client (`src/lib/db.ts`, moving to `apps/api` with `api-foundation`):** in development, the app reloads on every file save. Without this, each reload would open a new database client until you hit the connection limit. Caching the client on `globalThis` prevents that.
 
 **Rejected:**
 - **MongoDB:** the data is relational (orders link to users and products), and Postgres handles that better.
@@ -118,7 +120,7 @@ A plain-language explanation of what the first two specs do, why each choice was
 ### 3.1 The flow in simple words
 
 1. The shopper fills in the form. The browser checks it first: is the email valid, is the password at least 12 characters?
-2. The form is sent to a **Server Action**, a server function the form calls directly. The server checks everything again.
+2. The form is sent to a **Server Action**, a server function the form calls directly. The server checks everything again. (From `auth-api-migration` on, the form posts to `/api/auth/*` and the NestJS API does steps 2–6, including setting the cookie.)
 3. **Sign-up:** create the user with a **hashed** password (never the real one), then log them in.
 4. **Log-in:** find the user by email and compare the password against the hash.
 5. On success, the server creates a new session (a random token; only its hash is stored in the database), sets the **session cookie** and redirects to `/`.
@@ -246,7 +248,7 @@ All three are about things that changed after the tech-stack standard was writte
 3. **Next.js 16 renamed `middleware` to `proxy`, and it now runs on Node.js by default**, not edge.
    - This mostly affects `protected-routes`.
    - > Superseded 2026-10-11: the `auth.config.ts` split and its defence no longer apply, because Auth.js was removed (PR #10). The proxy only checks that the session cookie is present and loads no Prisma or Argon2, so the edge-vs-Node question doesn't matter — see [architecture.md](../../architecture.md).
-   - **Done:** Next.js docs warn that the proxy is **not** a full security boundary. The proxy now only checks that the cookie is present, and every page with private data and every Server Action calls `requireUser()` (standard [`global/auth-security`](../../../../standards/global/auth-security.md)).
+   - **Done:** Next.js docs warn that the proxy is **not** a full security boundary. The proxy now only checks that the cookie is present, and every page with private data and every Server Action calls `requireUser()` (after the 2026-10-13 move to a NestJS API: every API endpoint that needs a user runs the `AuthGuard`, and the web's `requireUser()` only decides what to render) (standard [`global/auth-security`](../../../../standards/global/auth-security.md)).
 
 ---
 

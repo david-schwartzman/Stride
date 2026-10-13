@@ -2,9 +2,9 @@
 
 global:
   auth-security:
-    description: requireUser() in every mutating action and private read, user ID only from the session, POST-only changes, only src/lib/auth touches tokens/hashes, no secrets in logs or NEXT_PUBLIC_
+    description: Nest AuthGuard on every mutating or private API endpoint, user ID only from the session, POST-only changes with an Origin check against the trusted forwarded host, API rejects calls without the web proxy secret, client IP only from the secret-verified header (null fails open), only apps/api/src/auth touches tokens/hashes, secrets only on the API project, none in logs or NEXT_PUBLIC_
   git-workflow:
     description: Needs description - run /index-standards
   tech-stack:
-    description: Needs description - run /index-standards
+    description: Next.js frontend (apps/web) + NestJS API (apps/api) monorepo with shared Zod; web never imports Prisma or secrets; Prisma 6 on Neon in the API; two Vercel projects
 

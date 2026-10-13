@@ -6,24 +6,24 @@
 
 ## Guard & safe redirect
 
-- [ ] T1 Confirm installed Next.js major (proxy.ts on 16+, middleware.ts on 15); add src/lib/callback-url.ts (safeCallbackUrl, buildLoginUrl)
+- [ ] T1 Confirm installed Next.js major (proxy.ts on 16+, middleware.ts on 15); add packages/shared/src/callback-url.ts (safeCallbackUrl, buildLoginUrl)
 - [ ] T2 Add src/features/session/guard.ts (pure guard() + PROTECTED_PREFIXES, whole-segment matching per AC1)
-- [ ] T3 Add src/proxy.ts (or src/middleware.ts): cookie-presence check (no DB, no auth library) calling guard(); matcher for all page routes excluding static files; redirect only PROTECTED_PREFIXES; on GET with the cookie call refreshSessionCookie(response, token), added to src/lib/auth/cookie.ts (no direct cookie writes in the proxy; cookie.ts stays Prisma/Argon2-free) — AC12
-- [ ] T4 Add src/features/session/require-user.ts (requireUser(path) → getCurrentSession() user or redirect to buildLoginUrl)
+- [ ] T3 Add src/proxy.ts (or src/middleware.ts): cookie-presence check (no DB, no auth library) calling guard(); matcher for all page routes excluding static files; redirect only PROTECTED_PREFIXES; on GET with the cookie call refreshSessionCookie(response, token) from packages/shared/src/session-cookie.ts (cookie name + attributes shared with the API; no secrets, no Prisma/Argon2) — AC12
+- [ ] T4 Add src/features/session/require-user.ts (requireUser(path) → getCurrentSession() calls GET /auth/me at API_URL with the cookie forwarded → user, or on 401 redirect to buildLoginUrl)
 
 ## Return-to wiring (signup-login files)
 
 - [ ] T5 /login + /signup pages: read and sanitise searchParams.callbackUrl, redirect signed-in users to it, pass hidden callbackUrl to forms, carry it on the cross-links
-- [ ] T6 loginAction / signupAction in src/features/auth/actions.ts: re-sanitise formData callbackUrl server-side, redirect(safe) instead of "/"
+- [ ] T6 API POST /auth/login and /auth/signup (apps/api auth module): re-sanitise the body's callbackUrl in the API and return it as the redirect target; the forms navigate to it instead of "/"
 - [ ] T7 Add src/features/session/LoginBanner.tsx (checkout status banner per Login.dc.html) and render it on /login
 
 ## Session header
 
-- [ ] T8 Add src/features/session/LogoutButton.tsx (form → signOutAction, no-JS, utility-link style)
-- [ ] T9 Add src/features/session/HeaderSession.tsx (getCurrentSession() → accountName, accountHref, and when signed in a utility node "My orders" + LogoutButton); wire it into src/app/layout.tsx inside <Suspense> with a neutral fallback (no account dot, aria-hidden utility placeholder); Log out in the mobile drawer
+- [ ] T8 Add src/features/session/LogoutButton.tsx (form method=post action=/api/auth/logout → API 303 to /, no-JS, utility-link style)
+- [ ] T9 Add src/features/session/HeaderSession.tsx (getCurrentSession() via GET /auth/me → accountName, accountHref, and when signed in a utility node "My orders" + LogoutButton); wire it into src/app/layout.tsx inside <Suspense> with a neutral fallback (no account dot, aria-hidden utility placeholder); Log out in the mobile drawer
 - [ ] T10 Add throwaway src/app/account/page.tsx placeholder using requireUser("/account") (unclaimed; account-wishlist replaces it)
 
 ## Verification
 
-- [ ] T11 Write tests first (testing skill): Vitest table for safeCallbackUrl (//, /\, scheme, javascript:, encoded, /login loop, length cap, query preserved); guard() matrix (protected vs public paths, sub-paths, /accounting and /wishlists not protected, cookie present/absent); refreshSessionCookie attributes + proxy refresh on GET only with cookie (AC12); requireUser redirect incl. revoked/expired/tampered token with cookie present; login/signup actions honour + re-sanitise callbackUrl; RTL for HeaderSession signed-in/out, the Suspense fallback showing neither Sign up/Log in nor Log out, and LoginBanner visibility; Playwright e2e/protected-routes.spec.ts (sign up → header log out → /account → login → back on /account; /checkout banner; //evil.com → /; old cookie copied before logout → /account redirects to login)
+- [ ] T11 Write tests first (testing skill): Vitest table for safeCallbackUrl (//, /\, scheme, javascript:, encoded, /login loop, length cap, query preserved); guard() matrix (protected vs public paths, sub-paths, /accounting and /wishlists not protected, cookie present/absent); refreshSessionCookie attributes + proxy refresh on GET only with cookie (AC12); requireUser redirect incl. revoked/expired/tampered token with cookie present; login/signup endpoints honour + re-sanitise callbackUrl; RTL for HeaderSession signed-in/out, the Suspense fallback showing neither Sign up/Log in nor Log out, and LoginBanner visibility; Playwright e2e/protected-routes.spec.ts (sign up → header log out → /account → login → back on /account; /checkout banner; //evil.com → /; old cookie copied before logout → /account redirects to login)
 - [ ] T12 Run QA against acceptance criteria (qa skill)
