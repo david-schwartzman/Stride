@@ -8,7 +8,7 @@
 
 - [x] T1 Write failing shared-contract tests (testing skill): move `apps/web/src/features/auth/schemas.test.ts` to `packages/shared/src/auth/schemas.test.ts`; add tests for `normalizeEmail`, `MESSAGES.tooManyAttempts` (1 vs several minutes), and parse tests for `authSuccessSchema`, `authErrorSchema`, `meResponseSchema` (AC8)
   - Done 2026-10-13 with the shared implementation it needs (`packages/shared/src/auth/`: `email`, `messages`, `schemas`, `responses`, re-exported from `index.ts`), since no other task creates it. The web keeps its own `schemas.ts`/`form-state.ts` until T19 switches the imports
-- [~] T2 Port the auth unit tests into `apps/api/src/auth/` (testing skill) (AC4, AC12, AC14):
+- [x] T2 Port the auth unit tests into `apps/api/src/auth/` (testing skill) (AC4, AC12, AC14):
   - `password.service.test.ts`, `session.service.test.ts`, `throttle.service.test.ts` from `apps/web/src/lib/auth/*.test.ts`
   - `ip-bucket.test.ts` from the `ipThrottleBucket` block of `apps/web/src/lib/request-ip.test.ts`
   - `testing/fake-db.ts`, typed against `PrismaService`
@@ -39,7 +39,7 @@
 - [x] T14 Add `apps/api/src/auth/zod-body.pipe.ts`: invalid body → 400 `{fieldErrors}` via the shared `fieldErrorsOf` (AC2, AC8)
 - [x] T15 Add `apps/api/src/auth/auth.guard.ts` and `current-user.decorator.ts`. T5 goes green (AC7)
 - [x] T16 Add `apps/api/src/auth/auth.controller.ts` (signup, login, logout, me), keeping today's order (sign-up: IP throttle before parse; login: parse → `recordLoginFailure` → check → withdraw); logout answers 303. T4 goes green (AC1–AC6, AC13)
-- [ ] T17 Add `apps/api/src/auth/auth.module.ts` (`onModuleInit` calls `getPepper()`) and import it in `apps/api/src/app.module.ts` (wiring edit); middleware order unchanged (AC1, AC12)
+- [x] T17 Add `apps/api/src/auth/auth.module.ts` (`onModuleInit` calls `getPepper()`) and import it in `apps/api/src/app.module.ts` (wiring edit); middleware order unchanged (AC1, AC12)
 - [ ] T18 Wire env for tests and e2e (AC5, AC12, AC14, AC15):
   - `apps/api/.env.example`: add `TEST_DATABASE_URL`
   - `apps/web/playwright.config.ts` (wiring edit): the API webServer runs without `NODE_ENV=production`, since the Origin check accepts `http://localhost` only outside production. DB URL and pepper come from `apps/api/.env` locally, so e2e uses the Neon demo database, as today; `TEST_DATABASE_URL` only un-skips `auth.spec.ts`. CI env stays with api-foundation's deferred T22

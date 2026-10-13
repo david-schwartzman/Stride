@@ -4,13 +4,14 @@ import {
   type NestModule,
 } from "@nestjs/common";
 
+import { AuthModule } from "./auth/auth.module";
 import { OriginCheckMiddleware } from "./common/origin-check.middleware";
 import { ProxySecretMiddleware } from "./common/proxy-secret.middleware";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 
 @Module({
-  imports: [PrismaModule, HealthModule],
+  imports: [PrismaModule, HealthModule, AuthModule],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
