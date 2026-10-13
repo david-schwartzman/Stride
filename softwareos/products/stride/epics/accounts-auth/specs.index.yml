@@ -32,6 +32,17 @@ specs:
       - packages/shared/src/index.ts
       - .github/workflows/**
       - playwright.config.ts
+  - folder: 2026-10-13-auth-api-migration
+    slug: auth-api-migration
+    status: shaped
+    branch: feat/accounts-auth/auth-api-migration
+    covers:
+      - apps/api/src/auth/**
+      - packages/shared/src/auth/**
+      - apps/web/src/features/auth/**
+      - apps/web/src/lib/auth/**
+      - apps/web/src/lib/db.ts
+      - apps/web/src/instrumentation.ts
   - folder: 2026-10-08-app-foundation
     slug: app-foundation
     status: in-progress
