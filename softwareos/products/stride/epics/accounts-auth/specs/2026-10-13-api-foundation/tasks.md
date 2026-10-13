@@ -28,7 +28,7 @@
   - point `test:e2e` at `-w apps/web`
   - remove the root postinstall and db:* scripts (they move in T9)
 - [x] T5 Add a root `tsconfig.base.json` with the shared compiler options. `apps/web/tsconfig.json` extends it and keeps the `@/*` → `./src/*` path alias (AC1, AC2)
-- [ ] T6 Fix ignore and format config (AC1):
+- [x] T6 Fix ignore and format config (AC1):
   - `.gitignore`: drop the leading slashes (`/node_modules`, `/.next/`, `/out/`, `/build`, `/coverage`, `/test-results/`, …) so they also match inside `apps/*`
   - keep the Prettier config and `.prettierignore` at the root, covering `apps/*` and `packages/*` and excluding `stride-design/**`
 - [ ] T7 Move checkpoint: web lint, typecheck, test and test:e2e from the root match the T1 baseline. Spot-check after login that the session cookie name, flags and path are unchanged (AC2)
