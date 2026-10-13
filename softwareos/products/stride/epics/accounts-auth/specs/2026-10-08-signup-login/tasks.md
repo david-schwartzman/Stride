@@ -28,7 +28,7 @@
 
 ## Validation, actions & hook
 
-- [ ] T5 Add src/features/auth/schemas.ts (signupSchema, loginSchema: email via normalizeEmail, password 12–128, name required)
+- [x] T5 Add src/features/auth/schemas.ts (signupSchema, loginSchema: email via normalizeEmail, password 12–128, name required)
 - [ ] T6 Add src/features/auth/hooks.ts (no-op onSignedIn) and runOnSignedIn wrapper (try/catch, log userId + error only)
 - [ ] T7 Implement signupAction in src/features/auth/actions.ts (checkSignupThrottle, safeParse, hashPassword, create user, P2002 → email error, new token + createSession + set cookie, runOnSignedIn, redirect /)
 - [ ] T8 Implement loginAction (safeParse first, then checkLoginThrottle on the normalised email → "Too many attempts" error, lookup by email, verifyDummy + recordLoginFailure when missing, verifyPassword, recordLoginFailure → password error, clearLoginFailures, new token + createSession + set cookie, runOnSignedIn, redirect /) and signOutAction (invalidateSession, delete cookie, redirect /)
@@ -45,5 +45,5 @@
 
 ## Verification
 
-- [ ] T13 Write tests first (testing skill), module tests are T19: Vitest for schemas and signup/login/signOut actions (duplicate email, P2002, wrong password, unknown email uses dummy hash, unknown email hits "Too many attempts" after 5 failures like a real one, 5 wrong passwords as `a@x.com` then ` A@X.com ` gets "Too many attempts", too many attempts, signup limit message, new token per login, hook called once, hook throwing still signs in, no password in returned state, signOut deletes the row + clears the cookie); RTL for form error wiring; Playwright e2e sign up → session holds across reload → fresh context log in → session holds (logout e2e is protected-routes T11)
+- [~] T13 Write tests first (testing skill), module tests are T19: Vitest for schemas and signup/login/signOut actions (duplicate email, P2002, wrong password, unknown email uses dummy hash, unknown email hits "Too many attempts" after 5 failures like a real one, 5 wrong passwords as `a@x.com` then ` A@X.com ` gets "Too many attempts", too many attempts, signup limit message, new token per login, hook called once, hook throwing still signs in, no password in returned state, signOut deletes the row + clears the cookie); RTL for form error wiring; Playwright e2e sign up → session holds across reload → fresh context log in → session holds (logout e2e is protected-routes T11)
 - [ ] T14 Run QA against acceptance criteria (qa skill)
