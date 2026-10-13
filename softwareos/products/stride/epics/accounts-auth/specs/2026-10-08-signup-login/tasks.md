@@ -36,7 +36,7 @@
 ## Pages & forms
 
 - [x] T9 Add src/app/(auth)/layout.tsx split panel per Login/Signup designs (side panel hidden at mobile)
-- [ ] T10 Build src/features/auth/SignupForm.tsx (useActionState, on-blur Zod, Input errors, pending Button, autoComplete) and src/app/(auth)/signup/page.tsx (redirect / if signed in)
+- [x] T10 Build src/features/auth/SignupForm.tsx (useActionState, on-blur Zod, Input errors, pending Button, autoComplete) and src/app/(auth)/signup/page.tsx (redirect / if signed in)
 - [ ] T11 Build src/features/auth/LoginForm.tsx and src/app/(auth)/login/page.tsx (same pattern, design copy + links)
 
 ## CI

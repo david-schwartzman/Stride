@@ -1,11 +1,11 @@
-import { useId, type InputHTMLAttributes } from "react";
+import { useId, type InputHTMLAttributes, type ReactNode } from "react";
 
 // Props and looks from stride-design/design-system/components (index.d.ts InputProps, bundle.css .st-input).
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   hint?: string;
   /** replaces the hint, marks the field aria-invalid; say how to fix it */
-  error?: string;
+  error?: ReactNode;
 }
 
 export function Input({
