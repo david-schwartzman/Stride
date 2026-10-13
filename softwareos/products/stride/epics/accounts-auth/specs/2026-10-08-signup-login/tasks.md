@@ -41,7 +41,7 @@
 
 ## CI
 
-- [ ] T12 Extend .github/workflows/ci.yml: postgres:16 service, DATABASE_URL/DIRECT_URL and test-only PASSWORD_PEPPER env, prisma migrate deploy before e2e
+- [x] T12 Extend .github/workflows/ci.yml: postgres:16 service, DATABASE_URL/DIRECT_URL and test-only PASSWORD_PEPPER env, prisma migrate deploy before e2e
 
 ## Verification
 
