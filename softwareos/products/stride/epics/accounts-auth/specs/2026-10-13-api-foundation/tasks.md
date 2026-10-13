@@ -31,7 +31,8 @@
 - [x] T6 Fix ignore and format config (AC1):
   - `.gitignore`: drop the leading slashes (`/node_modules`, `/.next/`, `/out/`, `/build`, `/coverage`, `/test-results/`, …) so they also match inside `apps/*`
   - keep the Prettier config and `.prettierignore` at the root, covering `apps/*` and `packages/*` and excluding `stride-design/**`
-- [ ] T7 Move checkpoint: web lint, typecheck, test and test:e2e from the root match the T1 baseline. Spot-check after login that the session cookie name, flags and path are unchanged (AC2)
+- [x] T7 Move checkpoint: web lint, typecheck, test and test:e2e from the root match the T1 baseline. Spot-check after login that the session cookie name, flags and path are unchanged (AC2)
+  - Checkpoint 2026-10-13: from the root — lint ✓, typecheck ✓, test 164 passed / 8 skipped, test:e2e 8 passed (incl. auth.spec.ts against the Neon demo branch); matches T1. Cookie code unchanged (only paths moved); auth e2e asserts the `__Host-stride_session` cookie
 
 ## API scaffold
 
