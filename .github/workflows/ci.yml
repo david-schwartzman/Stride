@@ -15,6 +15,27 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: stride
+          POSTGRES_PASSWORD: stride
+          POSTGRES_DB: stride_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U stride -d stride_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # Throwaway CI database and a test-only pepper (base64 of the 32-byte
+      # string "ci-only-test-pepper-not-a-secret"); never used outside CI.
+      DATABASE_URL: postgresql://stride:stride@localhost:5432/stride_test
+      DIRECT_URL: postgresql://stride:stride@localhost:5432/stride_test
+      TEST_DATABASE_URL: postgresql://stride:stride@localhost:5432/stride_test
+      PASSWORD_PEPPER: Y2ktb25seS10ZXN0LXBlcHBlci1ub3QtYS1zZWNyZXQ=
     steps:
       - uses: actions/checkout@v7
 
@@ -25,6 +46,10 @@ jobs:
 
       - name: Install
         run: npm ci
+
+      # Before the unit tests too: the Postgres integration tests need the tables.
+      - name: Migrate database
+        run: npx prisma migrate deploy
 
       - name: Lint
         run: npm run lint
