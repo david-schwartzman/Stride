@@ -8,7 +8,7 @@
 
 - [x] T1 Write failing shared-contract tests (testing skill): move `apps/web/src/features/auth/schemas.test.ts` to `packages/shared/src/auth/schemas.test.ts`; add tests for `normalizeEmail`, `MESSAGES.tooManyAttempts` (1 vs several minutes), and parse tests for `authSuccessSchema`, `authErrorSchema`, `meResponseSchema` (AC8)
   - Done 2026-10-13 with the shared implementation it needs (`packages/shared/src/auth/`: `email`, `messages`, `schemas`, `responses`, re-exported from `index.ts`), since no other task creates it. The web keeps its own `schemas.ts`/`form-state.ts` until T19 switches the imports
-- [ ] T2 Port the auth unit tests into `apps/api/src/auth/` (testing skill) (AC4, AC12, AC14):
+- [~] T2 Port the auth unit tests into `apps/api/src/auth/` (testing skill) (AC4, AC12, AC14):
   - `password.service.test.ts`, `session.service.test.ts`, `throttle.service.test.ts` from `apps/web/src/lib/auth/*.test.ts`
   - `ip-bucket.test.ts` from the `ipThrottleBucket` block of `apps/web/src/lib/request-ip.test.ts`
   - `testing/fake-db.ts`, typed against `PrismaService`
@@ -29,7 +29,7 @@
 
 ## API auth module
 
-- [ ] T8 Add exact-pinned deps to `apps/api/package.json`: `@node-rs/argon2` 2.2.1, `@oslojs/crypto` 1.0.1, `@oslojs/encoding` 1.1.0, `zod` 4.6.6, `cookie-parser` + types. Register `cookieParser()` in `apps/api/src/main.ts` (wiring edit to an api-foundation file) (AC5)
+- [x] T8 Add exact-pinned deps to `apps/api/package.json`: `@node-rs/argon2` 2.2.1, `@oslojs/crypto` 1.0.1, `@oslojs/encoding` 1.1.0, `zod` 4.6.6, `cookie-parser` + types. Register `cookieParser()` in `apps/api/src/main.ts` (wiring edit to an api-foundation file) (AC5)
 - [ ] T9 Add `apps/api/src/auth/password.service.ts` (`getPepper`, `hashPassword`, `verifyPassword`, `DUMMY_HASH`, `verifyDummy`; m=19456, t=2, p=1). T2's password tests go green (AC12, AC15)
 - [ ] T10 Add `apps/api/src/auth/ip-bucket.ts` and `throttle.service.ts` with signup-login AC14's limits; the IP comes from `common/request-ip.ts` `getClientIp(req)` (AC4)
 - [ ] T11 Add `apps/api/src/auth/session.service.ts`, keeping sliding renewal, `updateMany` race handling and the 90-day cap (AC3, AC7)
