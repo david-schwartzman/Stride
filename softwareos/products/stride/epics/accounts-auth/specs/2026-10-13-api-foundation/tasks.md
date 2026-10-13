@@ -66,7 +66,7 @@
 
 ## API endpoints & common
 
-- [ ] T14 Add `apps/api/src/health/health.module.ts` and `health.controller.ts`, and import the module in `AppModule` (AC3, AC7):
+- [x] T14 Add `apps/api/src/health/health.module.ts` and `health.controller.ts`, and import the module in `AppModule` (AC3, AC7):
   - `GET /health` runs `SELECT 1` via `PrismaService`
   - success: 200 `{status:"ok",db:"ok"}`
   - failure: 503 `{status:"error",db:"down"}`, with no error message, connection string or stack in the body
