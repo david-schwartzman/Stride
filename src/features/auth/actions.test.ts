@@ -229,7 +229,7 @@ describe("loginAction", () => {
     expect(mocks.onSignedIn).toHaveBeenCalledWith(userId);
   });
 
-  it("creates a new token on every login, never reusing the one sent", async () => {
+  it("creates a new token on every login and ends the session the request came with", async () => {
     await addUser();
     await expect(login()).rejects.toThrow("REDIRECT:/");
     const first = mocks.jar.get(COOKIE)!.value;
@@ -239,9 +239,20 @@ describe("loginAction", () => {
 
     expect(second).not.toBe(first);
     expect(mocks.db.tables.session.map((s) => s.id)).toEqual([
-      hashToken(first),
       hashToken(second),
     ]);
+    expect(await validateSessionToken(first)).toBeNull();
+  });
+
+  it("signing up while signed in ends the previous session too", async () => {
+    await addUser();
+    await expect(login()).rejects.toThrow("REDIRECT:/");
+    const before = mocks.jar.get(COOKIE)!.value;
+
+    await expect(signup({ email: "new@x.com" })).rejects.toThrow("REDIRECT:/");
+
+    expect(await validateSessionToken(before)).toBeNull();
+    expect(mocks.db.tables.session).toHaveLength(1);
   });
 
   it("still signs in when onSignedIn throws", async () => {

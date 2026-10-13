@@ -14,12 +14,17 @@ import {
 /**
  * Signs a user in: always a brand-new token (never one that came with the
  * request), its hash stored as the Session, the raw token only in the cookie.
+ * A session the request already carried is ended first, so overwriting the
+ * cookie can't leave a still-valid copy of the old token behind.
  * Server Actions only — it sets a cookie.
  */
 export async function startSession(
   userId: string,
   requestHeaders: Headers,
 ): Promise<void> {
+  const previous = await getSessionCookie();
+  if (previous) await invalidateSession(previous);
+
   const token = generateSessionToken();
   await createSession(token, userId, {
     userAgent: requestHeaders.get("user-agent"),
