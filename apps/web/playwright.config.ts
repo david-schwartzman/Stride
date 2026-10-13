@@ -26,7 +26,15 @@ export default defineConfig({
         : "npm run build && npm run start",
       cwd: "../api",
       url: `http://localhost:${apiPort}/health`,
-      env: { PORT: String(apiPort), WEB_PROXY_SECRET: proxySecret },
+      // Never production: the Origin check accepts http://localhost only
+      // outside it, and the session cookie is then `stride_session` (no
+      // __Host-, no Secure). DATABASE_URL and PASSWORD_PEPPER come from
+      // apps/api/.env locally; CI env is api-foundation's deferred T22.
+      env: {
+        PORT: String(apiPort),
+        WEB_PROXY_SECRET: proxySecret,
+        NODE_ENV: "test",
+      },
       reuseExistingServer: !process.env.CI,
       timeout: 180_000,
     },

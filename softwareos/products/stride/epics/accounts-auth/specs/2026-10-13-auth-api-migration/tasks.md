@@ -40,7 +40,7 @@
 - [x] T15 Add `apps/api/src/auth/auth.guard.ts` and `current-user.decorator.ts`. T5 goes green (AC7)
 - [x] T16 Add `apps/api/src/auth/auth.controller.ts` (signup, login, logout, me), keeping today's order (sign-up: IP throttle before parse; login: parse → `recordLoginFailure` → check → withdraw); logout answers 303. T4 goes green (AC1–AC6, AC13)
 - [x] T17 Add `apps/api/src/auth/auth.module.ts` (`onModuleInit` calls `getPepper()`) and import it in `apps/api/src/app.module.ts` (wiring edit); middleware order unchanged (AC1, AC12)
-- [ ] T18 Wire env for tests and e2e (AC5, AC12, AC14, AC15):
+- [~] T18 Wire env for tests and e2e (AC5, AC12, AC14, AC15):
   - `apps/api/.env.example`: add `TEST_DATABASE_URL`
   - `apps/web/playwright.config.ts` (wiring edit): the API webServer runs without `NODE_ENV=production`, since the Origin check accepts `http://localhost` only outside production. DB URL and pepper come from `apps/api/.env` locally, so e2e uses the Neon demo database, as today; `TEST_DATABASE_URL` only un-skips `auth.spec.ts`. CI env stays with api-foundation's deferred T22
 
