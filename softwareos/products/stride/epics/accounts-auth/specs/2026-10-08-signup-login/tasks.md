@@ -52,4 +52,4 @@
 ## PR #20 review
 
 - [x] T20 PR #20 review fixes (see spec Changelog 2026-10-13): per-IP throttle keys bucket IPv6 to its /64 via `ipThrottleBucket` in src/lib/request-ip.ts (IPv4 exact, mapped IPv6 → IPv4), with tests; `emailBlockedUntil` returns 0 when the failures are cleared between count and findFirst, with a race test; src/lib/auth/throttle.db.test.ts (5-failure block, own attempt excluded and withdrawn, 30-failure /64 block, 11th sign-up refused) and two renewal cases in session.db.test.ts (30-day slide, 90-day cap), Postgres-only; `signupSchema` name ≤ 100, email ≤ 254, with tests
-- [ ] T21 Rerun QA against the changed AC7 and AC14 (qa skill)
+- [x] T21 Rerun QA against the changed AC7 and AC14 (qa skill)
