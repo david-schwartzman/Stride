@@ -6,7 +6,8 @@
 
 ## Tests first (TDD)
 
-- [ ] T1 Write failing shared-contract tests (testing skill): move `apps/web/src/features/auth/schemas.test.ts` to `packages/shared/src/auth/schemas.test.ts`; add tests for `normalizeEmail`, `MESSAGES.tooManyAttempts` (1 vs several minutes), and parse tests for `authSuccessSchema`, `authErrorSchema`, `meResponseSchema` (AC8)
+- [x] T1 Write failing shared-contract tests (testing skill): move `apps/web/src/features/auth/schemas.test.ts` to `packages/shared/src/auth/schemas.test.ts`; add tests for `normalizeEmail`, `MESSAGES.tooManyAttempts` (1 vs several minutes), and parse tests for `authSuccessSchema`, `authErrorSchema`, `meResponseSchema` (AC8)
+  - Done 2026-10-13 with the shared implementation it needs (`packages/shared/src/auth/`: `email`, `messages`, `schemas`, `responses`, re-exported from `index.ts`), since no other task creates it. The web keeps its own `schemas.ts`/`form-state.ts` until T19 switches the imports
 - [ ] T2 Port the auth unit tests into `apps/api/src/auth/` (testing skill) (AC4, AC12, AC14):
   - `password.service.test.ts`, `session.service.test.ts`, `throttle.service.test.ts` from `apps/web/src/lib/auth/*.test.ts`
   - `ip-bucket.test.ts` from the `ipThrottleBucket` block of `apps/web/src/lib/request-ip.test.ts`

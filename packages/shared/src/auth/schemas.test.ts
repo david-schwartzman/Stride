@@ -1,3 +1,4 @@
+// covers AC8 (auth-api-migration T1; moved from apps/web/src/features/auth)
 import { describe, expect, it } from "vitest";
 
 import { fieldErrorsOf, loginSchema, signupSchema } from "./schemas";

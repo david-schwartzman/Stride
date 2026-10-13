@@ -1,7 +1,7 @@
 # Auth API Migration
 
 > Epic: ../../epic.md
-> Status: shaped
+> Status: in-progress
 > Branch: feat/accounts-auth/auth-api-migration
 > Covers: apps/api/src/auth/**, packages/shared/src/auth/**, apps/web/src/features/auth/**, apps/web/src/lib/auth/**, apps/web/src/lib/db.ts, apps/web/src/instrumentation.ts
 
