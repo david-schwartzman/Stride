@@ -57,7 +57,7 @@ specs:
       - .gitignore
   - folder: 2026-10-13-auth-api-migration
     slug: auth-api-migration
-    status: in-progress
+    status: done
     branch: feat/accounts-auth/auth-api-migration
     covers:
       - apps/api/src/auth/**
