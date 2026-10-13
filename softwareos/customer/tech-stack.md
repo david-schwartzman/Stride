@@ -9,7 +9,7 @@
 ## Backend
 
 - Separate NestJS API service (`apps/api`) in the same monorepo as the Next.js frontend (`apps/web`); only the API talks to the database (decided 2026-10-13)
-- The browser reaches the API through a same-origin `/api/*` rewrite; Server Components call it server-to-server
+- The browser reaches the API through a same-origin `/api/*` rewrite done by the web proxy; Server Components call it server-to-server
 - Server Components load data through the API; client forms send writes to `/api/*` — no Server Actions for data
 - Zod for input validation on both client and server, schemas shared from `packages/shared`
 - Auth: in-house session module in the API with email + password — opaque database sessions (token hash in Postgres, token in an HttpOnly `__Host-` cookie), passwords hashed with Argon2id + salt + pepper

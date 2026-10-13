@@ -11,7 +11,7 @@ Same technologies as `softwareos/standards/global/tech-stack.md`.
 ## Backend
 
 - Separate NestJS service (`apps/api`, Node 24) in the same monorepo, deployed as its own Vercel project; the only code that talks to the database
-- Web (`apps/web`) reaches it through a same-origin `/api/*` rewrite (browser) or `API_URL` (Server Components, server-to-server)
+- Web (`apps/web`) reaches it through a same-origin `/api/*` rewrite done by the web proxy, with the trusted proxy headers (browser) or `API_URL` (Server Components, server-to-server)
 - Server Components read through the API; client forms send writes to `/api/*` — no Server Actions for data
 - Zod for input validation on both client and server, schemas shared from `packages/shared`
 

@@ -39,12 +39,11 @@ specs:
     status: shaped
     branch: feat/accounts-auth/protected-routes
     covers:
-      - src/middleware.ts
-      - src/proxy.ts
+      - apps/web/src/middleware.ts
+      - apps/web/src/proxy.ts
       - packages/shared/src/callback-url.ts
       - packages/shared/src/session-cookie.ts
-      - src/features/session/**
-      - apps/api/src/auth/auth.guard.ts
+      - apps/web/src/features/session/**
       - e2e/protected-routes.spec.ts
   - folder: 2026-10-11-security-headers
     slug: security-headers
@@ -62,8 +61,8 @@ specs:
     branch: feat/accounts-auth/session-management
     covers:
       - /account/security
-      - src/app/account/security/**
-      - src/features/account-security/**
+      - apps/web/src/app/account/security/**
+      - apps/web/src/features/account-security/**
       - packages/shared/src/account-security/**
       - apps/api/src/account-security/**
       - apps/api/src/cron/**

@@ -17,12 +17,12 @@ No application code exists yet (`src/` not scaffolded).
 
 - **Location:** `../2026-10-08-signup-login/spec.md`, `../2026-10-11-protected-routes/spec.md`
 - **Relevance:** they define `session.ts`, `throttle.ts`, `getCurrentSession()`, `requireUser()` and the form patterns this spec reuses (Server Actions until `auth-api-migration`; then forms posting to `/api`).
-- **Key patterns:** `useActionState` + `useFormStatus` forms with shared Zod schemas; per-field error return shape that never echoes passwords; throttle keys in `AuthAttempt`; a no-JS `<form action={…}>` button (protected-routes' `LogoutButton`) for the per-device Sign out.
+- **Key patterns:** client forms that POST to `/api/*` with the shared Zod schemas from `packages/shared` (`useFormStatus` for the pending state); a per-field error response shape that never echoes passwords; throttle keys in `AuthAttempt`; a no-JS `<form method="post" action="/api/…">` button (protected-routes' `LogoutButton`) for the per-device Sign out. (signup-login's `useActionState` + Server Action forms are the pre-split pattern that `auth-api-migration` replaces.)
 
 ### Product architecture and standards
 
 - **Location:** `softwareos/products/stride/architecture.md` (Auth module, Gotchas), `softwareos/standards/global/auth-security.md`
-- **Relevance:** Server Components can't set or delete cookies, so the API's `POST /account/password` sets the new cookie on its response. Never trust client-sent IDs, and return 404 rather than 403 for objects the user doesn't own (`revokeSessionAction`). Create a new token on password change.
+- **Relevance:** Server Components can't set or delete cookies, so the API's `POST /account/password` sets the new cookie on its response. Never trust client-sent IDs, and return 404 rather than 403 for objects the user doesn't own (`POST /account/sessions/revoke`). Create a new token on password change.
 
 ### Stride Auth & Session Security Plan
 
