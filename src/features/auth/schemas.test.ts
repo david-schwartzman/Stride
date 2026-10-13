@@ -26,6 +26,30 @@ describe("signupSchema", () => {
     });
   });
 
+  it("caps the name at 100 characters", () => {
+    expect(
+      signupSchema.safeParse({ ...valid, name: "a".repeat(100) }).success,
+    ).toBe(true);
+
+    const result = signupSchema.safeParse({ ...valid, name: "a".repeat(101) });
+    expect(!result.success && fieldErrorsOf(result.error)).toEqual({
+      name: "Use 100 characters or fewer.",
+    });
+  });
+
+  it("caps the email at 254 characters", () => {
+    const at = (length: number) =>
+      `${"a".repeat(length - "@x.com".length)}@x.com`;
+    expect(signupSchema.safeParse({ ...valid, email: at(254) }).success).toBe(
+      true,
+    );
+
+    const result = signupSchema.safeParse({ ...valid, email: at(255) });
+    expect(!result.success && fieldErrorsOf(result.error)).toEqual({
+      email: "Enter a valid email address.",
+    });
+  });
+
   it.each(["", "ada", "ada@", "ada @x.com"])(
     "rejects the email %j",
     (email) => {

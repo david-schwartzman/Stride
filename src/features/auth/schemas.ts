@@ -4,12 +4,23 @@ import { normalizeEmail } from "@/lib/auth/email";
 
 // Shared by the forms (client, on blur) and the Server Actions (server).
 
-const name = z.string().trim().min(1, "Enter your name.");
+// Caps keep oversized values (a request that skips the form) out of the
+// database; the name is read on every session lookup. 254 is the longest
+// address SMTP allows.
+const name = z
+  .string()
+  .trim()
+  .min(1, "Enter your name.")
+  .max(100, "Use 100 characters or fewer.");
 
 const email = z
   .string()
   .transform(normalizeEmail)
-  .pipe(z.email("Enter a valid email address."));
+  .pipe(
+    z
+      .email("Enter a valid email address.")
+      .max(254, "Enter a valid email address."),
+  );
 
 // Length only, no composition rules; the cap keeps huge inputs off the hasher.
 const password = z
