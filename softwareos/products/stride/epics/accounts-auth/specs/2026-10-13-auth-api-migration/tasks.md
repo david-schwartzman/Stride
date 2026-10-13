@@ -14,7 +14,7 @@
   - `testing/fake-db.ts`, typed against `PrismaService`
   - `on-signed-in.test.ts` from `run-on-signed-in.test.ts`
   - a bad or missing `PASSWORD_PEPPER` makes `AuthModule` init throw, without the value in the message
-- [ ] T3 Port `session.db.test.ts` and `throttle.db.test.ts` to `apps/api/src/auth/` (`PrismaService` on `TEST_DATABASE_URL`, `describe.skipIf` when unset) (AC14, AC15)
+- [~] T3 Port `session.db.test.ts` and `throttle.db.test.ts` to `apps/api/src/auth/` (`PrismaService` on `TEST_DATABASE_URL`, `describe.skipIf` when unset) (AC14, AC15)
 - [ ] T4 Write `apps/api/src/auth/auth.controller.test.ts` (testing skill; Nest testing module + fake DB), replacing `actions.test.ts` (AC2–AC6, AC13):
   - sign-up: 200 `{redirectTo:"/"}`; 400 `fieldErrors`; 409 `emailTaken`, no user; 429 `formError` (before validation); incoming session ended; `onSignedIn` throw logged, sign-up still succeeds
   - login: new token and incoming session ended; invalid body → 400 `fieldErrors`; failures cleared; 401 `fieldErrors.password` for unknown email and wrong password alike, dummy hash called, no `Set-Cookie`; 429 back-off message; null IP skips the per-IP limits
@@ -33,7 +33,7 @@
 - [x] T9 Add `apps/api/src/auth/password.service.ts` (`getPepper`, `hashPassword`, `verifyPassword`, `DUMMY_HASH`, `verifyDummy`; m=19456, t=2, p=1). T2's password tests go green (AC12, AC15)
 - [x] T10 Add `apps/api/src/auth/ip-bucket.ts` and `throttle.service.ts` with signup-login AC14's limits; the IP comes from `common/request-ip.ts` `getClientIp(req)` (AC4)
 - [x] T11 Add `apps/api/src/auth/session.service.ts`, keeping sliding renewal, `updateMany` race handling and the 90-day cap (AC3, AC7)
-- [ ] T12 Add `apps/api/src/auth/session-cookie.ts`: name rule from `NODE_ENV`, set/clear via `res.cookie`/`res.clearCookie`, read (AC5)
+- [x] T12 Add `apps/api/src/auth/session-cookie.ts`: name rule from `NODE_ENV`, set/clear via `res.cookie`/`res.clearCookie`, read (AC5)
 - [x] T13 Add `apps/api/src/auth/on-signed-in.ts`: the `onSignedIn` stub and `runOnSignedIn` (swallows; logs only the userId and the error) (AC2, AC3, AC13)
 - [ ] T14 Add `apps/api/src/auth/zod-body.pipe.ts`: invalid body → 400 `{fieldErrors}` via the shared `fieldErrorsOf` (AC2, AC8)
 - [ ] T15 Add `apps/api/src/auth/auth.guard.ts` and `current-user.decorator.ts`. T5 goes green (AC7)
