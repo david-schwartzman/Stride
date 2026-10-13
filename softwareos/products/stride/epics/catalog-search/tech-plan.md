@@ -4,14 +4,14 @@
 
 ## Approach
 
-Server Components render Home, Catalog and Product detail, reading through the shared Prisma client module. Catalog state (search query, filters, sort, price range) lives in URL search params. The server reads those params and runs one Prisma query, so results are server-rendered and shareable. Small Client Components only update the URL (search box, filter controls) or hold local UI state (size selector). This epic creates the Prisma schema and seed script for Category, Product and ProductVariant, with images in /public served by next/image. Add-to-cart and wishlist buttons are placed on the pages but wired up in later epics.
+Server Components render Home, Catalog and Product detail, reading from the NestJS API's catalog endpoints (`apps/api`, server-to-server via `API_URL`). Catalog state (search query, filters, sort, price range) lives in URL search params. The page passes those params to the API, which runs one Prisma query, so results are server-rendered and shareable. Small Client Components only update the URL (search box, filter controls) or hold local UI state (size selector). This epic creates the Prisma schema and seed script for Category, Product and ProductVariant, with images in /public served by next/image. Add-to-cart and wishlist buttons are placed on the pages but wired up in later epics.
 
 ## Architecture Impact
 
-Builds on the app base created by Accounts & Auth (`app-foundation`: scaffold, CI, Prisma + Neon, shared client, shared layout/header):
+Builds on the app base created by Accounts & Auth (`app-foundation`: scaffold, CI, Prisma + Neon, shared client, shared layout/header; `api-foundation`: the NestJS API that now owns Prisma):
 
-- Migration adding models Category, Product, ProductVariant (size + stock). Product holds run type, gender, beginner tag, price in cents and slug.
-- Seed script for the catalog. Catalog content lives in its own shared data module (e.g. `prisma/catalog-data.ts`), separate from the seed logic. The seed imports it, and so does Launch & Polish's production catalog load, so the two can't drift apart.
+- An API catalog module and a migration (in `apps/api`) adding models Category, Product, ProductVariant (size + stock). Product holds run type, gender, beginner tag, price in cents and slug.
+- Seed script for the catalog. Catalog content lives in its own shared data module (e.g. `apps/api/prisma/catalog-data.ts`), separate from the seed logic. The seed imports it, and so does Launch & Polish's production catalog load, so the two can't drift apart.
 - Routes `/`, `/catalog`, `/product/[slug]`, plus catalog links in the shared header.
 - No new external services.
 
@@ -20,7 +20,8 @@ Builds on the app base created by Accounts & Auth (`app-foundation`: scaffold, C
 - Schema for filters: run type/gender as enums vs. tags. This decides query shape, so settle it in the first spec.
 - Product data and images: need ~30 real-looking products with licensed images before the seed. Content work could block.
 - Combined filters + search + sort in one Prisma query: keep it simple (case-insensitive contains) and don't add full-text search.
-- Neon cold starts may slow the first SSR load. Check on a Vercel preview.
+- Neon and API cold starts may slow the first SSR load (page → API → database is now two hops). Check on a Vercel preview; cache public catalog reads.
+- Depends on accounts-auth `api-foundation` (the NestJS API, monorepo and `/api` rewrite) — the backend moved to a separate NestJS service on 2026-10-13 (`../../architecture.md`).
 - Size model: half sizes for shoes vs. XS–XL vs. one size. Make sure ProductVariant handles all three cleanly.
 - Spike: none needed (the Prisma + Neon + Vercel preview smoke test runs in Accounts & Auth's `app-foundation`).
 

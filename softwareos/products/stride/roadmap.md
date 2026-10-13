@@ -8,7 +8,7 @@ None — greenfield product.
 
 The 8 required pages (full rules in [mission.md](mission.md#v1-scope--in)), built in this order:
 
-1. **Auth** — Sign-up / Login, protected routes (also creates the app base: scaffold, CI, Prisma, shared layout)
+1. **Auth** — Sign-up / Login, protected routes (also creates the app base: scaffold, CI, the NestJS API with Prisma, shared layout)
 2. **Catalog** — Home, Catalog (search, filter, sort), Product detail
 3. **Cart + Checkout** — Cart (guest cookie, merge on login), Checkout, Confirmation (mock payment)
 4. **Account + Wishlist** — Account / profile with order history, Favorites / wishlist

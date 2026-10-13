@@ -4,8 +4,8 @@
 
 _None._ The pre-flight coverage search (cross-epic) found no overlaps. These specs are prerequisites that this spec edits for wiring, but it doesn't claim their files:
 
-- **[Related]** [2026-10-08-app-foundation](../2026-10-08-app-foundation/spec.md) owns `prisma/schema.prisma`, `vercel.json` and `.env.example`. This spec adds `Session.publicId` (T1), the `crons` entry and `CRON_SECRET=` (T18). It stays separate because app-foundation owns the config files as a whole; this spec claims only its own migration folder.
-- **[Related]** [2026-10-08-signup-login](../2026-10-08-signup-login/spec.md) owns `src/lib/auth/**`. This spec extends `session.ts` (10-session cap, hourly `lastSeenAt`, list/revoke-by-`publicId`, cleanup helpers; T8) and `throttle.ts` (`pwchange:<userId>` key, `pruneAuthAttempts`; T9), and leaves `password.ts` unchanged. It stays separate because only `src/lib/auth/` may touch tokens and hashes (auth-security standard); the device and password-change features live in `src/features/account-security/`.
+- **[Related]** [2026-10-08-app-foundation](../2026-10-08-app-foundation/spec.md) owns `prisma/schema.prisma`, `vercel.json` and `.env.example` (they move to `apps/api` with candidate `api-foundation`, 2026-10-13). This spec adds `Session.publicId` (T1), the `crons` entry and `CRON_SECRET=` (T18). It stays separate because app-foundation owns the config files as a whole; this spec claims only its own migration folder.
+- **[Related]** [2026-10-08-signup-login](../2026-10-08-signup-login/spec.md) owns the auth module (`src/lib/auth/**`, moving to `apps/api/src/auth/` with candidate `auth-api-migration`). This spec extends the session service (10-session cap, hourly `lastSeenAt`, list/revoke-by-`publicId`, cleanup helpers; T8) and the throttle service (`pwchange:<userId>` key, `pruneAuthAttempts`; T9), and leaves the password service unchanged. It stays separate because only the auth module may touch tokens and hashes (auth-security standard); the device and password-change endpoints live in `apps/api/src/account-security/` and the UI in `src/features/account-security/`.
 - **[Related]** [2026-10-11-protected-routes](../2026-10-11-protected-routes/spec.md) owns `requireUser()`, the `/account` prefix guard and the throwaway `src/app/account/page.tsx` placeholder. This spec adds a temporary "Security" link to that placeholder (T19). It stays separate because the guard and session header are protected-routes' concern.
 - **[Related]** [2026-10-11-security-headers](../2026-10-11-security-headers/spec.md) (PR #14, merged before this spec) gives `/account/security` `Cache-Control: private, no-store` via `isPrivatePath` (the `/account` prefix) and the CSP's `form-action 'self'`. This spec adds no header code and only checks the result (T22, AC15).
 
@@ -16,13 +16,13 @@ No application code exists yet (`src/` not scaffolded).
 ### Sibling specs
 
 - **Location:** `../2026-10-08-signup-login/spec.md`, `../2026-10-11-protected-routes/spec.md`
-- **Relevance:** they define `session.ts`, `throttle.ts`, `getCurrentSession()`, `requireUser()` and the Server Action + form patterns this spec reuses.
+- **Relevance:** they define `session.ts`, `throttle.ts`, `getCurrentSession()`, `requireUser()` and the form patterns this spec reuses (Server Actions until `auth-api-migration`; then forms posting to `/api`).
 - **Key patterns:** `useActionState` + `useFormStatus` forms with shared Zod schemas; per-field error return shape that never echoes passwords; throttle keys in `AuthAttempt`; a no-JS `<form action={…}>` button (protected-routes' `LogoutButton`) for the per-device Sign out.
 
 ### Product architecture and standards
 
 - **Location:** `softwareos/products/stride/architecture.md` (Auth module, Gotchas), `softwareos/standards/global/auth-security.md`
-- **Relevance:** Server Components can't set or delete cookies, so `changePasswordAction` sets the new cookie itself. Never trust client-sent IDs, and return 404 rather than 403 for objects the user doesn't own (`revokeSessionAction`). Create a new token on password change.
+- **Relevance:** Server Components can't set or delete cookies, so the API's `POST /account/password` sets the new cookie on its response. Never trust client-sent IDs, and return 404 rather than 403 for objects the user doesn't own (`revokeSessionAction`). Create a new token on password change.
 
 ### Stride Auth & Session Security Plan
 

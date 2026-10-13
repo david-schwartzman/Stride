@@ -8,25 +8,24 @@
 
 ## Backend
 
-- Built into Next.js — no separate Express server
-- Server Components for data loading
-- Server Actions for mutations (cart, wishlist, checkout, auth)
-- Route Handlers only where an HTTP endpoint is needed
-- Zod for input validation on both client and server
-- Auth: in-house session module with email + password — opaque database sessions (token hash in Postgres, token in an HttpOnly `__Host-` cookie), passwords hashed with Argon2id + salt + pepper
+- Separate NestJS API service (`apps/api`) in the same monorepo as the Next.js frontend (`apps/web`); only the API talks to the database (decided 2026-10-13)
+- The browser reaches the API through a same-origin `/api/*` rewrite; Server Components call it server-to-server
+- Server Components load data through the API; client forms send writes to `/api/*` — no Server Actions for data
+- Zod for input validation on both client and server, schemas shared from `packages/shared`
+- Auth: in-house session module in the API with email + password — opaque database sessions (token hash in Postgres, token in an HttpOnly `__Host-` cookie), passwords hashed with Argon2id + salt + pepper
 
 ## Data
 
 - PostgreSQL hosted on Neon (serverless Postgres)
-- Prisma ORM with migrations and a seed script for the product catalog
+- Prisma ORM (in the API) with migrations and a seed script for the product catalog
 - Neon branch per preview deployment: each PR preview gets its own database branch, forked from the `develop` database branch, so preview data and migrations stay isolated
-  - CI/preview build runs `prisma migrate deploy` then the seed script against that preview's branch
+  - The API project's CI/preview build runs `prisma migrate deploy` then the seed script against that preview's branch
   - Production runs migrations only, never the seed script
   - The preview branch is deleted when the PR closes
 
 ## Infra & Services
 
-- Vercel for hosting, with preview deployments per PR
+- Vercel for hosting: two projects (web, API), each with preview deployments per PR
 - GitHub for repo and PRs; GitHub Actions CI (lint, typecheck, tests on every PR)
 - Product images stored in the repo under `/public`
 - Payment is mocked (no real payment provider)

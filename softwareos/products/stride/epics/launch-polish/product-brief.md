@@ -31,7 +31,7 @@ After the first four epics, all 8 pages work, but only locally and on PR preview
 - A keyboard-only run from landing to a confirmed order succeeds.
 - First-load performance target: TBD (set when shaping `responsive-a11y-pass`).
 - Playwright: landing → confirmation passes against a production-like preview deploy in under 3 minutes, and a read-only smoke check (key pages load, catalog populated, no 5xx) passes against the production URL.
-- A bad release can be rolled back to the previous Vercel deployment without a database rollback.
+- A bad release can be rolled back to the previous web and API deployments without a database rollback.
 
 ## Out of Scope
 
