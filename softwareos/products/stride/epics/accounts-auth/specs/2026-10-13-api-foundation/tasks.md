@@ -46,7 +46,7 @@
 
 ## Prisma move
 
-- [ ] T9 Move Prisma into the API (AC5):
+- [x] T9 Move Prisma into the API (AC5):
   - `git mv prisma/ apps/api/prisma/`, keeping the schema and every migration, including `*_init_auth`
   - move `prisma` and `@prisma/client` (6.19.3) into `apps/api/package.json`, with `postinstall: prisma generate`, `db:migrate` and `db:generate`
   - make the root `db:*` scripts forward via `-w @stride/api`

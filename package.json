@@ -13,17 +13,15 @@
     "format": "prettier --write .",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "test:e2e": "npm run test:e2e -w apps/web"
-  },
-  "dependencies": {
-    "@prisma/client": "6.19.3"
+    "test:e2e": "npm run test:e2e -w apps/web",
+    "db:migrate": "npm run db:migrate -w @stride/api",
+    "db:generate": "npm run db:generate -w @stride/api"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
     "concurrently": "10.0.5",
     "eslint": "^9",
     "prettier": "^3.9.10",
-    "prisma": "6.19.3",
     "typescript": "^5",
     "vitest": "^5.0.3"
   }
