@@ -30,7 +30,7 @@
 ## API auth module
 
 - [x] T8 Add exact-pinned deps to `apps/api/package.json`: `@node-rs/argon2` 2.2.1, `@oslojs/crypto` 1.0.1, `@oslojs/encoding` 1.1.0, `zod` 4.6.6, `cookie-parser` + types. Register `cookieParser()` in `apps/api/src/main.ts` (wiring edit to an api-foundation file) (AC5)
-- [ ] T9 Add `apps/api/src/auth/password.service.ts` (`getPepper`, `hashPassword`, `verifyPassword`, `DUMMY_HASH`, `verifyDummy`; m=19456, t=2, p=1). T2's password tests go green (AC12, AC15)
+- [x] T9 Add `apps/api/src/auth/password.service.ts` (`getPepper`, `hashPassword`, `verifyPassword`, `DUMMY_HASH`, `verifyDummy`; m=19456, t=2, p=1). T2's password tests go green (AC12, AC15)
 - [ ] T10 Add `apps/api/src/auth/ip-bucket.ts` and `throttle.service.ts` with signup-login AC14's limits; the IP comes from `common/request-ip.ts` `getClientIp(req)` (AC4)
 - [ ] T11 Add `apps/api/src/auth/session.service.ts`, keeping sliding renewal, `updateMany` race handling and the 90-day cap (AC3, AC7)
 - [ ] T12 Add `apps/api/src/auth/session-cookie.ts`: name rule from `NODE_ENV`, set/clear via `res.cookie`/`res.clearCookie`, read (AC5)
