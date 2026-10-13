@@ -97,7 +97,7 @@
 
 ## CI & e2e
 
-- [ ] T21 Start both apps in Playwright and add an API smoke test (AC4, AC11):
+- [x] T21 Start both apps in Playwright and add an API smoke test (AC4, AC11):
   - in `apps/web/playwright.config.ts`, make `webServer` an array: the API on :4000 first (ready check `http://localhost:4000/health`; Playwright counts the 401 from T34 as ready), then web on :3000 with `API_URL=http://localhost:4000`. Both get the same test `WEB_PROXY_SECRET`
   - add `apps/web/e2e/api-health.spec.ts`, asserting that `GET /api/health` on the web origin returns 200 with the shared schema
 - [ ] T22 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Update `.github/workflows/ci.yml` as a single job, on Node 24 with the `postgres:16` service from PR #20 (AC11):
