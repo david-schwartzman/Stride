@@ -2,7 +2,8 @@
 // The real AuthController, guard and services over HTTP, with the fake DB.
 import { randomBytes } from "node:crypto";
 
-import { type INestApplication, Logger } from "@nestjs/common";
+import { Logger } from "@nestjs/common";
+import type { NestExpressApplication } from "@nestjs/platform-express";
 import { Test } from "@nestjs/testing";
 import {
   MESSAGES,
@@ -25,6 +26,7 @@ import {
 import { PrismaService } from "../prisma/prisma.service";
 import { AuthController } from "./auth.controller";
 import { AuthGuard } from "./auth.guard";
+import { useSafeBodyParsing } from "./body-parsing";
 import { signInHooks } from "./on-signed-in";
 import * as password from "./password.service";
 import { SessionService, hashToken } from "./session.service";
@@ -48,7 +50,7 @@ const PEPPER = randomBytes(32).toString("base64");
 
 const fake = { db: createFakeDb() };
 const request = { ip: IP as string | null };
-let app: INestApplication;
+let app: NestExpressApplication;
 let baseUrl: string;
 let sessions: SessionService;
 let logs: unknown[][];
@@ -154,7 +156,12 @@ beforeAll(async () => {
       { provide: PrismaService, useValue: db },
     ],
   }).compile();
-  app = moduleRef.createNestApplication({ logger: false });
+  // As main.ts sets it up.
+  app = moduleRef.createNestApplication<NestExpressApplication>({
+    logger: false,
+    bodyParser: false,
+  });
+  useSafeBodyParsing(app);
   app.use(cookieParser());
   await app.listen(0, "127.0.0.1");
   baseUrl = await app.getUrl();
@@ -437,6 +444,61 @@ describe("POST /auth/logout", () => {
 
   it("has no GET logout", async () => {
     expect((await fetch(`${baseUrl}/auth/logout`)).status).toBe(404);
+  });
+});
+
+describe("malformed JSON bodies (security review T30 #1)", () => {
+  function raw(path: string, body: string) {
+    return fetch(`${baseUrl}/auth/${path}`, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...headers({}) },
+      body,
+    });
+  }
+
+  it.each([
+    [
+      "login",
+      {
+        email: "Enter a valid email address.",
+        password: "Use at least 12 characters.",
+      },
+    ],
+    [
+      "signup",
+      {
+        name: "Enter your name.",
+        email: "Enter a valid email address.",
+        password: "Use at least 12 characters.",
+      },
+    ],
+  ])(
+    "answers /auth/%s with the empty form's field errors, never echoing the body",
+    async (path, fieldErrors) => {
+      const secret = "hunter2-secret-value";
+
+      const res = await raw(path, `{"email":"a@b.c","password":${secret}}`);
+
+      const text = await res.text();
+      expect(res.status, text).toBe(400);
+      expect(text).not.toContain("hunter2");
+      expect(text).not.toContain("a@b.c");
+      expect(JSON.parse(text)).toEqual({ fieldErrors });
+      expect(res.headers.get("set-cookie")).toBeNull();
+      expect(JSON.stringify(logs)).not.toContain("hunter2");
+    },
+  );
+
+  it("answers other routes with a generic 400 that quotes nothing", async () => {
+    const res = await raw("logout", '{"token":hunter2-secret-value}');
+
+    const text = await res.text();
+    expect(res.status, text).toBe(400);
+    expect(text).not.toContain("hunter2");
+    expect(JSON.parse(text)).toEqual({
+      statusCode: 400,
+      message: "Invalid request body.",
+    });
   });
 });
 
