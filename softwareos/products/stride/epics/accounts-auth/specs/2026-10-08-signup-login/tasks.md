@@ -19,7 +19,7 @@
 
 ## Auth module tests (before T5)
 
-- [~] T19 Write Vitest tests test-first for the auth module (testing skill), passing before T5 starts: password.ts (hash, verify, wrong password, wrong pepper, verifyDummy, missing / empty / < 32-byte pepper throws); session.ts (create, validate, sliding renewal, 90-day cap, expired deleted, invalidate, invalidateAll, only hash stored, old token rejected after invalidateSession — AC16); throttle.ts (each back-off step delay(5..9+), per-IP 30/15 min block, signup 10/60 min limit, clear on success, unknown-email failures counted per email and per IP, 5 failures as `a@x.com` then ` A@X.com ` is refused, a refused attempt isn't recorded as a failure, per-IP checks skipped when the IP is null); request-ip.ts (valid IPv4/IPv6 `x-real-ip` returned; missing, empty or garbage → null; a spoofed `x-forwarded-for` is ignored)
+- [x] T19 Write Vitest tests test-first for the auth module (testing skill), passing before T5 starts: password.ts (hash, verify, wrong password, wrong pepper, verifyDummy, missing / empty / < 32-byte pepper throws); session.ts (create, validate, sliding renewal, 90-day cap, expired deleted, invalidate, invalidateAll, only hash stored, old token rejected after invalidateSession — AC16); throttle.ts (each back-off step delay(5..9+), per-IP 30/15 min block, signup 10/60 min limit, clear on success, unknown-email failures counted per email and per IP, 5 failures as `a@x.com` then ` A@X.com ` is refused, a refused attempt isn't recorded as a failure, per-IP checks skipped when the IP is null); request-ip.ts (valid IPv4/IPv6 `x-real-ip` returned; missing, empty or garbage → null; a spoofed `x-forwarded-for` is ignored)
 
 ## Auth.js
 
@@ -46,5 +46,5 @@
 
 ## Verification
 
-- [~] T13 Write tests first (testing skill), module tests are T19: Vitest for schemas and signup/login/signOut actions (duplicate email, P2002, wrong password, unknown email uses dummy hash, unknown email hits "Too many attempts" after 5 failures like a real one, 5 wrong passwords as `a@x.com` then ` A@X.com ` gets "Too many attempts", too many attempts, signup limit message, new token per login, hook called once, hook throwing still signs in, no password in returned state, signOut deletes the row + clears the cookie); RTL for form error wiring; Playwright e2e sign up → session holds across reload → fresh context log in → session holds (logout e2e is protected-routes T11)
+- [x] T13 Write tests first (testing skill), module tests are T19: Vitest for schemas and signup/login/signOut actions (duplicate email, P2002, wrong password, unknown email uses dummy hash, unknown email hits "Too many attempts" after 5 failures like a real one, 5 wrong passwords as `a@x.com` then ` A@X.com ` gets "Too many attempts", too many attempts, signup limit message, new token per login, hook called once, hook throwing still signs in, no password in returned state, signOut deletes the row + clears the cookie); RTL for form error wiring; Playwright e2e sign up → session holds across reload → fresh context log in → session holds (logout e2e is protected-routes T11)
 - [ ] T14 Run QA against acceptance criteria (qa skill)
