@@ -35,7 +35,7 @@ model Session {
 
 model AuthAttempt {
   id        String   @id @default(cuid())
-  key       String // "email:<e>" | "ip:<ip>" | "signup-ip:<ip>"
+  key       String // "email:<e>" | "ip:<ip>" | "signup-ip:<ip>"; IPv6 as its /64
   createdAt DateTime @default(now())
 
   @@index([key, createdAt])

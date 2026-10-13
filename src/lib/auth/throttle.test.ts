@@ -188,6 +188,26 @@ describe("login throttle", () => {
     });
   });
 
+  it("counts IPv6 failures per /64, so rotating addresses doesn't reset the IP limit", async () => {
+    for (let i = 0; i < 30; i++)
+      await recordLoginFailure(`user${i}@x.com`, `2001:db8:1:2::${i + 1}`);
+
+    expect(
+      await checkLoginThrottle("fresh@x.com", "2001:db8:1:2::ffff"),
+    ).toMatchObject({
+      allowed: false,
+    });
+    expect(await checkLoginThrottle("fresh@x.com", "2001:db8:1:3::1")).toEqual({
+      allowed: true,
+    });
+    expect(
+      fake.db.tables.authAttempt
+        .filter((r) => String(r.key).startsWith("ip:"))
+        .every((r) => r.key === "ip:2001:db8:1:2::/64"),
+    ).toBe(true);
+  });
+
+
   it("doesn't block an IP for 29 failures", async () => {
     for (let i = 0; i < 29; i++) await recordLoginFailure(`user${i}@x.com`, IP);
 
@@ -230,6 +250,18 @@ describe("signup throttle", () => {
     expect(await checkSignupThrottle(IP)).toEqual({ allowed: false });
     expect(fake.db.tables.authAttempt).toHaveLength(10);
     expect(await checkSignupThrottle("198.51.100.1")).toEqual({
+      allowed: true,
+    });
+  });
+
+  it("counts IPv6 sign-ups per /64", async () => {
+    for (let i = 0; i < 10; i++)
+      await checkSignupThrottle(`2001:db8:1:2::${i + 1}`);
+
+    expect(await checkSignupThrottle("2001:db8:1:2:abcd::1")).toEqual({
+      allowed: false,
+    });
+    expect(await checkSignupThrottle("2001:db8:1:3::1")).toEqual({
       allowed: true,
     });
   });

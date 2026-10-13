@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import { db } from "@/lib/db";
+import { ipThrottleBucket } from "@/lib/request-ip";
 
 import { normalizeEmail } from "./email";
 
@@ -34,8 +35,9 @@ export type ThrottleResult =
   { allowed: true } | { allowed: false; retryAfterMinutes: number };
 
 const emailKey = (email: string) => `email:${normalizeEmail(email)}`;
-const ipKey = (ip: string) => `ip:${ip}`;
-const signupIpKey = (ip: string) => `signup-ip:${ip}`;
+// Per-IP keys use the IPv6 /64, not the exact address (see ipThrottleBucket).
+const ipKey = (ip: string) => `ip:${ipThrottleBucket(ip)}`;
+const signupIpKey = (ip: string) => `signup-ip:${ipThrottleBucket(ip)}`;
 
 function within(ms: number) {
   return { gt: new Date(Date.now() - ms) };
