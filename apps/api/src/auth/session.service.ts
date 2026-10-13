@@ -28,6 +28,8 @@ export type Session = {
 export type SessionValidationResult = {
   session: Session;
   user: SessionUser;
+  /** True when this call slid the expiry, so the cookie's Max-Age should be re-set. */
+  renewed: boolean;
 } | null;
 
 /** 32 random bytes (256 bits), base32-encoded. A new one for every sign-in. */
@@ -85,13 +87,14 @@ export class SessionService {
     }
 
     let { expiresAt } = row;
+    let renewed = false;
     if (expiresAt.getTime() - now < SESSION_RENEW_BELOW_MS) {
-      const renewed = Math.min(
+      const slid = Math.min(
         now + SESSION_TTL_MS,
         row.createdAt.getTime() + SESSION_MAX_AGE_MS,
       );
-      if (renewed > expiresAt.getTime()) {
-        expiresAt = new Date(renewed);
+      if (slid > expiresAt.getTime()) {
+        expiresAt = new Date(slid);
         // updateMany, not update: the row may have been deleted (sign-out in
         // another tab) since it was read; that's a logged-out request, not an error.
         const { count } = await this.prisma.session.updateMany({
@@ -99,10 +102,11 @@ export class SessionService {
           data: { expiresAt, lastSeenAt: new Date(now) },
         });
         if (count === 0) return null;
+        renewed = true;
       }
     }
 
-    return { session: { ...pick(row), expiresAt }, user: row.user };
+    return { session: { ...pick(row), expiresAt }, user: row.user, renewed };
   }
 
   async invalidateSession(token: string): Promise<void> {

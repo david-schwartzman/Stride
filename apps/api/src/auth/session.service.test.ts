@@ -109,6 +109,7 @@ describe("session", () => {
     expect(result?.session.expiresAt).toEqual(
       new Date(START.getTime() + 30 * DAY),
     );
+    expect(result?.renewed).toBe(false);
   });
 
   it("slides expiry to now + 30 days once fewer than 15 days are left", async () => {
@@ -122,6 +123,7 @@ describe("session", () => {
     const expected = new Date(START.getTime() + 46 * DAY);
     expect(result?.session.expiresAt).toEqual(expected);
     expect(fake.db.tables.session[0].expiresAt).toEqual(expected);
+    expect(result?.renewed).toBe(true);
   });
 
   it("never renews beyond createdAt + 90 days", async () => {

@@ -21,7 +21,8 @@
   - logout: 303 `Location: /`, session deleted, cookie cleared, old token rejected afterwards
   - `Set-Cookie` attributes in production and not (AC5)
   - no password, token or body in responses or the spied logger
-- [ ] T5 Write `apps/api/src/auth/auth.guard.test.ts` (testing skill): valid, missing, expired, revoked and tampered cookie; every 401 body has no user data; renewal re-sets Max-Age; 90-day cap; `GET /auth/me` and `@CurrentUser()` return only `{id,email,name}` (AC7)
+- [~] T5 Write `apps/api/src/auth/auth.guard.test.ts` (testing skill): valid, missing, expired, revoked and tampered cookie; every 401 body has no user data; renewal re-sets Max-Age; 90-day cap; `GET /auth/me` and `@CurrentUser()` return only `{id,email,name}` (AC7)
+  - Guard, renewal, cap and `@CurrentUser()` cases green with T15 (probe route in `auth.guard.test.ts`). The `GET /auth/me` assertion needs the controller, so it lands in `auth.controller.test.ts` with T4/T16
 - [ ] T6 Rewrite the web tests to mock `fetch` (testing skill): `LoginForm.test.tsx`, `SignupForm.test.tsx`, `AuthPanel.test.tsx` cover the JSON POST to `/api/auth/login|signup`, pending state and blocked double submit, field/form errors mapped from the response, name/email kept after an error, `router.replace(redirectTo)` + `router.refresh()`; `RedirectIfSignedIn.test.tsx` mocks `apiFetch` (AC9, AC10)
 - [ ] T7 Extend `apps/web/e2e/auth.spec.ts` (wiring edit; signup-login's test) (AC5, AC6, AC14):
   - assert the non-production cookie: `stride_session`, HttpOnly, SameSite=Lax, Path=/, no Domain (the production name and Secure flag are unit-tested in T4)
@@ -36,7 +37,7 @@
 - [x] T12 Add `apps/api/src/auth/session-cookie.ts`: name rule from `NODE_ENV`, set/clear via `res.cookie`/`res.clearCookie`, read (AC5)
 - [x] T13 Add `apps/api/src/auth/on-signed-in.ts`: the `onSignedIn` stub and `runOnSignedIn` (swallows; logs only the userId and the error) (AC2, AC3, AC13)
 - [ ] T14 Add `apps/api/src/auth/zod-body.pipe.ts`: invalid body → 400 `{fieldErrors}` via the shared `fieldErrorsOf` (AC2, AC8)
-- [ ] T15 Add `apps/api/src/auth/auth.guard.ts` and `current-user.decorator.ts`. T5 goes green (AC7)
+- [x] T15 Add `apps/api/src/auth/auth.guard.ts` and `current-user.decorator.ts`. T5 goes green (AC7)
 - [ ] T16 Add `apps/api/src/auth/auth.controller.ts` (signup, login, logout, me), keeping today's order (sign-up: IP throttle before parse; login: parse → `recordLoginFailure` → check → withdraw); logout answers 303. T4 goes green (AC1–AC6, AC13)
 - [ ] T17 Add `apps/api/src/auth/auth.module.ts` (`onModuleInit` calls `getPepper()`) and import it in `apps/api/src/app.module.ts` (wiring edit); middleware order unchanged (AC1, AC12)
 - [ ] T18 Wire env for tests and e2e (AC5, AC12, AC14, AC15):
