@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "build:shared": "npm run build -w @stride/shared",
-    "dev": "npm run build:shared && npm run dev -w @stride/web",
+    "dev": "npm run build:shared && concurrently -n web,api -c auto \"npm run dev -w @stride/web\" \"npm run dev -w @stride/api\"",
     "build": "npm run build:shared && npm run build -w @stride/api -w @stride/web",
     "lint": "npm run lint --workspaces --if-present && prettier --check .",
     "format": "prettier --write .",

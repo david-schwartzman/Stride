@@ -89,7 +89,7 @@
 
 ## Local dev & env
 
-- [ ] T19 Set the root `dev` script to `concurrently -n web,api -c auto "npm run dev -w @stride/web" "npm run dev -w @stride/api"`. Confirm web runs on :3000 and the API on :4000, and that `curl localhost:3000/api/health` returns the API's body (AC4, AC10)
+- [x] T19 Set the root `dev` script to `concurrently -n web,api -c auto "npm run dev -w @stride/web" "npm run dev -w @stride/api"`. Confirm web runs on :3000 and the API on :4000, and that `curl localhost:3000/api/health` returns the API's body (AC4, AC10)
 - [ ] T20 Replace the root `.env.example` with one per app (AC10):
   - `apps/api/.env.example`: `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER`, `GUEST_CART_SECRET`, `WEB_PROXY_SECRET`
   - `apps/web/.env.example`: `API_URL=http://localhost:4000`, `WEB_PROXY_SECRET` (same local value as the API's), plus `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER` and `TEST_DATABASE_URL` marked `# TEMPORARY until auth-api-migration`
