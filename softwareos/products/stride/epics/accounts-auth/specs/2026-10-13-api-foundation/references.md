@@ -65,7 +65,7 @@ Greenfield for NestJS. The references are the current single-app configs that th
   - `db.ts` is a `globalThis`-cached `PrismaClient`.
   - On PR #20, `db` is imported by `src/features/auth/actions.ts`, `src/lib/auth/session.ts` and `src/lib/auth/throttle.ts`, and mocked in their tests. These are exactly the files AC6 allows.
   - `instrumentation.ts` checks the pepper at boot. It stays in web until `auth-api-migration`.
-  - `request-ip.ts` trusts only `x-real-ip`. That assumption breaks across the rewrite, which is why the T2.2 spike exists.
+  - `request-ip.ts` trusts only `x-real-ip`, and `ipThrottleBucket` buckets IPv6 per /64 (#20 review). That's right on the web project, where the temporary auth code still runs, but across the rewrite the API would see the web's egress IP. So the web proxy forwards the IP as `x-stride-client-ip` with the proxy secret (PR #21 review), and the API's `getClientIp(req)` reads only that.
 - **No path tricks:** nothing in `src`, `e2e` or the configs uses `process.cwd`, `__dirname` or absolute paths. `stride-design/` is referenced only in comments and lint/format ignores.
 
 ## Decisions
@@ -73,7 +73,7 @@ Greenfield for NestJS. The references are the current single-app configs that th
 - **Temporary exception over a big-bang move:** the user chose to land the monorepo and API first, keeping auth's Prisma use inside web behind a lint rule (AC6), rather than merge this spec with `auth-api-migration`.
 - **Vitest for the API** (with `unplugin-swc`), not Nest's default Jest, per the tech-stack standard.
 - **One root `npm run dev`** via `concurrently`.
-- **A missing `Origin` header on state-changing requests is rejected** (AC8).
+- **A missing `Origin` header on state-changing requests is rejected** (AC8). `Origin` is compared with `https://` + the secret-verified `x-stride-forwarded-host`, not a `WEB_ORIGIN` env var (PR #21 review).
 - **Security review is a required task (T32)** even in setup mode, because AC8 and AC9 guard later auth work.
 
 ## Follow-ups (not in this spec)

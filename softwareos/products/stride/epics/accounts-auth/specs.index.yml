@@ -22,6 +22,11 @@ specs:
       - apps/api/src/prisma/**
       - apps/api/src/common/**
       - apps/api/prisma/schema.prisma
+      - apps/web/.env.example
+      - apps/web/src/lib/api-proxy.ts
+      - apps/web/src/lib/api-proxy.test.ts
+      - apps/web/src/lib/api-client.ts
+      - apps/web/src/lib/api-client.test.ts
       - packages/shared/package.json
       - packages/shared/tsconfig.json
       - packages/shared/src/index.ts
