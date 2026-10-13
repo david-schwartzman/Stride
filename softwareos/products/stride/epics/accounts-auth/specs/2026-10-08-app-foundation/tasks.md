@@ -3,7 +3,8 @@
 > Epic: accounts-auth
 > Spec: 2026-10-08-app-foundation
 > Branch: feat/accounts-auth/app-foundation
-> PR: https://github.com/david-schwartzman/Stride/pull/17
+> PR: https://github.com/david-schwartzman/Stride/pull/17 · https://github.com/david-schwartzman/Stride/pull/18 (T8–T15)
+> Reviewed: 2026-10-12 APPROVE
 
 ## Scaffold & tooling
 
@@ -25,14 +26,14 @@
 
 ## Design system & layout
 
-- [ ] T8 Port tokens.css into src/styles/tokens.css, import in globals.css, map to Tailwind theme; load Barlow Condensed + body font via next/font
-- [ ] T9 Build src/components/ui/Button per ButtonProps + bundle.css
-- [ ] T10 Build src/components/ui/Input (label, hint, error via aria-describedby, aria-invalid)
-- [ ] T11 Build src/components/layout/Header (wordmark + volt slash, nav, placeholder search, icons w/ aria-labels, cartCount/accountName props, utility ReactNode slot defaulting to signed-out UtilityLinks My orders · Sign up · Log in, sticky) + client MobileNav drawer below bp-md that also shows the utility items
-- [ ] T12 Build src/components/layout/Footer per AC8's element list (pages/Footer.dc.html) and SkipLink
-- [ ] T13 Compose src/app/layout.tsx (SkipLink → Header → main#main → Footer) + placeholder src/app/page.tsx
+- [x] T8 Port tokens.css into src/styles/tokens.css, import in globals.css, map to Tailwind theme; load Barlow Condensed + body font via next/font
+- [x] T9 Build src/components/ui/Button per ButtonProps + bundle.css
+- [x] T10 Build src/components/ui/Input (label, hint, error via aria-describedby, aria-invalid)
+- [x] T11 Build src/components/layout/Header (wordmark + volt slash, nav, placeholder search, icons w/ aria-labels, cartCount/accountName props, utility ReactNode slot defaulting to signed-out UtilityLinks My orders · Sign up · Log in, sticky) + client MobileNav drawer below bp-md that also shows the utility items
+- [x] T12 Build src/components/layout/Footer per AC8's element list (pages/Footer.dc.html) and SkipLink
+- [x] T13 Compose src/app/layout.tsx (SkipLink → Header → main#main → Footer) + placeholder src/app/page.tsx
 
 ## Verification
 
-- [ ] T14 Write Vitest tests for Button, Input (error/aria wiring), Header (cart count hidden at 0, aria-labels, default utility row links, custom utility node rendered), Footer (AC8 columns, links and bottom row) and the Playwright smoke (layout, skip link, 375px no h-scroll) (testing skill)
-- [ ] T15 Run QA against acceptance criteria (qa skill)
+- [x] T14 Write Vitest tests for Button, Input (error/aria wiring), Header (cart count hidden at 0, aria-labels, default utility row links, custom utility node rendered), Footer (AC8 columns, links and bottom row) and the Playwright smoke (layout, skip link, 375px no h-scroll) (testing skill)
+- [x] T15 Run QA against acceptance criteria (qa skill)

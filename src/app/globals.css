@@ -1,26 +1,52 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Stride design tokens as the Tailwind theme (stride-design/design-system/README.md
+   "Using it with Tailwind"). `inline` makes utilities read the token variables, so
+   [data-theme="dark"] switches them too. Same-named entries (--font-sans,
+   --radius-sm, --shadow-raised, …) look self-referential in Tailwind's theme layer,
+   but the unlayered tokens.css :root always wins over @layer theme. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-surface-inverse: var(--surface-inverse);
+  --color-on-inverse: var(--on-inverse);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-volt: var(--volt);
+  --color-on-volt: var(--on-volt);
+  --color-volt-soft: var(--volt-soft);
+  --color-volt-text: var(--volt-text);
+  --color-sale: var(--sale);
+  --color-sale-soft: var(--sale-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-focus: var(--focus);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+
+  --radius-none: var(--radius-none);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-raised: var(--shadow-raised);
+  --shadow-lift: var(--shadow-lift);
+  --shadow-focus: var(--focus-ring);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Breakpoints from tokens.json (bp-sm / bp-md / bp-lg). */
+@theme {
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 960px;
+  --breakpoint-lg: 1280px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
 }
