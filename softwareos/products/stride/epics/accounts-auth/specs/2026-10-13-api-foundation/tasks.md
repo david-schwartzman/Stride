@@ -27,7 +27,7 @@
   - make the root build, lint, typecheck and test scripts fan out with `--workspaces --if-present`
   - point `test:e2e` at `-w apps/web`
   - remove the root postinstall and db:* scripts (they move in T9)
-- [ ] T5 Add a root `tsconfig.base.json` with the shared compiler options. `apps/web/tsconfig.json` extends it and keeps the `@/*` → `./src/*` path alias (AC1, AC2)
+- [x] T5 Add a root `tsconfig.base.json` with the shared compiler options. `apps/web/tsconfig.json` extends it and keeps the `@/*` → `./src/*` path alias (AC1, AC2)
 - [ ] T6 Fix ignore and format config (AC1):
   - `.gitignore`: drop the leading slashes (`/node_modules`, `/.next/`, `/out/`, `/build`, `/coverage`, `/test-results/`, …) so they also match inside `apps/*`
   - keep the Prettier config and `.prettierignore` at the root, covering `apps/*` and `packages/*` and excluding `stride-design/**`
