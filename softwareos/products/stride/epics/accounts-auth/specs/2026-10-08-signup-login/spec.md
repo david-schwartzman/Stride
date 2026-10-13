@@ -1,7 +1,7 @@
 # Sign-up & Login
 
 > Epic: ../../epic.md
-> Status: shaped
+> Status: in-progress
 > Branch: feat/accounts-auth/signup-login
 > Covers: /login, /signup, src/app/(auth)/**, src/lib/auth/**, src/lib/request-ip.ts, src/lib/request-ip.test.ts, src/features/auth/**, src/instrumentation.ts, prisma/migrations/*_init_auth/**
 

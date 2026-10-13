@@ -6,7 +6,7 @@
 
 ## Data & passwords
 
-- [ ] T1 Add User (incl. pepperVersion), Session and AuthAttempt models to prisma/schema.prisma and generate migration prisma/migrations/<ts>_init_auth/
+- [x] T1 Add User (incl. pepperVersion), Session and AuthAttempt models to prisma/schema.prisma and generate migration prisma/migrations/<ts>_init_auth/
 - [ ] T2 Add @node-rs/argon2 (exact pin) and src/lib/auth/password.ts (hashPassword / verifyPassword / verifyDummy; Argon2id m=19456 t=2 p=1, secret = PASSWORD_PEPPER via getPepper(), which throws when the pepper is missing, empty or decodes to < 32 bytes); src/instrumentation.ts runs the same check at server start
 
 ## Auth module
