@@ -4,15 +4,20 @@ import { Prisma } from "@prisma/client";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { hashPassword } from "@/lib/auth/password";
-import { startSession } from "@/lib/auth/sign-in";
-import { checkSignupThrottle } from "@/lib/auth/throttle";
+import { hashPassword, verifyDummy, verifyPassword } from "@/lib/auth/password";
+import { endSession, startSession } from "@/lib/auth/sign-in";
+import {
+  checkLoginThrottle,
+  checkSignupThrottle,
+  clearLoginFailures,
+  recordLoginFailure,
+} from "@/lib/auth/throttle";
 import { db } from "@/lib/db";
 import { getClientIp } from "@/lib/request-ip";
 
 import { MESSAGES, type AuthFormState } from "./form-state";
 import { runOnSignedIn } from "./run-on-signed-in";
-import { fieldErrorsOf, signupSchema } from "./schemas";
+import { fieldErrorsOf, loginSchema, signupSchema } from "./schemas";
 
 function field(formData: FormData, name: string): string {
   const value = formData.get(name);
@@ -59,5 +64,51 @@ export async function signupAction(
 
   await startSession(userId, requestHeaders);
   await runOnSignedIn(userId);
+  redirect("/");
+}
+
+export async function loginAction(
+  _prev: AuthFormState,
+  formData: FormData,
+): Promise<AuthFormState> {
+  const requestHeaders = await headers();
+  const input = {
+    email: field(formData, "email"),
+    password: field(formData, "password"),
+  };
+  const values = { email: input.email };
+
+  // Parse first: the throttle keys on the normalised email.
+  const parsed = loginSchema.safeParse(input);
+  if (!parsed.success)
+    return { fieldErrors: fieldErrorsOf(parsed.error), values };
+  const { email, password } = parsed.data;
+  const ip = getClientIp(requestHeaders);
+
+  const throttle = await checkLoginThrottle(email, ip);
+  if (!throttle.allowed) {
+    return {
+      formError: MESSAGES.tooManyAttempts(throttle.retryAfterMinutes),
+      values,
+    };
+  }
+
+  const user = await db.user.findUnique({ where: { email } });
+  // An unknown email takes the same path as a wrong password: same Argon2
+  // work, same failure records, same message (AC15).
+  if (!user) await verifyDummy();
+  if (!user || !(await verifyPassword(user.passwordHash, password))) {
+    await recordLoginFailure(email, ip);
+    return { fieldErrors: { password: MESSAGES.wrongPassword }, values };
+  }
+
+  await clearLoginFailures(email);
+  await startSession(user.id, requestHeaders);
+  await runOnSignedIn(user.id);
+  redirect("/");
+}
+
+export async function signOutAction(): Promise<void> {
+  await endSession();
   redirect("/");
 }

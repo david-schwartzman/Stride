@@ -31,7 +31,7 @@
 - [x] T5 Add src/features/auth/schemas.ts (signupSchema, loginSchema: email via normalizeEmail, password 12–128, name required)
 - [x] T6 Add src/features/auth/hooks.ts (no-op onSignedIn) and runOnSignedIn wrapper (try/catch, log userId + error only)
 - [x] T7 Implement signupAction in src/features/auth/actions.ts (checkSignupThrottle, safeParse, hashPassword, create user, P2002 → email error, new token + createSession + set cookie, runOnSignedIn, redirect /)
-- [ ] T8 Implement loginAction (safeParse first, then checkLoginThrottle on the normalised email → "Too many attempts" error, lookup by email, verifyDummy + recordLoginFailure when missing, verifyPassword, recordLoginFailure → password error, clearLoginFailures, new token + createSession + set cookie, runOnSignedIn, redirect /) and signOutAction (invalidateSession, delete cookie, redirect /)
+- [x] T8 Implement loginAction (safeParse first, then checkLoginThrottle on the normalised email → "Too many attempts" error, lookup by email, verifyDummy + recordLoginFailure when missing, verifyPassword, recordLoginFailure → password error, clearLoginFailures, new token + createSession + set cookie, runOnSignedIn, redirect /) and signOutAction (invalidateSession, delete cookie, redirect /)
 
 ## Pages & forms
 

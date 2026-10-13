@@ -10,7 +10,8 @@ import {
   vi,
 } from "vitest";
 
-import { hashToken } from "@/lib/auth/session";
+import * as password from "@/lib/auth/password";
+import { hashToken, validateSessionToken } from "@/lib/auth/session";
 import { createFakeDb, type FakeDb } from "@/lib/auth/testing/fake-db";
 
 import { MESSAGES, type AuthFormState } from "./form-state";
@@ -50,8 +51,16 @@ vi.mock("next/navigation", () => ({
   },
 }));
 vi.mock("./hooks", () => ({ onSignedIn: mocks.onSignedIn }));
+vi.mock("@/lib/auth/password", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/auth/password")>();
+  return {
+    ...actual,
+    verifyPassword: vi.fn(actual.verifyPassword),
+    verifyDummy: vi.fn(actual.verifyDummy),
+  };
+});
 
-import { signupAction } from "./actions";
+import { loginAction, signOutAction, signupAction } from "./actions";
 
 const PASSWORD = "correct horse battery";
 const COOKIE = "stride_session";
@@ -89,6 +98,8 @@ beforeEach(() => {
   mocks.jar.clear();
   mocks.request.ip = "203.0.113.7";
   mocks.onSignedIn.mockReset();
+  vi.mocked(password.verifyPassword).mockClear();
+  vi.mocked(password.verifyDummy).mockClear();
 });
 
 afterEach(() => {
@@ -183,5 +194,138 @@ describe("signupAction", () => {
     await expect(signup({ email: "twelfth@x.com" })).rejects.toThrow(
       "REDIRECT:/",
     );
+  });
+});
+
+async function addUser(email = "ada@x.com") {
+  const user = await mocks.db.user.create({
+    data: {
+      email,
+      name: "Ada Lovelace",
+      passwordHash: await password.hashPassword(PASSWORD),
+    },
+  });
+  return user.id as string;
+}
+
+const login = (email = "ada@x.com", pass = PASSWORD) =>
+  loginAction({}, form({ email, password: pass }));
+
+const keys = () => mocks.db.tables.authAttempt.map((r) => r.key).sort();
+
+describe("loginAction", () => {
+  it("signs in with a new session cookie, clears the email's failures and redirects", async () => {
+    const userId = await addUser();
+    await login("ada@x.com", "wrong password!!");
+
+    await expect(login(" ADA@x.com ")).rejects.toThrow("REDIRECT:/");
+
+    const cookie = mocks.jar.get(COOKIE)!;
+    expect(mocks.db.tables.session).toEqual([
+      expect.objectContaining({ id: hashToken(cookie.value), userId }),
+    ]);
+    expect(keys()).toEqual(["ip:203.0.113.7"]);
+    expect(mocks.onSignedIn).toHaveBeenCalledTimes(1);
+    expect(mocks.onSignedIn).toHaveBeenCalledWith(userId);
+  });
+
+  it("creates a new token on every login, never reusing the one sent", async () => {
+    await addUser();
+    await expect(login()).rejects.toThrow("REDIRECT:/");
+    const first = mocks.jar.get(COOKIE)!.value;
+
+    await expect(login()).rejects.toThrow("REDIRECT:/");
+    const second = mocks.jar.get(COOKIE)!.value;
+
+    expect(second).not.toBe(first);
+    expect(mocks.db.tables.session.map((s) => s.id)).toEqual([
+      hashToken(first),
+      hashToken(second),
+    ]);
+  });
+
+  it("still signs in when onSignedIn throws", async () => {
+    await addUser();
+    mocks.onSignedIn.mockRejectedValue(new Error("merge failed"));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(login()).rejects.toThrow("REDIRECT:/");
+    expect(mocks.jar.has(COOKIE)).toBe(true);
+  });
+
+  it("rejects a wrong password on the Password field, records a failure and sets no cookie", async () => {
+    await addUser();
+
+    const state = await login("ada@x.com", "wrong password!!");
+
+    expect(state).toEqual({
+      fieldErrors: { password: MESSAGES.wrongPassword },
+      values: { email: "ada@x.com" },
+    });
+    expect(mocks.jar.has(COOKIE)).toBe(false);
+    expect(keys()).toEqual(["email:ada@x.com", "ip:203.0.113.7"]);
+    expectNoSecrets(state);
+  });
+
+  it("treats an unknown email like a wrong password, using the dummy hash", async () => {
+    const state = await login("nobody@x.com");
+
+    expect(state.fieldErrors).toEqual({ password: MESSAGES.wrongPassword });
+    expect(password.verifyDummy).toHaveBeenCalledTimes(1);
+    expect(keys()).toEqual(["email:nobody@x.com", "ip:203.0.113.7"]);
+    expect(mocks.jar.has(COOKIE)).toBe(false);
+    expectNoSecrets(state);
+  });
+
+  it("throttles an unknown email after 5 failures, like a real one", async () => {
+    for (let i = 0; i < 5; i++) await login("nobody@x.com");
+
+    const state = await login("nobody@x.com");
+
+    expect(state.formError).toBe(MESSAGES.tooManyAttempts(1));
+    expect(state.formError).toBe("Too many attempts, try again in 1 minute.");
+  });
+
+  it("refuses ` A@X.com ` after 5 wrong passwords as `a@x.com`, without checking the password", async () => {
+    await addUser("a@x.com");
+    for (let i = 0; i < 5; i++) await login("a@x.com", "wrong password!!");
+    vi.mocked(password.verifyPassword).mockClear();
+    const before = mocks.db.tables.authAttempt.length;
+
+    const state = await login(" A@X.com ", PASSWORD);
+
+    expect(state.formError).toBe(MESSAGES.tooManyAttempts(1));
+    expect(password.verifyPassword).not.toHaveBeenCalled();
+    expect(mocks.db.tables.authAttempt).toHaveLength(before);
+    expect(mocks.jar.has(COOKIE)).toBe(false);
+  });
+
+  it("validates on the server before throttling or looking anything up", async () => {
+    const state = await login("nope", "short");
+
+    expect(state.fieldErrors).toEqual({
+      email: "Enter a valid email address.",
+      password: "Use at least 12 characters.",
+    });
+    expect(mocks.db.tables.authAttempt).toHaveLength(0);
+    expect(password.verifyDummy).not.toHaveBeenCalled();
+  });
+});
+
+describe("signOutAction", () => {
+  it("deletes the session row, clears the cookie and redirects; the old token stops working", async () => {
+    await addUser();
+    await expect(login()).rejects.toThrow("REDIRECT:/");
+    const token = mocks.jar.get(COOKIE)!.value;
+
+    await expect(signOutAction()).rejects.toThrow("REDIRECT:/");
+
+    expect(mocks.db.tables.session).toHaveLength(0);
+    expect(mocks.jar.has(COOKIE)).toBe(false);
+    expect(await validateSessionToken(token)).toBeNull();
+  });
+
+  it("redirects when there is no session", async () => {
+    await expect(signOutAction()).rejects.toThrow("REDIRECT:/");
   });
 });

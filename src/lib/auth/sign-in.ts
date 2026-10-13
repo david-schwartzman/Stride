@@ -1,7 +1,15 @@
 import { getClientIp } from "@/lib/request-ip";
 
-import { setSessionCookie } from "./cookie";
-import { createSession, generateSessionToken } from "./session";
+import {
+  deleteSessionCookie,
+  getSessionCookie,
+  setSessionCookie,
+} from "./cookie";
+import {
+  createSession,
+  generateSessionToken,
+  invalidateSession,
+} from "./session";
 
 /**
  * Signs a user in: always a brand-new token (never one that came with the
@@ -18,4 +26,11 @@ export async function startSession(
     ipAddress: getClientIp(requestHeaders),
   });
   await setSessionCookie(token);
+}
+
+/** Signs the current request's session out: deletes its row, then the cookie. */
+export async function endSession(): Promise<void> {
+  const token = await getSessionCookie();
+  if (token) await invalidateSession(token);
+  await deleteSessionCookie();
 }
