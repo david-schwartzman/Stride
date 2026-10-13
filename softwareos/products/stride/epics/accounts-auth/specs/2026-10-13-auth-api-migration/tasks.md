@@ -52,7 +52,7 @@
 
 ## Web deletions
 
-- [ ] T22 Delete the web's server-side auth code (AC9, AC11, AC12):
+- [x] T22 Delete the web's server-side auth code (AC9, AC11, AC12):
   - `features/auth/actions.ts`, `actions.test.ts`, `hooks.ts`, `run-on-signed-in.ts` and its test
   - `src/lib/auth/**` and `src/lib/db.ts`
   - `src/instrumentation.ts` (empty once the pepper check goes)
