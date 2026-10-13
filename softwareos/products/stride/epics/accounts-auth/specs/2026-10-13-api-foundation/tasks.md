@@ -6,10 +6,11 @@
 
 ## Gate & spike
 
-- [ ] T1 Dependency gate: confirm PR #20 (signup-login) is merged into `develop` (human). Rebase `feat/accounts-auth/api-foundation` onto `develop`. Record a green baseline of `npm run lint`, `typecheck`, `test` and `test:e2e` (including `e2e/auth.spec.ts`) as the no-regression reference (AC2, AC11)
-- [ ] T2 Spike, on a throwaway branch: a minimal NestJS app behind a web proxy (`proxy.ts`) that rewrites `/api/*` with `NextResponse.rewrite` and added request headers, deployed to Vercel previews. Record the results in `spike-notes.md` in this spec folder before starting T3. Also record whether `next.config.ts` `headers()` reach proxied `/api/*` responses (AC4, AC9, AC12, AC15)
-- [ ] T2.1 Preview pairing: compare two linked Vercel projects (the proxy derives the API preview's branch URL from `VERCEL_GIT_COMMIT_REF`) with Vercel Services. Aim for a web preview that reaches the API preview from the same commit through `/api`, with both on the same Neon preview branch. Prove that the proxy's `x-vercel-protection-bypass` gets past the API preview's Deployment Protection. If neither option works with reasonable setup, record the fallback (web previews call the shared `develop` API preview) and why. Record the chosen setup (human for the Vercel/Neon dashboard parts) (AC12)
-- [ ] T2.2 Trusted proxy headers: deploy an echo endpoint on the spike API that returns the `x-stride-*` headers it received (the spike branch is never merged). Call it through the web proxy and record:
+- [~] T1 Dependency gate: confirm PR #20 (signup-login) is merged into `develop` (human). Rebase `feat/accounts-auth/api-foundation` onto `develop`. Record a green baseline of `npm run lint`, `typecheck`, `test` and `test:e2e` (including `e2e/auth.spec.ts`) as the no-regression reference (AC2, AC11)
+  - Baseline recorded 2026-10-13 on `feat/accounts-auth/auth-api-demo` (PR #20 and #21 merged into the branch, not yet into `develop` — the gate itself is deferred for the demo): lint ✓, typecheck ✓, `test` 164 passed / 8 skipped (Postgres-only `*.db.test.ts`, no `TEST_DATABASE_URL`), `test:e2e` 5 passed, plus `e2e/auth.spec.ts` 3 passed against the Neon demo branch (`TEST_DATABASE_URL` set to un-skip)
+- [ ] T2 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Spike, on a throwaway branch: a minimal NestJS app behind a web proxy (`proxy.ts`) that rewrites `/api/*` with `NextResponse.rewrite` and added request headers, deployed to Vercel previews. Record the results in `spike-notes.md` in this spec folder before starting T3. Also record whether `next.config.ts` `headers()` reach proxied `/api/*` responses (AC4, AC9, AC12, AC15)
+- [ ] T2.1 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Preview pairing: compare two linked Vercel projects (the proxy derives the API preview's branch URL from `VERCEL_GIT_COMMIT_REF`) with Vercel Services. Aim for a web preview that reaches the API preview from the same commit through `/api`, with both on the same Neon preview branch. Prove that the proxy's `x-vercel-protection-bypass` gets past the API preview's Deployment Protection. If neither option works with reasonable setup, record the fallback (web previews call the shared `develop` API preview) and why. Record the chosen setup (human for the Vercel/Neon dashboard parts) (AC12)
+- [ ] T2.2 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Trusted proxy headers: deploy an echo endpoint on the spike API that returns the `x-stride-*` headers it received (the spike branch is never merged). Call it through the web proxy and record:
   - that `x-stride-client-ip` equals the browser's real IP (Vercel's `x-real-ip` at the web edge), including when the browser sends a spoofed `x-stride-client-ip` or `x-real-ip`
   - that two clients on different networks show different IPs
   - that `x-stride-forwarded-host` is the web preview's host and the secret arrives intact
@@ -97,31 +98,31 @@
 - [ ] T21 Start both apps in Playwright and add an API smoke test (AC4, AC11):
   - in `apps/web/playwright.config.ts`, make `webServer` an array: the API on :4000 first (ready check `http://localhost:4000/health`; Playwright counts the 401 from T34 as ready), then web on :3000 with `API_URL=http://localhost:4000`. Both get the same test `WEB_PROXY_SECRET`
   - add `apps/web/e2e/api-health.spec.ts`, asserting that `GET /api/health` on the web origin returns 200 with the shared schema
-- [ ] T22 Update `.github/workflows/ci.yml` as a single job, on Node 24 with the `postgres:16` service from PR #20 (AC11):
+- [ ] T22 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Update `.github/workflows/ci.yml` as a single job, on Node 24 with the `postgres:16` service from PR #20 (AC11):
   - steps, in order: `npm ci` → `npx prisma migrate deploy` in `apps/api` → root lint, typecheck and test (all workspaces) → build both apps → `playwright install` → `test:e2e` (both apps, including `e2e/auth.spec.ts`)
   - env: `DATABASE_URL`, `DIRECT_URL`, `TEST_DATABASE_URL`, `PASSWORD_PEPPER`, `GUEST_CART_SECRET`, `WEB_PROXY_SECRET` (a CI-only value), `API_URL`
 
 ## Vercel
 
-- [ ] T23 Split the Vercel config by app (AC5, AC12):
+- [ ] T23 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Split the Vercel config by app (AC5, AC12):
   - add `apps/api/vercel.json` with build command `DIRECT_URL="${DIRECT_URL:-$DATABASE_URL_UNPOOLED}" prisma migrate deploy && nest build`, plus the Nest entry/function config the spike proved in T2.1
   - move the root `vercel.json` to `apps/web/vercel.json` with `framework: nextjs` and a plain `next build`, so the web build no longer migrates
-- [ ] T24 (human) In Vercel, apply the setup chosen in T2.1 (AC10, AC12):
+- [ ] T24 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** (human) In Vercel, apply the setup chosen in T2.1 (AC10, AC12):
   - web project: Root Directory `apps/web`
   - API project (create or configure): Root Directory `apps/api`
   - follow `INFRA_PLAN.md` step D2: create and deploy the API project first (deploy order), then move the web Root Directory
   - attach the Neon integration so both get the same preview branch (the web still needs it for the temporary auth code)
   - set the AC10 env vars on each: `WEB_PROXY_SECRET` with the same value on both and a different one per environment; `PASSWORD_PEPPER` and `GUEST_CART_SECRET` copied with the **same** values; on web, `API_URL` per the T2.1 result and `API_PROTECTION_BYPASS_SECRET` on Preview
-- [ ] T25 (human-assisted) Push the branch and verify the preview: `GET <web-preview>/api/health` returns the API's 200 body, needs no CORS headers and makes no cross-origin browser request. A direct `GET <api-preview>/health` without the secret gets 401. Both deployments come from the same commit and the same Neon branch, or the AC12 fallback is in place. Record the URLs in `spike-notes.md` (AC4, AC12, AC13, AC15)
+- [ ] T25 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** (human-assisted) Push the branch and verify the preview: `GET <web-preview>/api/health` returns the API's 200 body, needs no CORS headers and makes no cross-origin browser request. A direct `GET <api-preview>/health` without the secret gets 401. Both deployments come from the same commit and the same Neon branch, or the AC12 fallback is in place. Record the URLs in `spike-notes.md` (AC4, AC12, AC13, AC15)
 
 ## Docs
 
-- [ ] T26 Update `softwareos/products/stride/architecture.md` (AC6, AC9, AC12). The trusted proxy headers, the client-IP rule and pairing-as-a-goal are already there (PR #21):
+- [ ] T26 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Update `softwareos/products/stride/architecture.md` (AC6, AC9, AC12). The trusted proxy headers, the client-IP rule and pairing-as-a-goal are already there (PR #21):
   - Environments: replace the pairing goal with what T2.1 chose (or the fallback)
   - Trusted proxy headers and the client-IP Gotcha: change only what T2.2 contradicted
   - Gotchas: the temporary Prisma-in-web exception, linked to `auth-api-migration`
-- [ ] T27 Update `INFRA_PLAN.md`. Step D2 already creates the API project (PR #21); add the T2.1 result (projects or Services), build commands (migrate only in the API), the env var matrix, including `WEB_PROXY_SECRET` and `API_PROTECTION_BYPASS_SECRET`, and Neon branch pairing (AC5, AC10, AC12)
-- [ ] T28 Add the `apps/web/` prefix to every accounts-auth spec's Covers paths, then run `/refresh-indexes` (AC2):
+- [ ] T27 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Update `INFRA_PLAN.md`. Step D2 already creates the API project (PR #21); add the T2.1 result (projects or Services), build commands (migrate only in the API), the env var matrix, including `WEB_PROXY_SECRET` and `API_PROTECTION_BYPASS_SECRET`, and Neon branch pairing (AC5, AC10, AC12)
+- [ ] T28 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Add the `apps/web/` prefix to every accounts-auth spec's Covers paths, then run `/refresh-indexes` (AC2):
   - protected-routes, session-management and auth-event-logging are already done (PR #21); edit security-headers directly
   - edit the done specs `2026-10-08-app-foundation` and `2026-10-08-signup-login` through `/spec-changes`
 
@@ -144,5 +145,5 @@
   - `proxy-secret.middleware.test.ts`: valid, wrong, missing and different-length secret; unset `WEB_PROXY_SECRET` rejects everything; `/cron/*` exempt; 401 body empty and the handler never runs
   - `api-proxy.test.ts`: client-sent `x-stride-*` headers replaced; a null IP omits `x-stride-client-ip`; `x-stride-forwarded-host` from `Host`
   - `api-client.test.ts`: `apiFetch` calls `API_URL` with the trusted headers and the incoming `Cookie`
-- [ ] T32 Security review (security-reviewer agent) of `proxy-secret.middleware.ts`, `origin-check.middleware.ts`, `request-ip.ts`, `api-proxy.ts`, `api-client.ts`, the health response body, and the split of env vars across the apps (AC3, AC8, AC9, AC10, AC13, AC14)
-- [ ] T33 Run QA against acceptance criteria AC1–AC15 (qa skill)
+- [ ] T32 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Security review (security-reviewer agent) of `proxy-secret.middleware.ts`, `origin-check.middleware.ts`, `request-ip.ts`, `api-proxy.ts`, `api-client.ts`, the health response body, and the split of env vars across the apps (AC3, AC8, AC9, AC10, AC13, AC14)
+- [ ] T33 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Run QA against acceptance criteria AC1–AC15 (qa skill)

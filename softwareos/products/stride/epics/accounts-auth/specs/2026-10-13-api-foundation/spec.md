@@ -1,7 +1,7 @@
 # API Foundation
 
 > Epic: ../../epic.md
-> Status: shaped
+> Status: in-progress
 > Branch: feat/accounts-auth/api-foundation
 > Covers: package.json, package-lock.json, tsconfig.base.json, apps/web/package.json, apps/api/package.json, apps/api/nest-cli.json, apps/api/tsconfig.json, apps/api/vercel.json, apps/api/.env.example, apps/api/src/main.ts, apps/api/src/app.module.ts, apps/api/src/health/**, apps/api/src/prisma/**, apps/api/src/common/**, apps/api/prisma/schema.prisma, apps/web/.env.example, apps/web/src/lib/api-proxy.ts, apps/web/src/lib/api-proxy.test.ts, apps/web/src/lib/api-client.ts, apps/web/src/lib/api-client.test.ts, packages/shared/package.json, packages/shared/tsconfig.json, packages/shared/src/index.ts, .github/workflows/**, playwright.config.ts
 
