@@ -1,4 +1,4 @@
-// covers AC3, AC6, AC9, AC11 (signup-login T13)
+// covers AC3, AC6, AC9, AC11 (signup-login T13); auth-api-migration AC5, AC6, AC14 (T7)
 import { randomUUID } from "node:crypto";
 
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
@@ -37,8 +37,21 @@ test("sign up → session holds across reload; log in from a fresh browser → s
   await page.getByRole("button", { name: "Create account" }).click();
   await expect(page).toHaveURL("/");
 
+  // Set by the API through the /api rewrite. Outside production (the e2e API
+  // runs with NODE_ENV=test) it's plain stride_session without Secure; the
+  // __Host- name and Secure flag are unit-tested in auth.controller.test.ts.
   const cookie = await sessionCookie(context);
-  expect(cookie).toMatchObject({ httpOnly: true, sameSite: "Lax", path: "/" });
+  expect(cookie).toMatchObject({
+    name: "stride_session",
+    httpOnly: true,
+    secure: false,
+    sameSite: "Lax",
+    path: "/",
+    // Host-only: a Domain attribute would show as ".localhost".
+    domain: "localhost",
+  });
+  const DAY_S = 24 * 60 * 60;
+  expect(cookie!.expires - Date.now() / 1000).toBeGreaterThan(29 * DAY_S);
   expect(cookie?.value).not.toContain(PASSWORD);
 
   await page.reload();
@@ -113,4 +126,42 @@ test("signing up with an existing email shows the inline error with a Log in lin
     "href",
     "/login",
   );
+});
+
+test("logout is a plain form POST to /api/auth/logout: 303 to /, cookie cleared, session gone", async ({
+  page,
+  context,
+}) => {
+  await page.goto("/signup");
+  await page.getByLabel("Name").fill("Ada Lovelace");
+  await page.getByLabel("Email").fill(`e2e-${randomUUID()}@test.stride`);
+  await page.getByLabel("Password").fill(PASSWORD);
+  await page.getByRole("button", { name: "Create account" }).click();
+  await expect(page).toHaveURL("/");
+  const token = (await sessionCookie(context))?.value;
+  expect(token).toBeTruthy();
+
+  // A native form submission, as a no-JavaScript logout button would send.
+  const logout = page.waitForResponse((r) =>
+    r.url().endsWith("/api/auth/logout"),
+  );
+  await page.evaluate(() => {
+    const form = document.createElement("form");
+    form.method = "post";
+    form.action = "/api/auth/logout";
+    document.body.append(form);
+    form.submit();
+  });
+  const res = await logout;
+  expect(res.status()).toBe(303);
+  expect(res.headers()["location"]).toBe("/");
+  await expect(page).toHaveURL("/");
+  expect(await sessionCookie(context)).toBeUndefined();
+
+  // The old token is dead server-side, not just forgotten by the browser.
+  await context.addCookies([
+    { name: "stride_session", value: token!, url: page.url() },
+  ]);
+  await page.goto("/login");
+  await expect(page).toHaveURL("/login");
 });
