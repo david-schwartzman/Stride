@@ -132,7 +132,7 @@
 
 ## Verification
 
-- [ ] T29 Write unit tests (testing skill) for the health endpoint and the shared schema (AC3, AC7):
+- [x] T29 Write unit tests (testing skill) for the health endpoint and the shared schema (AC3, AC7):
   - `apps/api/src/health/health.controller.test.ts`: `SELECT 1` succeeds → 200 ok; Prisma throws → 503 down; the body has no error text or secrets
   - parse tests for the `packages/shared` schema
   - one `apps/web` test that imports `healthResponseSchema` from `@stride/shared`
