@@ -140,11 +140,12 @@
   - `origin-check.middleware.test.ts`: POST/PUT/PATCH/DELETE with matching, mismatching and missing Origin; GET/HEAD pass; the handler isn't called on 403
   - `origin-check.middleware.test.ts` also covers a missing `x-stride-forwarded-host` and `http://` in and out of production
   - `request-ip.test.ts`: valid IPv4/IPv6 in `x-stride-client-ip`, garbage, empty, a missing header, and a request carrying only `x-forwarded-for` or `x-real-ip` (→ null)
-- [ ] T31 Write config and regression tests (testing skill) for the web wiring (AC2, AC4, AC6, AC10, AC11):
+- [x] T31 Write config and regression tests (testing skill) for the web wiring (AC2, AC4, AC6, AC10, AC11):
   - `apiRewrite`: `/api` stripped, query kept, `Cookie` passed through, bypass header only on Preview with the secret set, and the production 503 when `API_URL` or `WEB_PROXY_SECRET` is missing
   - `next.config.ts` has no `/api` rewrite
   - an ESLint fixture check that `@prisma/client` outside the allowed files is an error
   - confirm the full web suite and e2e (including `auth.spec.ts` and `api-health.spec.ts`) pass from the root
+  - Run 2026-10-13 from the root: lint ✓, typecheck ✓, `test` web 186 passed / 8 skipped (Postgres-only `*.db.test.ts`), api 25, shared 11; `test:e2e` 9 passed incl. `auth.spec.ts` (root `.env` loaded, `TEST_DATABASE_URL` set to un-skip) and `api-health.spec.ts`
 - [x] T36 Write unit tests first (testing skill) for the trusted proxy headers (AC13, AC14):
   - `proxy-secret.middleware.test.ts`: valid, wrong, missing and different-length secret; unset `WEB_PROXY_SECRET` rejects everything; `/cron/*` exempt; 401 body empty and the handler never runs
   - `api-proxy.test.ts`: client-sent `x-stride-*` headers replaced; a null IP omits `x-stride-client-ip`; `x-stride-forwarded-host` from `Host`
