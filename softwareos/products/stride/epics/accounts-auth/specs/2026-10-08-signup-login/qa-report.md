@@ -3,6 +3,7 @@
 > Spec: spec.md
 > Date: 2026-10-13 · QA by: david-schwartzman · Mode: setup
 > Verdict: PASS WITH NOTES
+> Stale: spec changed 2026-10-13 (Acceptance Criteria) — rerun the qa skill
 
 ## Acceptance Criteria
 
