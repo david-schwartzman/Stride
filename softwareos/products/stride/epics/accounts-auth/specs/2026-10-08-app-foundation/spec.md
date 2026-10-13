@@ -3,7 +3,7 @@
 > Epic: ../../epic.md
 > Status: in-progress
 > Branch: feat/accounts-auth/app-foundation
-> Covers: package.json, next.config.ts, tsconfig.json, eslint.config.mjs, .prettierrc, postcss.config.mjs, vitest.config.ts, playwright.config.ts, .github/workflows/**, prisma/schema.prisma, src/lib/db.ts, src/app/layout.tsx, src/app/globals.css, src/styles/**, src/components/layout/**, src/components/ui/**, vercel.json, .env.example, .gitignore
+> Covers: package.json, next.config.ts, tsconfig.json, eslint.config.mjs, .prettierrc, postcss.config.mjs, vitest.config.ts, playwright.config.ts, .github/workflows/**, prisma/schema.prisma, src/app/layout.tsx, src/app/globals.css, src/styles/**, src/components/layout/**, src/components/ui/**, vercel.json, .env.example, .gitignore
 
 ## Overview
 
@@ -75,3 +75,4 @@ Includes the tech plan's spike: Prisma + Neon + Vercel preview smoke test. The U
 | 2026-10-12 | david-schwartzman | change | AC7 + Technical Approach: Header utility row (My orders · Sign up · Log in) defined, as a `utility` ReactNode slot so protected-routes can place the logout form; AC8: Footer made checkable (listed elements instead of "matches Footer.dc.html"); T11/T12/T14 updated — PR #12 review | https://github.com/david-schwartzman/Stride/pull/12 |
 | 2026-10-12 | david-schwartzman | change | Covers adds `.gitignore` (AC11, T4 edit it); Changelog ref to `INFRA_PLAN.md` now links the file (on `develop` since #13); references.md drops the stale "stride-design/ is untracked" note — PR #12 review (2nd round) | https://github.com/david-schwartzman/Stride/pull/12 |
 | 2026-10-12 | david-schwartzman | change | Technical Approach + T2/T5: postinstall `prisma generate` moves from T2 to T5 — it needs prisma/schema.prisma, so adding it in T2 broke npm install/ci on every commit until T5 | — |
+| 2026-10-13 | david-schwartzman | change | Covers drops `src/lib/db.ts`: deleted, the web no longer has a Prisma client (the API's `PrismaService` owns database access) — auth code moved into the API by auth-api-migration (its T28) | [auth-api-migration](../2026-10-13-auth-api-migration/spec.md) |

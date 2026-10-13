@@ -47,7 +47,6 @@ specs:
       - playwright.config.ts
       - .github/workflows/**
       - prisma/schema.prisma
-      - src/lib/db.ts
       - src/app/layout.tsx
       - src/app/globals.css
       - src/styles/**
@@ -116,10 +115,7 @@ specs:
     covers:
       - /login
       - /signup
-      - src/app/(auth)/**
-      - src/lib/auth/**
-      - src/lib/request-ip.ts
-      - src/lib/request-ip.test.ts
-      - src/features/auth/**
-      - src/instrumentation.ts
-      - prisma/migrations/*_init_auth/**
+      - apps/web/src/app/(auth)/**
+      - apps/web/src/lib/request-ip.ts
+      - apps/web/src/lib/request-ip.test.ts
+      - apps/api/prisma/migrations/*_init_auth/**
