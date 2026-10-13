@@ -73,5 +73,6 @@
 
 - [x] T29 From the root, run lint, typecheck, test and test:e2e with `TEST_DATABASE_URL` set (`*.db.test.ts` and `e2e/auth.spec.ts` run); spot-check an existing user's login (AC14, AC15)
   - Done 2026-10-13: lint, typecheck, test (API 148 incl. the 8 Postgres tests on the Neon demo DB, web 94, shared 44) and test:e2e (10/10, both apps). Existing-user spot-check not possible: the database had no pre-migration accounts; the Argon2 parameters and pepper are unchanged (password.service.test.ts)
-- [ ] T30 Security review (security-reviewer agent) of `apps/api/src/auth/**`, the `main.ts`/`app.module.ts` changes and the web fetch path (AC3–AC7, AC12, AC13)
+- [~] T30 Security review (security-reviewer agent) of `apps/api/src/auth/**`, the `main.ts`/`app.module.ts` changes and the web fetch path (AC3–AC7, AC12, AC13)
+  - 2026-10-13 review: APPROVE WITH NOTES (0 critical, 0 high, 1 medium, 3 low). Fixed: `GET /auth/me` / AuthGuard send `Cache-Control: private, no-store` (#3). Open: malformed JSON's 400 quotes the raw body, against AC13 (#1, medium); backslash `redirectTo` check in `submit-auth.ts` (#2, low) and Prisma error logging (#4, low) deferred by the user
 - [ ] T31 Run QA against acceptance criteria AC1–AC15 (qa skill)

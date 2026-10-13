@@ -23,6 +23,9 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const http = context.switchToHttp();
     const req = http.getRequest<AuthenticatedRequest>();
+    const res = http.getResponse<Response>();
+    // Private data (or a 401 about it): never stored by a browser or CDN.
+    res.setHeader("Cache-Control", "private, no-store");
 
     const token = readSessionCookie(req);
     if (!token) throw new UnauthorizedException();
@@ -31,7 +34,7 @@ export class AuthGuard implements CanActivate {
 
     // Sliding renewal moved the expiry; give the browser a fresh Max-Age too.
     // (A Server Component's server-to-server call can't pass this on.)
-    if (result.renewed) setSessionCookie(http.getResponse<Response>(), token);
+    if (result.renewed) setSessionCookie(res, token);
 
     const { id, email, name } = result.user;
     req.user = { id, email, name };

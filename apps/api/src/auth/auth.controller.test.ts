@@ -441,6 +441,17 @@ describe("POST /auth/logout", () => {
 });
 
 describe("GET /auth/me", () => {
+  it("is never cached (security review T30 #3)", async () => {
+    await addUser();
+    const token = await expectSignedIn(await login());
+
+    for (const cookie of [`${COOKIE}=${token}`, undefined]) {
+      expect((await me(cookie)).headers.get("cache-control")).toBe(
+        "private, no-store",
+      );
+    }
+  });
+
   it("returns only { id, email, name } for a valid cookie", async () => {
     const userId = await addUser();
     const token = await expectSignedIn(await login());
