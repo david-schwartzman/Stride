@@ -2,49 +2,29 @@
   "name": "stride",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint && prettier --check .",
+    "dev": "npm run dev -w @stride/web",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present && prettier --check .",
     "format": "prettier --write .",
-    "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run",
-    "test:e2e": "playwright test",
-    "db:migrate": "prisma migrate dev",
-    "db:generate": "prisma generate",
-    "postinstall": "prisma generate"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e -w apps/web"
   },
   "dependencies": {
-    "@node-rs/argon2": "2.2.1",
-    "@oslojs/crypto": "1.0.1",
-    "@oslojs/encoding": "1.1.0",
-    "@prisma/client": "6.19.3",
-    "lucide-react": "1.48.0",
-    "next": "16.4.0",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "zod": "4.6.6"
+    "@prisma/client": "6.19.3"
   },
   "devDependencies": {
-    "@playwright/test": "^1.64.0",
-    "@tailwindcss/turbopack": "^4",
-    "@testing-library/dom": "^10.4.2",
-    "@testing-library/jest-dom": "^7.0.1",
-    "@testing-library/react": "^16.3.3",
     "@types/node": "^24.19.2",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "10.0.5",
     "eslint": "^9",
-    "eslint-config-next": "16.4.0",
-    "eslint-config-prettier": "^10.1.8",
-    "jsdom": "^30.1.2",
     "prettier": "^3.9.10",
     "prisma": "6.19.3",
-    "tailwindcss": "^4",
     "typescript": "^5",
-    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^5.0.3"
   }
 }

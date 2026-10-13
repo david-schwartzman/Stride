@@ -21,7 +21,7 @@
 ## Workspaces & move
 
 - [x] T3 `git mv` `src/`, `public/`, `e2e/`, `next.config.ts`, `next-env.d.ts`, `tsconfig.json`, `vitest.config.ts`, `vitest.setup.ts`, `eslint.config.mjs` and `playwright.config.ts` into `apps/web/`. Create `apps/web/package.json` (name `@stride/web`) with the Next/React/zod dependencies and the scripts dev, build, start, lint, typecheck, test and test:e2e. `stride-design/` stays at the root (AC2)
-- [ ] T4 Rewrite the root `package.json`, then regenerate the single root `package-lock.json` and delete the stale root `tsconfig.tsbuildinfo` (AC1):
+- [x] T4 Rewrite the root `package.json`, then regenerate the single root `package-lock.json` and delete the stale root `tsconfig.tsbuildinfo` (AC1):
   - add `"workspaces": ["apps/*", "packages/*"]`
   - keep the shared devDeps at the root (typescript, eslint, prettier, vitest, @types/node) and add `concurrently`
   - make the root build, lint, typecheck and test scripts fan out with `--workspaces --if-present`
