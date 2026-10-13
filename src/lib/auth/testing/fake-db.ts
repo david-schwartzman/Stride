@@ -3,7 +3,7 @@
 // real database when TEST_DATABASE_URL is set.
 
 type Row = Record<string, unknown>;
-type Range = { gte?: Date; lt?: Date };
+type Range = { gt?: Date; gte?: Date; lt?: Date };
 type Where = Record<string, unknown>;
 
 function matches(row: Row, where: Where = {}): boolean {
@@ -12,9 +12,13 @@ function matches(row: Row, where: Where = {}): boolean {
     if (condition instanceof Date)
       return (value as Date).getTime() === condition.getTime();
     if (condition && typeof condition === "object") {
-      const { gte, lt } = condition as Range;
+      const { gt, gte, lt } = condition as Range;
       const time = (value as Date).getTime();
-      return (!gte || time >= gte.getTime()) && (!lt || time < lt.getTime());
+      return (
+        (!gt || time > gt.getTime()) &&
+        (!gte || time >= gte.getTime()) &&
+        (!lt || time < lt.getTime())
+      );
     }
     return value === condition;
   });
