@@ -77,8 +77,8 @@
 
 ## Web wiring
 
-- [ ] T35 Add `apps/web/src/lib/api-proxy.ts` `trustedProxyHeaders(incoming: Headers): Headers`: copy the incoming headers, delete every `x-stride-*`, then set `x-stride-proxy-secret` (`WEB_PROXY_SECRET`), `x-stride-client-ip` from the web's `getClientIp(headers)` (`src/lib/request-ip.ts`, #20; omitted when null) and `x-stride-forwarded-host` (`Host`). Add `apps/web/src/lib/api-client.ts` (`import "server-only"`) with `apiFetch(path, init)`, which calls `${API_URL}${path}` with `trustedProxyHeaders(await headers())` and the incoming `Cookie`. T36 goes green (AC14)
-- [ ] T17 Wire the `/api` rewrite in the web proxy, not in `next.config.ts` (AC4, AC10, AC12):
+- [x] T35 Add `apps/web/src/lib/api-proxy.ts` `trustedProxyHeaders(incoming: Headers): Headers`: copy the incoming headers, delete every `x-stride-*`, then set `x-stride-proxy-secret` (`WEB_PROXY_SECRET`), `x-stride-client-ip` from the web's `getClientIp(headers)` (`src/lib/request-ip.ts`, #20; omitted when null) and `x-stride-forwarded-host` (`Host`). Add `apps/web/src/lib/api-client.ts` (`import "server-only"`) with `apiFetch(path, init)`, which calls `${API_URL}${path}` with `trustedProxyHeaders(await headers())` and the incoming `Cookie`. T36 goes green (AC14)
+- [x] T17 Wire the `/api` rewrite in the web proxy, not in `next.config.ts` (AC4, AC10, AC12):
   - `apps/web/src/lib/api-proxy.ts`: `apiRewrite(request)` strips `/api`, keeps the query, and returns `NextResponse.rewrite(\`${API_URL}${path}\`, { request: { headers: trustedProxyHeaders(request.headers) } })` (T35), passing the whole `Cookie` header through. On Preview it adds `x-vercel-protection-bypass` when `API_PROTECTION_BYPASS_SECRET` is set
   - outside production, `API_URL` defaults to `http://localhost:4000`; in production a missing `API_URL` or `WEB_PROXY_SECRET` makes `/api/*` answer 503 and logs the variable name only
   - create `apps/web/src/proxy.ts` (Next 16.4) as a thin adapter: matcher includes `/api/:path*`, `/api/*` → `apiRewrite`, everything else → `NextResponse.next()`. This is a wiring edit, not claimed: protected-routes owns the file and later adds the page guard
@@ -143,7 +143,7 @@
   - `next.config.ts` has no `/api` rewrite
   - an ESLint fixture check that `@prisma/client` outside the allowed files is an error
   - confirm the full web suite and e2e (including `auth.spec.ts` and `api-health.spec.ts`) pass from the root
-- [~] T36 Write unit tests first (testing skill) for the trusted proxy headers (AC13, AC14):
+- [x] T36 Write unit tests first (testing skill) for the trusted proxy headers (AC13, AC14):
   - `proxy-secret.middleware.test.ts`: valid, wrong, missing and different-length secret; unset `WEB_PROXY_SECRET` rejects everything; `/cron/*` exempt; 401 body empty and the handler never runs
   - `api-proxy.test.ts`: client-sent `x-stride-*` headers replaced; a null IP omits `x-stride-client-ip`; `x-stride-forwarded-host` from `Host`
   - `api-client.test.ts`: `apiFetch` calls `API_URL` with the trusted headers and the incoming `Cookie`
