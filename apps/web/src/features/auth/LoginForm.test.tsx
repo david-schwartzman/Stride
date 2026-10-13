@@ -1,4 +1,4 @@
-// covers AC2, AC5, AC7, AC8, AC14 (T11, T13)
+// covers AC2, AC5, AC7, AC8, AC14 (T11, T13); auth-api-migration AC9 (T6)
 import {
   act,
   fireEvent,
@@ -7,14 +7,20 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { MESSAGES } from "@stride/shared";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { AuthFormState } from "./form-state";
+const router = vi.hoisted(() => ({ replace: vi.fn(), refresh: vi.fn() }));
+vi.mock("next/navigation", () => ({ useRouter: () => router }));
+const fetchMock = vi.fn<typeof fetch>();
 
-const loginAction = vi.hoisted(() =>
-  vi.fn<(prev: AuthFormState, data: FormData) => Promise<AuthFormState>>(),
-);
-vi.mock("./actions", () => ({ loginAction }));
+function respond(status: number, body: unknown) {
+  fetchMock.mockResolvedValue(
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { "content-type": "application/json" },
+    }),
+  );
+}
 
 import { LoginForm } from "./LoginForm";
 
@@ -31,7 +37,14 @@ function fillValid() {
 
 describe("LoginForm", () => {
   beforeEach(() => {
-    loginAction.mockReset();
+    fetchMock.mockReset();
+    router.replace.mockReset();
+    router.refresh.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it("renders labelled Email and Password fields with autocomplete", () => {
@@ -63,17 +76,53 @@ describe("LoginForm", () => {
 
     fireEvent.click(submit());
 
-    expect(loginAction).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
     expect(field("Password")).toHaveAccessibleDescription(
       "Use at least 12 characters.",
     );
   });
 
-  it("shows a wrong password inline on the Password field and keeps the email", async () => {
-    loginAction.mockResolvedValue({
-      fieldErrors: { password: MESSAGES.wrongPassword },
-      values: { email: "ada@x.com" },
+  it("POSTs the fields as JSON to /api/auth/login, then navigates to redirectTo and refreshes", async () => {
+    respond(200, { redirectTo: "/" });
+    render(<LoginForm />);
+    fillValid();
+
+    await act(async () => fireEvent.click(submit()));
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe("/api/auth/login");
+    expect(init?.method).toBe("POST");
+    expect(new Headers(init?.headers).get("content-type")).toBe(
+      "application/json",
+    );
+    expect(JSON.parse(String(init?.body))).toEqual({
+      email: "ada@x.com",
+      password: "correct horse battery",
     });
+    await waitFor(() => expect(router.replace).toHaveBeenCalledWith("/"));
+    expect(router.refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the API's field errors inline", async () => {
+    respond(400, {
+      fieldErrors: { email: "Enter a valid email address." },
+    });
+    render(<LoginForm />);
+    fillValid();
+
+    await act(async () => fireEvent.click(submit()));
+
+    await waitFor(() =>
+      expect(field("Email")).toHaveAccessibleDescription(
+        "Enter a valid email address.",
+      ),
+    );
+    expect(router.replace).not.toHaveBeenCalled();
+  });
+
+  it("shows a wrong password inline on the Password field and keeps the email", async () => {
+    respond(401, { fieldErrors: { password: MESSAGES.wrongPassword } });
     render(<LoginForm />);
     fillValid();
 
@@ -90,10 +139,7 @@ describe("LoginForm", () => {
   });
 
   it("shows too many attempts as a form-level alert", async () => {
-    loginAction.mockResolvedValue({
-      formError: MESSAGES.tooManyAttempts(4),
-      values: { email: "ada@x.com" },
-    });
+    respond(429, { formError: MESSAGES.tooManyAttempts(4) });
     render(<LoginForm />);
     fillValid();
 
@@ -105,7 +151,7 @@ describe("LoginForm", () => {
   });
 
   it("shows a pending state and blocks double submit", async () => {
-    loginAction.mockReturnValue(new Promise(() => {}));
+    fetchMock.mockReturnValue(new Promise(() => {}));
     render(<LoginForm />);
     fillValid();
 
@@ -114,6 +160,6 @@ describe("LoginForm", () => {
     await waitFor(() => expect(submit()).toBeDisabled());
     expect(submit()).toHaveTextContent("Logging in…");
     fireEvent.click(submit());
-    expect(loginAction).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

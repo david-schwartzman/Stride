@@ -1,4 +1,4 @@
-// covers AC1, AC4, AC7, AC8, AC11 (T10, T13)
+// covers AC1, AC4, AC7, AC8, AC11 (T10, T13); auth-api-migration AC9 (T6)
 import {
   act,
   fireEvent,
@@ -7,14 +7,20 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { MESSAGES } from "@stride/shared";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { AuthFormState } from "./form-state";
+const router = vi.hoisted(() => ({ replace: vi.fn(), refresh: vi.fn() }));
+vi.mock("next/navigation", () => ({ useRouter: () => router }));
+const fetchMock = vi.fn<typeof fetch>();
 
-const signupAction = vi.hoisted(() =>
-  vi.fn<(prev: AuthFormState, data: FormData) => Promise<AuthFormState>>(),
-);
-vi.mock("./actions", () => ({ signupAction }));
+function respond(status: number, body: unknown) {
+  fetchMock.mockResolvedValue(
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { "content-type": "application/json" },
+    }),
+  );
+}
 
 import { SignupForm } from "./SignupForm";
 
@@ -37,7 +43,14 @@ const VALID = {
 
 describe("SignupForm", () => {
   beforeEach(() => {
-    signupAction.mockReset();
+    fetchMock.mockReset();
+    router.replace.mockReset();
+    router.refresh.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it("renders labelled Name, Email and Password fields with autocomplete and the password hint", () => {
@@ -90,7 +103,7 @@ describe("SignupForm", () => {
 
     fireEvent.click(submit());
 
-    expect(signupAction).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
     expect(field("Name")).toHaveAccessibleDescription("Enter your name.");
     expect(field("Email")).toHaveAccessibleDescription(
       "Enter a valid email address.",
@@ -100,22 +113,32 @@ describe("SignupForm", () => {
     );
   });
 
-  it("shows the existing-email error on the Email field with a Log in link", async () => {
-    signupAction.mockResolvedValue({
-      fieldErrors: { email: MESSAGES.emailTaken },
-      values: { name: "Ada Lovelace", email: "ada@x.com" },
-    });
+  it("POSTs the fields as JSON to /api/auth/signup, then navigates to redirectTo and refreshes", async () => {
+    respond(200, { redirectTo: "/" });
     render(<SignupForm />);
     fill(VALID);
 
     await act(async () => fireEvent.click(submit()));
 
-    const data = signupAction.mock.calls[0][1];
-    expect(Object.fromEntries(data)).toEqual({
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe("/api/auth/signup");
+    expect(init?.method).toBe("POST");
+    expect(JSON.parse(String(init?.body))).toEqual({
       name: "Ada Lovelace",
       email: "ada@x.com",
       password: VALID.Password,
     });
+    await waitFor(() => expect(router.replace).toHaveBeenCalledWith("/"));
+    expect(router.refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the existing-email error on the Email field with a Log in link, keeping name and email", async () => {
+    respond(409, { fieldErrors: { email: MESSAGES.emailTaken } });
+    render(<SignupForm />);
+    fill(VALID);
+
+    await act(async () => fireEvent.click(submit()));
+
     await waitFor(() =>
       expect(field("Email")).toHaveAttribute("aria-invalid", "true"),
     );
@@ -124,15 +147,14 @@ describe("SignupForm", () => {
       "href",
       "/login",
     );
+    expect(field("Name").value).toBe("Ada Lovelace");
     expect(field("Email").value).toBe("ada@x.com");
     expect(field("Password").value).toBe("");
+    expect(router.replace).not.toHaveBeenCalled();
   });
 
   it("shows a form-level error from the server", async () => {
-    signupAction.mockResolvedValue({
-      formError: MESSAGES.signupLimit,
-      values: {},
-    });
+    respond(429, { formError: MESSAGES.signupLimit });
     render(<SignupForm />);
     fill(VALID);
 
@@ -144,7 +166,7 @@ describe("SignupForm", () => {
   });
 
   it("shows a pending state and blocks double submit", async () => {
-    signupAction.mockReturnValue(new Promise(() => {}));
+    fetchMock.mockReturnValue(new Promise(() => {}));
     render(<SignupForm />);
     fill(VALID);
 
@@ -153,6 +175,6 @@ describe("SignupForm", () => {
     await waitFor(() => expect(submit()).toBeDisabled());
     expect(submit()).toHaveTextContent("Creating account…");
     fireEvent.click(submit());
-    expect(signupAction).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

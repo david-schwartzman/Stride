@@ -1,20 +1,28 @@
 "use client";
 
 import { loginSchema } from "@stride/shared";
+import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 
 import { Input } from "@/components/ui/Input";
 
-import { loginAction } from "./actions";
 import type { AuthFormState } from "./form-state";
 import { FormError } from "./FormError";
+import { submitAuth } from "./submit-auth";
 import { SubmitButton } from "./SubmitButton";
 import { useAuthForm } from "./use-auth-form";
 
 const initialState: AuthFormState = {};
 
 export function LoginForm() {
-  const [state, formAction] = useActionState(loginAction, initialState);
+  const router = useRouter();
+  const [state, formAction] = useActionState(
+    submitAuth("login", (redirectTo) => {
+      router.replace(redirectTo);
+      router.refresh();
+    }),
+    initialState,
+  );
   const { errorFor, onBlur, onSubmit } = useAuthForm(loginSchema, state);
 
   return (

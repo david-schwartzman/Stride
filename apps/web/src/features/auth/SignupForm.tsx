@@ -2,20 +2,28 @@
 
 import Link from "next/link";
 import { MESSAGES, signupSchema } from "@stride/shared";
+import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 
 import { Input } from "@/components/ui/Input";
 
-import { signupAction } from "./actions";
 import type { AuthFormState } from "./form-state";
 import { FormError } from "./FormError";
+import { submitAuth } from "./submit-auth";
 import { SubmitButton } from "./SubmitButton";
 import { useAuthForm } from "./use-auth-form";
 
 const initialState: AuthFormState = {};
 
 export function SignupForm() {
-  const [state, formAction] = useActionState(signupAction, initialState);
+  const router = useRouter();
+  const [state, formAction] = useActionState(
+    submitAuth("signup", (redirectTo) => {
+      router.replace(redirectTo);
+      router.refresh();
+    }),
+    initialState,
+  );
   const { errorFor, onBlur, onSubmit } = useAuthForm(signupSchema, state);
 
   const emailError = errorFor("email");
