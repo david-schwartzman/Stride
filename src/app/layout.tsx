@@ -32,7 +32,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <SkipLink />
         <Header />
-        <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
+        {/* scroll-mt clears the sticky Header (57px mobile, 93px md+) so the
+            skip link doesn't land #main underneath it. */}
+        <main
+          id="main"
+          tabIndex={-1}
+          className="flex-1 scroll-mt-15 focus:outline-none md:scroll-mt-24"
+        >
           {children}
         </main>
         <Footer />

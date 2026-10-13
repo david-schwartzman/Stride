@@ -1,5 +1,5 @@
 // covers AC1, AC10, T13, T14
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 test("every page renders the shared layout", async ({ page }) => {
   await page.goto("/");
@@ -21,6 +21,34 @@ test("skip link is the first focusable element and jumps to #main", async ({
   await expect(page).toHaveURL(/#main$/);
   await expect(page.locator("main#main")).toBeFocused();
 });
+
+for (const width of [375, 1280]) {
+  test(`skip link lands #main below the sticky header at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await skipPastHeader(page);
+  });
+}
+
+async function skipPastHeader(page: Page) {
+  await page.goto("/");
+  // Make the page taller than the viewport so the jump actually scrolls.
+  await page.evaluate(() => {
+    const filler = document.createElement("div");
+    filler.style.height = "3000px";
+    document.getElementById("main")?.append(filler);
+    window.scrollTo(0, 1500);
+  });
+
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/#main$/);
+
+  const headerBottom = (await page.getByRole("banner").boundingBox())!;
+  const mainTop = (await page.locator("main#main").boundingBox())!.y;
+  expect(mainTop).toBeGreaterThanOrEqual(headerBottom.y + headerBottom.height);
+}
 
 test.describe("at 375px", () => {
   test.use({ viewport: { width: 375, height: 800 } });
