@@ -136,10 +136,11 @@
   - `apps/api/src/health/health.controller.test.ts`: `SELECT 1` succeeds → 200 ok; Prisma throws → 503 down; the body has no error text or secrets
   - parse tests for the `packages/shared` schema
   - one `apps/web` test that imports `healthResponseSchema` from `@stride/shared`
-- [ ] T30 Write unit tests (testing skill) for the common API middleware (AC8, AC9):
+- [x] T30 Write unit tests (testing skill) for the common API middleware (AC8, AC9):
   - `origin-check.middleware.test.ts`: POST/PUT/PATCH/DELETE with matching, mismatching and missing Origin; GET/HEAD pass; the handler isn't called on 403
   - `origin-check.middleware.test.ts` also covers a missing `x-stride-forwarded-host` and `http://` in and out of production
   - `request-ip.test.ts`: valid IPv4/IPv6 in `x-stride-client-ip`, garbage, empty, a missing header, and a request carrying only `x-forwarded-for` or `x-real-ip` (→ null)
+  - Written with T15/T16 (`12405fe`, `027698a`); verified 2026-10-13: every case above is covered and passes in the API suite (25 passed)
 - [x] T31 Write config and regression tests (testing skill) for the web wiring (AC2, AC4, AC6, AC10, AC11):
   - `apiRewrite`: `/api` stripped, query kept, `Cookie` passed through, bypass header only on Preview with the secret set, and the production 503 when `API_URL` or `WEB_PROXY_SECRET` is missing
   - `next.config.ts` has no `/api` rewrite
