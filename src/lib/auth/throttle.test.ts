@@ -207,6 +207,19 @@ describe("login throttle", () => {
     ).toBe(true);
   });
 
+  it("allows the attempt when the email's failures are cleared mid-check", async () => {
+    await fail(5);
+    // A successful login in another tab clears the rows between count and findFirst.
+    const findFirst = fake.db.authAttempt.findFirst.bind(fake.db.authAttempt);
+    vi.spyOn(fake.db.authAttempt, "findFirst").mockImplementationOnce(
+      async (args) => {
+        await clearLoginFailures("a@x.com");
+        return findFirst(args);
+      },
+    );
+
+    expect(await checkLoginThrottle("a@x.com", IP)).toEqual({ allowed: true });
+  });
 
   it("doesn't block an IP for 29 failures", async () => {
     for (let i = 0; i < 29; i++) await recordLoginFailure(`user${i}@x.com`, IP);

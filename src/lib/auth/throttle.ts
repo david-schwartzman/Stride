@@ -138,7 +138,10 @@ async function emailBlockedUntil(
     orderBy: { createdAt: "desc" },
   });
   const step = Math.min(failures - emailMinFailures, emailDelaysMs.length - 1);
-  return last!.createdAt.getTime() + emailDelaysMs[step];
+  // Null when clearLoginFailures (a successful login in another tab) ran
+  // between the count and this read: nothing left to block on.
+  if (!last) return 0;
+  return last.createdAt.getTime() + emailDelaysMs[step];
 }
 
 async function ipBlockedUntil(ip: string, exclude: string[]): Promise<number> {
