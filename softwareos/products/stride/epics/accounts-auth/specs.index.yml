@@ -2,6 +2,31 @@
 generated: 2026-10-13
 epic: accounts-auth
 specs:
+  - folder: 2026-10-13-api-foundation
+    slug: api-foundation
+    status: shaped
+    branch: feat/accounts-auth/api-foundation
+    covers:
+      - package.json
+      - package-lock.json
+      - tsconfig.base.json
+      - apps/web/package.json
+      - apps/api/package.json
+      - apps/api/nest-cli.json
+      - apps/api/tsconfig.json
+      - apps/api/vercel.json
+      - apps/api/.env.example
+      - apps/api/src/main.ts
+      - apps/api/src/app.module.ts
+      - apps/api/src/health/**
+      - apps/api/src/prisma/**
+      - apps/api/src/common/**
+      - apps/api/prisma/schema.prisma
+      - packages/shared/package.json
+      - packages/shared/tsconfig.json
+      - packages/shared/src/index.ts
+      - .github/workflows/**
+      - playwright.config.ts
   - folder: 2026-10-08-app-foundation
     slug: app-foundation
     status: in-progress
