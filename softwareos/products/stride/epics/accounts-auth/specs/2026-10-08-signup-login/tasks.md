@@ -11,7 +11,7 @@
 
 ## Auth module
 
-- [ ] T15 Add @oslojs/crypto + @oslojs/encoding (exact pins) and src/lib/auth/session.ts (generateSessionToken, hashToken, createSession, validateSessionToken with 30d sliding / renew under 15d / 90d cap, invalidateSession, invalidateAllSessions)
+- [x] T15 Add @oslojs/crypto + @oslojs/encoding (exact pins) and src/lib/auth/session.ts (generateSessionToken, hashToken, createSession, validateSessionToken with 30d sliding / renew under 15d / 90d cap, invalidateSession, invalidateAllSessions)
 - [ ] T16 Add src/lib/auth/cookie.ts (set/delete with exact attributes; __Host-stride_session in production, stride_session in dev) and src/lib/auth/current.ts (getCurrentSession wrapped in React cache())
 - [ ] T17 Add src/lib/request-ip.ts (`getClientIp(headers)`: `x-real-ip` validated with `net.isIP()`, else null; never `x-forwarded-for`) and src/lib/auth/throttle.ts (AuthAttempt-based checkLoginThrottle, recordLoginFailure, clearLoginFailures, checkSignupThrottle; each normalises the email itself via normalizeEmail (trim + lowercase) from src/lib/auth/email.ts, also used by T5's schemas; exact limits + back-off table per AC14 as an exported const; IP from `getClientIp` only, per-IP checks skipped when it's null)
 - [ ] T18 Spike before building forms: deploy a throwaway route to a Vercel preview that hashes + verifies a password with @node-rs/argon2 (pepper from env) and sets/reads the session cookie; confirm the native module loads in the serverless function, then remove the route
