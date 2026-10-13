@@ -2,6 +2,8 @@
 // auth module's unit tests run without Postgres. session.db.test.ts covers the
 // real database when TEST_DATABASE_URL is set.
 
+import { Prisma } from "@prisma/client";
+
 type Row = Record<string, unknown>;
 type Range = { gt?: Date; gte?: Date; lt?: Date };
 type Where = Record<string, unknown>;
@@ -43,11 +45,24 @@ export function createFakeDb() {
     authAttempt: [] as Row[],
   };
 
-  function model(name: keyof typeof tables, defaults: () => Row) {
+  function model(
+    name: keyof typeof tables,
+    defaults: () => Row,
+    unique: string[] = [],
+  ) {
     const rows = () => tables[name];
     return {
       async create({ data }: { data: Row }) {
         const row = { ...defaults(), ...data };
+        const clash = unique.find((field) =>
+          rows().some((r) => r[field] === row[field]),
+        );
+        if (clash) {
+          throw new Prisma.PrismaClientKnownRequestError(
+            "Unique constraint failed",
+            { code: "P2002", clientVersion: "fake", meta: { target: [clash] } },
+          );
+        }
         tables[name].push(row);
         return { ...row };
       },
@@ -112,10 +127,11 @@ export function createFakeDb() {
 
   return {
     tables,
-    user: model("user", () => ({
-      id: `user_${++nextId}`,
-      createdAt: new Date(),
-    })),
+    user: model(
+      "user",
+      () => ({ id: `user_${++nextId}`, createdAt: new Date() }),
+      ["email"],
+    ),
     session: model("session", () => ({
       createdAt: new Date(),
       lastSeenAt: new Date(),
