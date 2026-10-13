@@ -14,7 +14,7 @@
   - `testing/fake-db.ts`, typed against `PrismaService`
   - `on-signed-in.test.ts` from `run-on-signed-in.test.ts`
   - a bad or missing `PASSWORD_PEPPER` makes `AuthModule` init throw, without the value in the message
-- [~] T3 Port `session.db.test.ts` and `throttle.db.test.ts` to `apps/api/src/auth/` (`PrismaService` on `TEST_DATABASE_URL`, `describe.skipIf` when unset) (AC14, AC15)
+- [x] T3 Port `session.db.test.ts` and `throttle.db.test.ts` to `apps/api/src/auth/` (`PrismaService` on `TEST_DATABASE_URL`, `describe.skipIf` when unset) (AC14, AC15)
 - [x] T4 Write `apps/api/src/auth/auth.controller.test.ts` (testing skill; Nest testing module + fake DB), replacing `actions.test.ts` (AC2–AC6, AC13):
   - sign-up: 200 `{redirectTo:"/"}`; 400 `fieldErrors`; 409 `emailTaken`, no user; 429 `formError` (before validation); incoming session ended; `onSignedIn` throw logged, sign-up still succeeds
   - login: new token and incoming session ended; invalid body → 400 `fieldErrors`; failures cleared; 401 `fieldErrors.password` for unknown email and wrong password alike, dummy hash called, no `Set-Cookie`; 429 back-off message; null IP skips the per-IP limits
