@@ -71,6 +71,7 @@
 
 ## Verification
 
-- [ ] T29 From the root, run lint, typecheck, test and test:e2e with `TEST_DATABASE_URL` set (`*.db.test.ts` and `e2e/auth.spec.ts` run); spot-check an existing user's login (AC14, AC15)
+- [x] T29 From the root, run lint, typecheck, test and test:e2e with `TEST_DATABASE_URL` set (`*.db.test.ts` and `e2e/auth.spec.ts` run); spot-check an existing user's login (AC14, AC15)
+  - Done 2026-10-13: lint, typecheck, test (API 148 incl. the 8 Postgres tests on the Neon demo DB, web 94, shared 44) and test:e2e (10/10, both apps). Existing-user spot-check not possible: the database had no pre-migration accounts; the Argon2 parameters and pepper are unchanged (password.service.test.ts)
 - [ ] T30 Security review (security-reviewer agent) of `apps/api/src/auth/**`, the `main.ts`/`app.module.ts` changes and the web fetch path (AC3–AC7, AC12, AC13)
 - [ ] T31 Run QA against acceptance criteria AC1–AC15 (qa skill)
