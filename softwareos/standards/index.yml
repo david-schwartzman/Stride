@@ -2,7 +2,7 @@
 
 global:
   auth-security:
-    description: Nest AuthGuard on every mutating or private API endpoint, user ID only from the session, POST-only changes with an Origin check, only apps/api/src/auth touches tokens/hashes, secrets only on the API project, none in logs or NEXT_PUBLIC_
+    description: Nest AuthGuard on every mutating or private API endpoint, user ID only from the session, POST-only changes with an Origin check against the trusted forwarded host, API rejects calls without the web proxy secret, client IP only from the secret-verified header (null fails open), only apps/api/src/auth touches tokens/hashes, secrets only on the API project, none in logs or NEXT_PUBLIC_
   git-workflow:
     description: Needs description - run /index-standards
   tech-stack:

@@ -45,6 +45,6 @@ No application code exists yet (`src/` not scaffolded).
 
 ## Planner assumptions
 
-- The IP comes only from `getClientIp()`, never the leftmost `x-forwarded-for`, which the client controls. Before the 2026-10-13 move that meant Vercel's `x-real-ip`. Now the request crosses the web's `/api` rewrite into the API project, so the API sees the rewrite hop; which forwarded header is trustworthy is settled by candidate `api-foundation` on a preview, and AC6 follows it.
+- The IP comes only from `getClientIp()`, never the leftmost `x-forwarded-for`, which the client controls. Before the 2026-10-13 move that meant Vercel's `x-real-ip`. Now the request crosses the web's `/api` rewrite into the API project, so the API sees the rewrite hop. Decided in the PR #21 review: the web proxy forwards the client IP as `x-stride-client-ip` with the `x-stride-proxy-secret` header, and the API reads it only after checking the secret (`architecture.md`, Trusted proxy headers). AC6 follows it.
 - The AC10 e2e test reads `AuthEvent` rows through a test-only Prisma client on the CI `DATABASE_URL` (the Postgres service container signup-login adds).
 - The `password_change` count comes from the in-transaction session delete. If `changePasswordAction` uses `invalidateAllSessions`, that helper must return a count (T17).

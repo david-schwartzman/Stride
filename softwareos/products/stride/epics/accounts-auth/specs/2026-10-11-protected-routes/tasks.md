@@ -27,8 +27,3 @@
 
 - [ ] T11 Write tests first (testing skill): Vitest table for safeCallbackUrl (//, /\, scheme, javascript:, encoded, /login loop, length cap, query preserved); guard() matrix (protected vs public paths, sub-paths, /accounting and /wishlists not protected, cookie present/absent); refreshSessionCookie attributes + proxy refresh on GET only with cookie (AC12); requireUser redirect incl. revoked/expired/tampered token with cookie present; login/signup endpoints honour + re-sanitise callbackUrl; RTL for HeaderSession signed-in/out, the Suspense fallback showing neither Sign up/Log in nor Log out, and LoginBanner visibility; Playwright e2e/protected-routes.spec.ts (sign up → header log out → /account → login → back on /account; /checkout banner; //evil.com → /; old cookie copied before logout → /account redirects to login)
 - [ ] T12 Run QA against acceptance criteria (qa skill)
-
-## API guard (added 2026-10-13, NestJS backend)
-
-- [ ] T13 Add apps/api/src/auth/auth.guard.ts (Nest AuthGuard: session cookie → session service → request user, 401 otherwise) and GET /auth/me using it — AC9, AC10
-- [ ] T14 Write tests first (testing skill) for the AuthGuard and GET /auth/me: valid, missing, expired, revoked and tampered cookie; no user data in the 401 body

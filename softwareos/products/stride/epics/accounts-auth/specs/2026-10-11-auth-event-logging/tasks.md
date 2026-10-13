@@ -15,8 +15,8 @@
 ## Tests first (TDD)
 
 - [ ] T3 Write failing Vitest cases in apps/api/src/auth-events/request-meta.test.ts (build a fake Nest request with headers):
-  - `getRequestMeta(req)` returns the IP from the API's `getClientIp` (valid forwarded client-IP header, per api-foundation), and null when it's missing or invalid.
-  - A spoofed `x-forwarded-for` alone gives a null IP.
+  - `getRequestMeta(req)` returns the IP from the API's `getClientIp(req)`: the validated `x-stride-client-ip` on a request that passed the proxy-secret check, and null when it's missing or invalid.
+  - A spoofed `x-forwarded-for` or `x-real-ip` alone gives a null IP.
   - `user-agent` has control characters stripped and is truncated to 512 characters. Test with exactly 512, 513 and a multi-KB value.
   - A missing user agent gives null (AC6).
   - (testing skill)
@@ -58,7 +58,7 @@
   - Capture every stdout/stderr line and every `authEvent.create` payload.
   - Assert that none of those strings appear as a substring of any captured line or row (AC5).
   - (testing skill)
-- [ ] T11 Write failing Playwright e2e/auth-events.spec.ts against real Postgres, with `extraHTTPHeaders` setting the client-IP header api-foundation settles to `203.0.113.7`:
+- [ ] T11 Write failing Playwright e2e/auth-events.spec.ts against real Postgres, with `extraHTTPHeaders` setting `x-real-ip: 203.0.113.7` (the web proxy forwards it to the API as `x-stride-client-ip` with the proxy secret):
   - Steps: sign up a fresh email, log out, log in with a wrong password, then log in correctly.
   - Query `AuthEvent` for the user, ordered by `createdAt`, and expect exactly `signup`, `logout`, `login_failure` (`bad_password`), `login_success`.
   - Each row has `ipAddress` `203.0.113.7` and a non-null `userAgent`. The `logout` `sessionPublicId` equals the `signup` one. No row has a `sessionPublicId` that matches any `Session.id`.
@@ -71,8 +71,8 @@
   - `AuthEventInput` is a discriminated union on `type` with per-type fields: `signup_failure.reason: "email_taken" | "throttled"`; `login_failure` as a union of `{ reason: "bad_password"; userId }` and `{ reason: "unknown_email" | "throttled" }` with no `userId`; `password_change_failure.reason: "wrong_current_password" | "throttled"`; `logout_others` / `password_change` have `count: number`; `sessionPublicId` only on `signup`, `login_success`, `logout`, `session_revoked`, `password_change`.
   - Add a per-type allowlist of keys used by the recorder.
   - No free-form or metadata field (AC1, AC4, AC5).
-- [ ] T13 Add apps/api/src/auth-events/request-meta.ts. `async getRequestMeta()` awaits `headers()` and takes the IP from `getClientIp(h)` (apps/api/src/common/request-ip.ts, signup-login); no second IP parser. It strips control characters from `user-agent` (`/[\u0000-\u001F\u007F]/g`) and truncates it to 512 characters (AC6). T3 goes green.
-- [ ] T14 Add apps/api/src/auth-events/record.ts (server-only, `import "server-only"`). `async recordAuthEvent(input: AuthEventInput): Promise<void>`:
+- [ ] T13 Add apps/api/src/auth-events/request-meta.ts. `getRequestMeta(req)` takes the Nest request (no `next/headers`) and gets the IP from `getClientIp(req)` (apps/api/src/common/request-ip.ts, api-foundation); no second IP parser. It strips control characters from `user-agent` (`/[\u0000-\u001F\u007F]/g`) and truncates it to 512 characters (AC6). T3 goes green.
+- [ ] T14 Add apps/api/src/auth-events/record.ts (no `import "server-only"`: it throws outside React Server Components and would crash the API module on load). `async recordAuthEvent(req, input: AuthEventInput): Promise<void>`, where `req` is the Nest request:
   - `getRequestMeta(req)` and capture `createdAt = new Date()` once.
   - Build the row from the type's allowlist only.
   - Non-throttled: immediately `console.log(JSON.stringify({ evt: "auth", type, reason, count, userId, sessionPublicId, createdAt }))` on one line (no IP/UA), then schedule `waitUntil((async () => { try { await prisma.authEvent.create({ data: { ...row, createdAt } }) } catch { console.error(JSON.stringify({ evt: "auth_event_write_failed", type })) } })`.
@@ -83,7 +83,7 @@
 
 ## Auth module (sibling files, wiring edits)
 
-- [ ] T17 Edit the API session service in apps/api/src/auth/ (signup-login file). `createSession` returns `{ publicId }` alongside its current return value. `invalidateOtherSessions` returns the `deleteMany` count. If `POST /account/password` uses `invalidateAllSessions`, that returns its count too. Update the existing callers in src/features/auth/actions.ts and apps/api/src/account-security/ so they still type-check (AC3). T8 goes green.
+- [ ] T17 Edit the API session service in apps/api/src/auth/ (signup-login file). `createSession` returns `{ publicId }` alongside its current return value. `invalidateOtherSessions` returns the `deleteMany` count. If `POST /account/password` uses `invalidateAllSessions`, that returns its count too. Update the existing callers in apps/api/src/auth/ and apps/api/src/account-security/ so they still type-check (AC3). T8 goes green.
 - [ ] T18 Edit the API auth controller/service in apps/api/src/auth/ (signup-login file):
   - `POST /auth/signup`: `signup_failure` / `throttled` after the throttle check; `signup_failure` / `email_taken` on P2002; `signup` with `userId` + `publicId` after `createSession`.
   - `POST /auth/login`: `login_failure` / `throttled`; `unknown_email` on the dummy-hash branch, with no `userId` and no email; `bad_password` with `userId`; `login_success` with `userId` + `publicId`.

@@ -10,7 +10,8 @@
 
 - Separate NestJS API (`apps/api`) in the same npm-workspaces monorepo as the Next.js frontend (`apps/web`); shared Zod schemas and types in `packages/shared`
 - **Boundary rule:** `apps/web` never imports Prisma, `@node-rs/argon2` or any secret. All data goes through the API. If a page needs data that no endpoint returns, add an endpoint
-- The browser reaches the API only through the same-origin `/api/*` rewrite; Server Components call it server-to-server at `API_URL`
+- The browser reaches the API only through the same-origin `/api/*` rewrite, which the web proxy does (not `next.config`, so it can add the trusted proxy headers and strip the `/api` prefix); Server Components call it server-to-server at `API_URL` with the same headers (see `auth-security.md`, Requests)
+- **Deploy order:** web and API don't deploy atomically. The API ships first, and every API change stays backward-compatible with the web deploy in production; remove old endpoints or fields only in a later deploy
 - Server Components load data through the API; client forms send writes to `/api/*` — no Server Actions for data
 - Zod for input validation on both client and server, from `packages/shared`
 
@@ -41,7 +42,7 @@
 
 ## Other
 
-- Vercel hosting: two projects (web, API), each with preview deployments per PR; a web preview points at the API preview from the same commit
+- Vercel hosting: two projects (web, API), each with preview deployments per PR. Goal: a web preview calls the API preview from the same commit. The mechanism (and the Deployment Protection bypass) is settled by the `api-foundation` spike; until then a web preview may call the shared `develop` API preview
 - GitHub Actions CI: lint, typecheck, tests on every PR
 - Product images stored in the repo under `/public`
 - Payment is mocked (no real payment provider)

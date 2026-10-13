@@ -3,7 +3,7 @@
 > Epic: ../../epic.md
 > Status: shaped
 > Branch: feat/accounts-auth/session-management
-> Covers: /account/security, src/app/account/security/**, src/features/account-security/**, packages/shared/src/account-security/**, apps/api/src/account-security/**, apps/api/src/cron/**, e2e/session-management.spec.ts, apps/api/prisma/migrations/*_session_public_id/**
+> Covers: /account/security, apps/web/src/app/account/security/**, apps/web/src/features/account-security/**, packages/shared/src/account-security/**, apps/api/src/account-security/**, apps/api/src/cron/**, e2e/session-management.spec.ts, apps/api/prisma/migrations/*_session_public_id/**
 
 ## Overview
 
@@ -41,6 +41,8 @@ New route `/account/security`: change password + "Your devices". There are no de
 16. AC16: Playwright passes in CI against a real Postgres. It signs the same user in on two browser contexts A and B; A's devices list shows 2 rows; A signs out "other devices" and B's next navigation lands on login. Then it signs B in again, changes the password in A, and checks that B is logged out, A is still signed in, the old password fails at login and the new one works.
 
 ## Technical Approach
+
+- **Paths:** this spec is built after `api-foundation`, so web files live under `apps/web/`. In this spec and its tasks, `src/...` means `apps/web/src/...`.
 
 Since 2026-10-13 the backend is a separate NestJS API (`apps/api`), reached from the browser through the same-origin `/api` rewrite and from Server Components at `API_URL` (`../../../../architecture.md`). Everything that touches the database, tokens or hashes below lives in the API; the web app only renders and posts.
 
@@ -97,3 +99,4 @@ Since 2026-10-13 the backend is a separate NestJS API (`apps/api`), reached from
 | 2026-10-12 | david-schwartzman | revised | PR review: `revokeOtherSessionsAction` calls `requireUser()` first (AC11 no-session case); explicit order of `auth-security.md` edits; 375px viewport check in e2e; security-plan sections copied into the repo | PR #15 |
 | 2026-10-12 | david-schwartzman | revised | PR review: AC13 retention reason now cites the 60-minute sign-up-per-IP window (signup-login AC14) | PR #19 |
 | 2026-10-13 | david-schwartzman | change | Backend moved to a separate NestJS API: actions become `apps/api/src/account-security/` endpoints behind the `AuthGuard`, auth module edits land in `apps/api/src/auth/`, schema moves to `packages/shared`, cron becomes the API's `GET /cron/cleanup-sessions`; AC3, AC10, AC11, AC13, AC14, Technical Approach, Standards Applied and Covers updated; open tasks reworded — tech-lead decision for a clear frontend / backend split | softwareos/products/stride/architecture.md |
+| 2026-10-13 | david-schwartzman | revised | PR review: Covers uses `apps/web/src/...` for web files, with a Paths note in the Technical Approach; references.md describes `/api` forms and `POST /account/sessions/revoke` instead of Server Action patterns | https://github.com/david-schwartzman/Stride/pull/21 |
