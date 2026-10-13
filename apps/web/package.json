@@ -16,6 +16,7 @@
     "@oslojs/crypto": "1.0.1",
     "@oslojs/encoding": "1.1.0",
     "@prisma/client": "6.19.3",
+    "@stride/shared": "0.1.0",
     "lucide-react": "1.48.0",
     "next": "16.4.0",
     "react": "19.3.0",

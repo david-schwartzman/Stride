@@ -62,7 +62,7 @@
   - `src/health.ts`: a zod `healthResponseSchema` for `{status:"ok",db:"ok"}` | `{status:"error",db:"down"}`, plus the inferred `HealthResponse` type
   - `src/index.ts`
   - decide how the apps consume it: the TS source (via Next `transpilePackages` and swc in the API) or a `tsc` build to `dist`. If it needs a build, make `npm run build` order it before both apps
-- [ ] T13 Add `@stride/shared` as a dependency of `apps/api` and `apps/web`. If the apps consume the source, also add `transpilePackages: ["@stride/shared"]` in `apps/web/next.config.ts` (AC7)
+- [x] T13 Add `@stride/shared` as a dependency of `apps/api` and `apps/web`. If the apps consume the source, also add `transpilePackages: ["@stride/shared"]` in `apps/web/next.config.ts` (AC7)
 
 ## API endpoints & common
 
