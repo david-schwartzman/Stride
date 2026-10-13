@@ -40,7 +40,7 @@
 
 ## Gotchas
 
-- Greenfield: no code yet — follow the specs and standards. (The app-foundation and signup-login code predates the 2026-10-13 split and still lives in one Next app, which keeps `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER` and `GUEST_CART_SECRET` on the web project until candidate specs `api-foundation` and `auth-api-migration` move it. Remove them from the web project only after `auth-api-migration` ships.)
+- Greenfield: no code yet — follow the specs and standards. (Since `auth-api-migration`, the web app reads no database URL or auth secret. The web Vercel project may still hold `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER` and `GUEST_CART_SECRET` from before the 2026-10-13 split: a human removes them from the web project once `auth-api-migration` is deployed.)
 - `apps/web` never imports Prisma, `@node-rs/argon2` or a secret — if a page needs data, add an API endpoint
 - Keep the API behind the same-origin `/api` rewrite. Calling the API on its own domain from the browser breaks the `__Host-` cookie (no `Domain` allowed) and would need CORS
 - Client IP crosses the rewrite. The API reads it only from `x-stride-client-ip` on a request with a valid `x-stride-proxy-secret` (see Trusted proxy headers), never from `x-forwarded-for`, `x-real-ip` or the connecting address: across the rewrite those are the web project's egress IP, which all shoppers share. When the IP is missing or invalid it is null, and per-IP throttles **fail open** (skip the per-IP check, keep the per-account one) rather than put everyone in one bucket. Verify on an `api-foundation` preview

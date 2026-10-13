@@ -62,7 +62,7 @@
 
 ## Docs
 
-- [ ] T25 `softwareos/products/stride/architecture.md:43`: drop the temporary Prisma-in-web Gotcha; keep the human Vercel step to remove `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER` and `GUEST_CART_SECRET` from the web project (AC11)
+- [x] T25 `softwareos/products/stride/architecture.md:43`: drop the temporary Prisma-in-web Gotcha; keep the human Vercel step to remove `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER` and `GUEST_CART_SECRET` from the web project (AC11)
 - [ ] T26 `softwareos/standards/global/auth-security.md:28`: remove the "Until `auth-api-migration` ships…" sentence
 - [ ] T27 `epics/accounts-auth/tech-plan.md`: line 56 candidate → shaped with a spec link; update line 21's parenthetical
 - [ ] T28 **(human-confirmed)** `/spec-changes` on the done specs:
