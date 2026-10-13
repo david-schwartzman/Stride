@@ -56,7 +56,8 @@
 
 ## Shared package
 
-- [ ] T12 Create `packages/shared` (name `@stride/shared`) (AC7):
+- [x] T12 Create `packages/shared` (name `@stride/shared`) (AC7):
+  - Decision: the package builds to CommonJS in `dist` with `tsc` (the API runs compiled Node, which can't load TS source from node_modules). Root `build:shared` runs before dev, build, typecheck, test and test:e2e
   - `package.json`, and a `tsconfig.json` extending the base
   - `src/health.ts`: a zod `healthResponseSchema` for `{status:"ok",db:"ok"}` | `{status:"error",db:"down"}`, plus the inferred `HealthResponse` type
   - `src/index.ts`

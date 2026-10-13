@@ -7,13 +7,14 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npm run dev -w @stride/web",
-    "build": "npm run build --workspaces --if-present",
+    "build:shared": "npm run build -w @stride/shared",
+    "dev": "npm run build:shared && npm run dev -w @stride/web",
+    "build": "npm run build:shared && npm run build -w @stride/api -w @stride/web",
     "lint": "npm run lint --workspaces --if-present && prettier --check .",
     "format": "prettier --write .",
-    "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
-    "test:e2e": "npm run test:e2e -w apps/web",
+    "typecheck": "npm run build:shared && npm run typecheck --workspaces --if-present",
+    "test": "npm run build:shared && npm run test --workspaces --if-present",
+    "test:e2e": "npm run build:shared && npm run test:e2e -w apps/web",
     "db:migrate": "npm run db:migrate -w @stride/api",
     "db:generate": "npm run db:generate -w @stride/api"
   },
