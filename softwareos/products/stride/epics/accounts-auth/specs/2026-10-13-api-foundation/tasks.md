@@ -36,7 +36,7 @@
 
 ## API scaffold
 
-- [ ] T8 Scaffold `apps/api` (name `@stride/api`, `engines.node` 24) (AC1, AC3):
+- [x] T8 Scaffold `apps/api` (name `@stride/api`, `engines.node` 24) (AC1, AC3):
   - NestJS 11 with `@nestjs/platform-express` and `nest-cli.json`
   - `tsconfig.json` extending `tsconfig.base.json` (`experimentalDecorators`, `emitDecoratorMetadata`)
   - `src/main.ts`: `PORT`, default 4000; `enableShutdownHooks()`
