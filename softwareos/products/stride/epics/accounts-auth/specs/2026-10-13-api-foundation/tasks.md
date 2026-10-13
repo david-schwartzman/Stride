@@ -51,7 +51,7 @@
   - move `prisma` and `@prisma/client` (6.19.3) into `apps/api/package.json`, with `postinstall: prisma generate`, `db:migrate` and `db:generate`
   - make the root `db:*` scripts forward via `-w @stride/api`
   - confirm the root `prisma/` folder is gone
-- [ ] T10 Temporary exception: add `@prisma/client` to `apps/web/package.json` at the same pinned version, so `apps/web/src/lib/db.ts` resolves the hoisted generated client. Confirm signup-login's actions still typecheck and run. Add a comment in `db.ts` naming candidate `auth-api-migration` (AC5, AC6)
+- [x] T10 Temporary exception: add `@prisma/client` to `apps/web/package.json` at the same pinned version, so `apps/web/src/lib/db.ts` resolves the hoisted generated client. Confirm signup-login's actions still typecheck and run. Add a comment in `db.ts` naming candidate `auth-api-migration` (AC5, AC6)
 - [ ] T11 Add `apps/api/src/prisma/prisma.service.ts` (extends `PrismaClient`; `$connect` in `onModuleInit`; disconnects on shutdown) and `apps/api/src/prisma/prisma.module.ts` (global export). Import the module in `AppModule` (AC3)
 
 ## Shared package
