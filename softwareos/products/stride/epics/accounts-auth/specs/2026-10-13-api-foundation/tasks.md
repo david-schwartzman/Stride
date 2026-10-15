@@ -3,13 +3,13 @@
 > Epic: accounts-auth
 > Spec: 2026-10-13-api-foundation
 > Branch: feat/accounts-auth/api-foundation
-> Reviewed: 2026-10-13 APPROVE
-> SecurityReviewed: 2026-10-13 APPROVE
+> Reviewed: 2026-10-15 REQUEST CHANGES (re-review pending)
 
 ## Gate & spike
 
 - [~] T1 Dependency gate: confirm PR #20 (signup-login) is merged into `develop` (human). Rebase `feat/accounts-auth/api-foundation` onto `develop`. Record a green baseline of `npm run lint`, `typecheck`, `test` and `test:e2e` (including `e2e/auth.spec.ts`) as the no-regression reference (AC2, AC11)
-  - Baseline recorded 2026-10-13 on `feat/accounts-auth/auth-api-demo` (PR #20 and #21 merged into the branch, not yet into `develop` — the gate itself is deferred for the demo): lint ✓, typecheck ✓, `test` 164 passed / 8 skipped (Postgres-only `*.db.test.ts`, no `TEST_DATABASE_URL`), `test:e2e` 5 passed, plus `e2e/auth.spec.ts` 3 passed against the Neon demo branch (`TEST_DATABASE_URL` set to un-skip)
+  - Provisional baseline recorded 2026-10-13 with PR #20 and #21 merged into a local branch, not yet into `develop`: lint ✓, typecheck ✓, `test` 164 passed / 8 skipped (Postgres-only `*.db.test.ts`, no `TEST_DATABASE_URL`), `test:e2e` 5 passed, plus `e2e/auth.spec.ts` 3 passed against a Neon dev branch (`TEST_DATABASE_URL` set to un-skip)
+  - Still open: once #20 and #21 merge, rebase onto `develop` and re-record the baseline there
 - [ ] T2 **Not started — needs Vercel access (human).** Spike, on a throwaway branch: a minimal NestJS app behind a web proxy (`proxy.ts`) that rewrites `/api/*` with `NextResponse.rewrite` and added request headers, deployed to Vercel previews. Record the results in `spike-notes.md` in this spec folder before starting T3. Also record whether `next.config.ts` `headers()` reach proxied `/api/*` responses (AC4, AC9, AC12, AC15)
 - [ ] T2.1 **Not started — needs Vercel access (human).** Preview pairing: compare two linked Vercel projects (the proxy derives the API preview's branch URL from `VERCEL_GIT_COMMIT_REF`) with Vercel Services. Aim for a web preview that reaches the API preview from the same commit through `/api`, with both on the same Neon preview branch. Prove that the proxy's `x-vercel-protection-bypass` gets past the API preview's Deployment Protection. If neither option works with reasonable setup, record the fallback (web previews call the shared `develop` API preview) and why. Record the chosen setup (human for the Vercel/Neon dashboard parts) (AC12)
 - [ ] T2.2 **Not started — needs Vercel access (human).** Trusted proxy headers: deploy an echo endpoint on the spike API that returns the `x-stride-*` headers it received (the spike branch is never merged). Call it through the web proxy and record:
@@ -34,7 +34,7 @@
   - `.gitignore`: drop the leading slashes (`/node_modules`, `/.next/`, `/out/`, `/build`, `/coverage`, `/test-results/`, …) so they also match inside `apps/*`
   - keep the Prettier config and `.prettierignore` at the root, covering `apps/*` and `packages/*` and excluding `stride-design/**`
 - [x] T7 Move checkpoint: web lint, typecheck, test and test:e2e from the root match the T1 baseline. Spot-check after login that the session cookie name, flags and path are unchanged (AC2)
-  - Checkpoint 2026-10-13: from the root — lint ✓, typecheck ✓, test 164 passed / 8 skipped, test:e2e 8 passed (incl. auth.spec.ts against the Neon demo branch); matches T1. Cookie code unchanged (only paths moved); auth e2e asserts the `__Host-stride_session` cookie
+  - Checkpoint 2026-10-13: from the root — lint ✓, typecheck ✓, test 164 passed / 8 skipped, test:e2e 8 passed (incl. auth.spec.ts against a Neon dev branch); matches T1. Cookie code unchanged (only paths moved); auth e2e asserts the `__Host-stride_session` cookie
 
 ## API scaffold
 
@@ -63,8 +63,7 @@
   - `package.json`, and a `tsconfig.json` extending the base
   - `src/health.ts`: a zod `healthResponseSchema` for `{status:"ok",db:"ok"}` | `{status:"error",db:"down"}`, plus the inferred `HealthResponse` type
   - `src/index.ts`
-  - decide how the apps consume it: the TS source (via Next `transpilePackages` and swc in the API) or a `tsc` build to `dist`. If it needs a build, make `npm run build` order it before both apps
-- [x] T13 Add `@stride/shared` as a dependency of `apps/api` and `apps/web`. If the apps consume the source, also add `transpilePackages: ["@stride/shared"]` in `apps/web/next.config.ts` (AC7)
+- [x] T13 Add `@stride/shared` as a dependency of `apps/api` and `apps/web` (AC7)
 
 ## API endpoints & common
 
@@ -81,6 +80,7 @@
 ## Web wiring
 
 - [x] T35 Add `apps/web/src/lib/api-proxy.ts` `trustedProxyHeaders(incoming: Headers): Headers`: copy the incoming headers, delete every `x-stride-*`, then set `x-stride-proxy-secret` (`WEB_PROXY_SECRET`), `x-stride-client-ip` from the web's `getClientIp(headers)` (`src/lib/request-ip.ts`, #20; omitted when null) and `x-stride-forwarded-host` (`Host`). Add `apps/web/src/lib/api-client.ts` (`import "server-only"`) with `apiFetch(path, init)`, which calls `${API_URL}${path}` with `trustedProxyHeaders(await headers())` and the incoming `Cookie`. T36 goes green (AC14)
+  - Hardened 2026-10-15 (Changelog): `apiFetch` drops caller-supplied `x-stride-*` headers, passes the incoming request's own `Origin` through (or sends none), defaults to a 10-second timeout, and on Preview sends `x-vercel-protection-bypass` through `addProtectionBypass()`, shared with the proxy (AC12)
 - [x] T17 Wire the `/api` rewrite in the web proxy, not in `next.config.ts` (AC4, AC10, AC12):
   - `apps/web/src/lib/api-proxy.ts`: `apiRewrite(request)` strips `/api`, keeps the query, and returns `NextResponse.rewrite(\`${API_URL}${path}\`, { request: { headers: trustedProxyHeaders(request.headers) } })` (T35), passing the whole `Cookie` header through. On Preview it adds `x-vercel-protection-bypass` when `API_PROTECTION_BYPASS_SECRET` is set
   - outside production, `API_URL` defaults to `http://localhost:4000`; in production a missing `API_URL` or `WEB_PROXY_SECRET` makes `/api/*` answer 503 and logs the variable name only
@@ -124,13 +124,13 @@
 
 ## Docs
 
-- [ ] T26 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Update `softwareos/products/stride/architecture.md` (AC6, AC9, AC12). The trusted proxy headers, the client-IP rule and pairing-as-a-goal are already there (PR #21):
+- [ ] T26 **Not started — waits for the T2.1/T2.2 spike results.** Update `softwareos/products/stride/architecture.md` (AC6, AC9, AC12). The trusted proxy headers, the client-IP rule and pairing-as-a-goal are already there (PR #21):
   - Environments: replace the pairing goal with what T2.1 chose (or the fallback)
   - Trusted proxy headers and the client-IP Gotcha: change only what T2.2 contradicted
   - Gotchas: the temporary Prisma-in-web exception, linked to `auth-api-migration`
-- [ ] T27 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Update `INFRA_PLAN.md`. Step D2 already creates the API project (PR #21); add the T2.1 result (projects or Services), build commands (migrate only in the API), the env var matrix, including `WEB_PROXY_SECRET` and `API_PROTECTION_BYPASS_SECRET`, and Neon branch pairing (AC5, AC10, AC12)
-- [ ] T28 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Add the `apps/web/` prefix to every accounts-auth spec's Covers paths, then run `/refresh-indexes` (AC2):
-  - protected-routes, session-management and auth-event-logging are already done (PR #21); edit security-headers directly
+- [ ] T27 **Not started — waits for the T2.1 spike result.** Update `INFRA_PLAN.md`. Step D2 already creates the API project (PR #21); add the T2.1 result (projects or Services), build commands (migrate only in the API), the env var matrix, including `WEB_PROXY_SECRET` and `API_PROTECTION_BYPASS_SECRET`, and Neon branch pairing (AC5, AC10, AC12)
+- [ ] T28 **Not started.** Add the `apps/web/` prefix to every accounts-auth spec's Covers paths, then run `/refresh-indexes` (AC2):
+  - protected-routes, session-management and auth-event-logging: their source paths were prefixed in PR #21 and their `e2e/` entries on 2026-10-15; edit security-headers directly
   - edit the done specs `2026-10-08-app-foundation` and `2026-10-08-signup-login` through `/spec-changes`
 
 ## Verification
@@ -150,10 +150,11 @@
   - `next.config.ts` has no `/api` rewrite
   - an ESLint fixture check that `@prisma/client` outside the allowed files is an error
   - confirm the full web suite and e2e (including `auth.spec.ts` and `api-health.spec.ts`) pass from the root
-  - Run 2026-10-13 from the root: lint ✓, typecheck ✓, `test` web 186 passed / 8 skipped (Postgres-only `*.db.test.ts`), api 25, shared 11; `test:e2e` 9 passed incl. `auth.spec.ts` (root `.env` loaded, `TEST_DATABASE_URL` set to un-skip) and `api-health.spec.ts`
+  - Run 2026-10-13 from the root: lint ✓, typecheck ✓, `test` web 186 passed / 8 skipped (Postgres-only `*.db.test.ts`), api 25, shared 11; `test:e2e` 9 passed incl. `auth.spec.ts` (this run predates the per-app `.env` split, so it loaded the root `.env`; `TEST_DATABASE_URL` set to un-skip) and `api-health.spec.ts`
 - [x] T36 Write unit tests first (testing skill) for the trusted proxy headers (AC13, AC14):
   - `proxy-secret.middleware.test.ts`: valid, wrong, missing and different-length secret; unset `WEB_PROXY_SECRET` rejects everything; `/cron/*` exempt; 401 body empty and the handler never runs
   - `api-proxy.test.ts`: client-sent `x-stride-*` headers replaced; a null IP omits `x-stride-client-ip`; `x-stride-forwarded-host` from `Host`
   - `api-client.test.ts`: `apiFetch` calls `API_URL` with the trusted headers and the incoming `Cookie`
-- [ ] T32 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Security review (security-reviewer agent) of `proxy-secret.middleware.ts`, `origin-check.middleware.ts`, `request-ip.ts`, `api-proxy.ts`, `api-client.ts`, the health response body, and the split of env vars across the apps (AC3, AC8, AC9, AC10, AC13, AC14)
-- [ ] T33 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Run QA against acceptance criteria AC1–AC15 (qa skill)
+- [x] T32 Security review (security-reviewer agent) of `proxy-secret.middleware.ts`, `origin-check.middleware.ts`, `request-ip.ts`, `api-proxy.ts`, `api-client.ts`, the health response body, and the split of env vars across the apps (AC3, AC8, AC9, AC10, AC13, AC14)
+  - Reviewed 2026-10-15: APPROVE WITH COMMENTS, 4 LOW findings. Fixed: `apiFetch` header and Origin hardening (`fix(accounts-auth): stop apiFetch inventing an Origin…`) and the AppModule middleware wiring test. Deferred: the `/cron/*` header strip and the dynamic-import lint rule (the `no-restricted-imports` rule doesn't catch `import()`)
+- [ ] T33 **Not started.** Run QA against acceptance criteria AC1–AC15 (qa skill)

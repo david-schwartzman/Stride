@@ -3,7 +3,7 @@
 > Epic: ../../epic.md
 > Status: shaped
 > Branch: feat/accounts-auth/auth-event-logging
-> Covers: apps/api/src/auth-events/**, apps/api/prisma/migrations/*_auth_event/**, e2e/auth-events.spec.ts
+> Covers: apps/api/src/auth-events/**, apps/api/prisma/migrations/*_auth_event/**, apps/web/e2e/auth-events.spec.ts
 
 ## Overview
 
@@ -11,7 +11,7 @@ A spec of Accounts & Auth from the tech plan's candidate list (tech-plan.md:46).
 
 Every security-relevant auth action records one structured event, in two places: an `AuthEvent` row in Postgres (durable, queryable, pruned after 90 days by the nightly cron), with the user ID, IP, user agent and time; and a short JSON line on stdout (the API project's Vercel runtime logs) with no IP and no user agent. It never includes passwords, tokens, cookies, session hashes or raw form data.
 
-Builds on `signup-login` (sign-up/login/logout endpoints and the auth module, in the NestJS API's `apps/api/src/auth/` once candidate `auth-api-migration` lands) and `session-management` (change-password and revoke endpoints, `Session.publicId`, the cleanup cron). Both must be merged first, and candidate `api-foundation` before them (the backend moved to a separate NestJS API on 2026-10-13). Changes to their files are wiring edits that this spec doesn't claim, as are changes to the API's `prisma/schema.prisma`, `architecture.md` and `auth-security.md`.
+Builds on `signup-login` (sign-up/login/logout endpoints and the auth module, in the NestJS API's `apps/api/src/auth/` once candidate `auth-api-migration` lands) and `session-management` (change-password and revoke endpoints, `Session.publicId`, the cleanup cron). Both must be merged first, and `api-foundation` before them (the backend moved to a separate NestJS API on 2026-10-13). Changes to their files are wiring edits that this spec doesn't claim, as are changes to the API's `prisma/schema.prisma`, `architecture.md` and `auth-security.md`.
 
 ## Goals & User Stories
 
@@ -75,3 +75,4 @@ Builds on `signup-login` (sign-up/login/logout endpoints and the auth module, in
 | 2026-10-13 | david-schwartzman | change | Backend moved to a separate NestJS API: recorder moves to `apps/api/src/auth-events/` with `waitUntil` (`@vercel/functions`) instead of `after()`; hooks into the API auth and account-security endpoints and cron; AC6 client IP forwarded across the `/api` rewrite (verified in `api-foundation`); AC7, AC8, AC10, AC11, Technical Approach, Standards Applied and Covers updated; open tasks reworded — tech-lead decision for a clear frontend / backend split | softwareos/products/stride/architecture.md |
 | 2026-10-13 | david-schwartzman | revised | PR review: AC6 and AC10 name the client-IP trust model (`x-stride-client-ip` read only after the proxy-secret check); T13 and T14 take the Nest `req` (`getRequestMeta(req)`, `recordAuthEvent(req, input)`) instead of `next/headers`, and T14 drops `import "server-only"` (it throws outside React Server Components); T3, T11 and T17 match | https://github.com/david-schwartzman/Stride/pull/21 |
 | 2026-10-15 | david-schwartzman | change | `standards.md` (global/auth-security copy): a missing or different `Origin` gets 401, not 403 — tech lead decision: both gatekeeper checks answer 401 | ../../../../../../standards/global/auth-security.md |
+| 2026-10-15 | david-schwartzman | revised | Covers: the e2e entry gets the `apps/web/` prefix like the other web paths (the e2e folder moved with the web app in api-foundation) — api-foundation review | — |

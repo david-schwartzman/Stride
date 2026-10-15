@@ -3,7 +3,7 @@
 > Epic: ../../epic.md
 > Status: in-progress
 > Branch: feat/accounts-auth/api-foundation
-> Covers: package.json, package-lock.json, tsconfig.base.json, apps/web/package.json, apps/api/package.json, apps/api/nest-cli.json, apps/api/tsconfig.json, apps/api/vercel.json, apps/api/.env.example, apps/api/src/main.ts, apps/api/src/app.module.ts, apps/api/src/health/**, apps/api/src/prisma/**, apps/api/src/common/**, apps/api/prisma/schema.prisma, apps/web/.env.example, apps/web/src/lib/api-proxy.ts, apps/web/src/lib/api-proxy.test.ts, apps/web/src/lib/api-client.ts, apps/web/src/lib/api-client.test.ts, packages/shared/package.json, packages/shared/tsconfig.json, packages/shared/src/index.ts, .github/workflows/**, playwright.config.ts
+> Covers: package.json, package-lock.json, tsconfig.base.json, apps/web/package.json, apps/api/package.json, apps/api/nest-cli.json, apps/api/tsconfig.json, apps/api/vercel.json, apps/api/.env.example, apps/api/src/main.ts, apps/api/src/app.module.ts, apps/api/src/app.module.test.ts, apps/api/src/health/**, apps/api/src/prisma/**, apps/api/src/common/**, apps/api/prisma/schema.prisma, apps/web/.env.example, apps/web/src/lib/api-proxy.ts, apps/web/src/lib/api-proxy.test.ts, apps/web/src/lib/api-client.ts, apps/web/src/lib/api-client.test.ts, apps/api/eslint.config.mjs, apps/api/vitest.config.ts, apps/api/tsconfig.build.json, apps/web/vercel.json, apps/web/playwright.config.ts, apps/web/e2e/api-health.spec.ts, apps/web/src/config/*.test.ts, apps/web/src/lib/shared-health.test.ts, packages/shared/package.json, packages/shared/tsconfig.json, packages/shared/tsconfig.build.json, packages/shared/src/index.ts, packages/shared/src/health.ts, .github/workflows/**
 
 ## Overview
 
@@ -58,14 +58,14 @@ This is a **no-regression** spec. Every accounts-auth criterion and test that pa
     - The web proxy rewrites `/api/*` to `API_URL` (default `http://localhost:4000`).
     - Each app has its own `.env.example`. The API's lists `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER`, `GUEST_CART_SECRET` and `WEB_PROXY_SECRET`. The web's lists `API_URL` and `WEB_PROXY_SECRET` (the same local value as the API's), plus `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER` and `TEST_DATABASE_URL` marked "temporary — removed by auth-api-migration".
 11. AC11: CI runs, in order:
+    - `npm ci`, then `prisma migrate deploy` from `apps/api` against the Postgres service (before the unit tests: the Postgres-only suites need the tables)
     - lint, typecheck and unit tests for every workspace
-    - `prisma migrate deploy` from `apps/api` against the Postgres service
     - builds of both apps
     - Playwright with both apps started, including signup-login's `e2e/auth.spec.ts` against the real database
 12. AC12: The spike settles preview pairing, and the result is recorded in `spike-notes.md`, `architecture.md` Environments and `INFRA_PLAN.md`:
     - Goal: a PR's web preview reaches the API preview built from the same commit through `/api`, and both use the same Neon preview branch (the web still needs it for the temporary auth code). The options to compare are two linked projects (the proxy derives the API preview's branch URL from `VERCEL_GIT_COMMIT_REF`) and one project with Vercel Services.
     - Fallback, if neither works with reasonable setup: web previews call the shared `develop` API preview, and the notes record why. Checks of a change that spans both apps then happen after the API PR merges.
-    - Either way, a web preview reaches a protected API preview: the proxy sends `x-vercel-protection-bypass` from `API_PROTECTION_BYPASS_SECRET` (web Preview env only, never `NEXT_PUBLIC_`).
+    - Either way, a web preview reaches a protected API preview: the proxy and `apiFetch` send `x-vercel-protection-bypass` from `API_PROTECTION_BYPASS_SECRET` (web Preview env only, never `NEXT_PUBLIC_`), through one shared helper.
 13. AC13: A global API middleware, registered before every other middleware and guard, rejects any request without a valid `x-stride-proxy-secret` with 401 and an empty body:
     - Valid means equal to `WEB_PROXY_SECRET`, compared in constant time. An unset or empty `WEB_PROXY_SECRET` rejects everything.
     - `/cron/*` is the only exempt path (later specs give it its own Bearer check).
@@ -73,8 +73,12 @@ This is a **no-regression** spec. Every accounts-auth criterion and test that pa
 14. AC14: The web sets the trusted proxy headers on every API call, from one function, `trustedProxyHeaders(incoming)` in `apps/web/src/lib/api-proxy.ts`:
     - `x-stride-proxy-secret` (`WEB_PROXY_SECRET`); `x-stride-client-ip` from the web's `getClientIp(headers)` (#20's, Vercel's `x-real-ip`), omitted when null; `x-stride-forwarded-host` from the request's `Host`.
     - Any client-sent `x-stride-*` header is dropped first, so a browser can't spoof one.
-    - The proxy uses it for `/api/*`. Server Components use `apiFetch(path, init)` in `apps/web/src/lib/api-client.ts` (`server-only`), which calls `API_URL` with the same headers plus the incoming `Cookie` header.
-    - Unit tests cover spoofed `x-stride-*` headers being replaced, a null IP omitting the header, the forwarded host, and `apiFetch` forwarding the cookie.
+    - The proxy uses it for `/api/*`. Server Components use `apiFetch(path, init)` in `apps/web/src/lib/api-client.ts` (`server-only`), which calls `API_URL` with the same headers plus the incoming `Cookie` header. `apiFetch` also:
+      - drops caller-supplied `x-stride-*` headers before setting the trusted ones;
+      - sends the incoming request's own `Origin` when it has one and no `Origin` otherwise (never one derived from the host);
+      - times out after 10 seconds when the caller passes no `signal`;
+      - on Preview, sends `x-vercel-protection-bypass` like the proxy (AC12).
+    - Unit tests cover spoofed `x-stride-*` headers being replaced (from the browser and from an `apiFetch` caller), a null IP omitting the header, the forwarded host, `apiFetch` forwarding the cookie, its `Origin` passed through or absent, its timeout default and its bypass header.
 15. AC15: Exit checks, recorded in `spike-notes.md`:
     - On the spike preview (T2.2): the IP the API receives is the browser's real IP even when the browser sends a spoofed `x-stride-client-ip` or `x-real-ip`, and two clients on different networks show different IPs.
     - On this spec's preview (T25): a direct call to the API's own domain without the secret gets 401, while `GET <web-preview>/api/health` returns 200.
@@ -115,7 +119,7 @@ This is a **no-regression** spec. Every accounts-auth criterion and test that pa
 - **Rewrite (web proxy):**
   - `apps/web/src/lib/api-proxy.ts` (claimed): `trustedProxyHeaders(incoming)` (AC14) and `apiRewrite(request)`, which builds `${API_URL}` + the path without `/api` + the query, and returns `NextResponse.rewrite(url, { request: { headers } })`. On Vercel Preview it also adds `x-vercel-protection-bypass` when `API_PROTECTION_BYPASS_SECRET` is set.
   - `apps/web/src/proxy.ts` (Next 16.4): created here as a thin adapter whose matcher includes `/api/:path*` and which calls `apiRewrite` for `/api/*`. It's a wiring edit, not claimed: protected-routes owns the file and adds the page guard next to the `/api` branch.
-  - `apps/web/src/lib/api-client.ts` (claimed, `import "server-only"`): `apiFetch(path, init)` for Server Components (AC14).
+  - `apps/web/src/lib/api-client.ts` (claimed, `import "server-only"`): `apiFetch(path, init)` for Server Components (AC14). It shares the Preview bypass helper with `apiRewrite`.
   - `API_URL` and `WEB_PROXY_SECRET` are read at request time. Outside production `API_URL` defaults to `http://localhost:4000`. In production a missing `API_URL` or `WEB_PROXY_SECRET` makes `/api/*` answer 503 and logs the missing variable name (never its value).
   - No `rewrites()` in `next.config.ts`: a config rewrite can't add the trusted headers or the bypass header.
 - **Vercel:**
@@ -156,3 +160,4 @@ This is a **no-regression** spec. Every accounts-auth criterion and test that pa
 | 2026-10-13 | david-schwartzman | created | Initial shaping | — |
 | 2026-10-13 | david-schwartzman | change | Aligned with the PR #21 review fixes and PR #20's latest commits: the web proxy does the `/api` rewrite with the trusted proxy headers (AC4, AC14), new proxy-secret middleware (AC13), Origin check against the trusted forwarded host instead of `WEB_ORIGIN` (AC8), `getClientIp(req)` reads `x-stride-client-ip` only after the secret check (AC9), `WEB_PROXY_SECRET` replaces `WEB_ORIGIN` (AC10), preview pairing as a goal with a documented fallback and the protection-bypass header (AC12), exit checks (AC15); AC6 allows `actions.test.ts`; #20's `request-ip.ts` stays in the web; Covers adds the web proxy and client modules and `apps/web/.env.example` — the architecture changed under the shaped spec (client-IP trust model, Origin target, preview pairing) | https://github.com/david-schwartzman/Stride/pull/21 |
 | 2026-10-15 | david-schwartzman | change | AC8: the Origin check rejects with 401 instead of 403, so both gatekeeper checks (proxy secret, Origin) answer 401; `standards.md` matches; new task T37 switches the middleware and its tests (done T15/T30 still read 403 as history) — tech lead decision: both checks run before the user is identified | — |
+| 2026-10-15 | david-schwartzman | change | AC14: `apiFetch` drops caller `x-stride-*` headers, passes the incoming `Origin` through instead of deriving one from the host, defaults to a 10-second timeout, and sends the Preview bypass header; AC12: the bypass comes from one helper shared by the proxy and `apiFetch`; AC11: migrate runs right after install, before the unit tests (as CI does); Covers: `playwright.config.ts` → `apps/web/playwright.config.ts`, adds the files the build actually created (`packages/shared/src/health.ts`, the `tsconfig.build.json`s, the API's ESLint and Vitest configs, the web config and health tests, `apps/web/e2e/api-health.spec.ts`) and `apps/web/vercel.json`; T35 notes the hardening — code and security review of the branch | — |
