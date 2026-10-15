@@ -2,7 +2,12 @@ import "server-only";
 
 import { headers } from "next/headers";
 
-import { apiBaseUrl, missingApiEnv, trustedProxyHeaders } from "./api-proxy";
+import {
+  addProtectionBypass,
+  apiBaseUrl,
+  missingApiEnv,
+  trustedProxyHeaders,
+} from "./api-proxy";
 
 /** Applied when the caller passes no `signal`, so a hung API can't hang the page. */
 export const API_FETCH_TIMEOUT_MS = 10_000;
@@ -17,6 +22,7 @@ export const API_FETCH_TIMEOUT_MS = 10_000;
  * - `Origin` is the incoming request's own, or absent. It's never invented, so
  *   a write without a real browser Origin fails the API's check (AC8).
  * - Without a caller `signal`, the call times out after 10 seconds.
+ * - On Preview it adds `x-vercel-protection-bypass`, like the proxy (AC12).
  */
 export async function apiFetch(
   path: string,
@@ -45,6 +51,7 @@ export async function apiFetch(
   outgoing.delete("origin");
   const origin = incoming.get("origin");
   if (origin) outgoing.set("origin", origin);
+  addProtectionBypass(outgoing);
 
   return fetch(`${apiBaseUrl()}${path}`, {
     ...init,

@@ -114,6 +114,35 @@ describe("apiFetch", () => {
     expect(sent().init.signal).toBe(controller.signal);
   });
 
+  it("sends the protection bypass on Preview when the secret is set", async () => {
+    vi.stubEnv("VERCEL_ENV", "preview");
+    vi.stubEnv("API_PROTECTION_BYPASS_SECRET", "bypass-secret");
+    await apiFetch("/health");
+
+    expect(sent().headers.get("x-vercel-protection-bypass")).toBe(
+      "bypass-secret",
+    );
+  });
+
+  it("sends no protection bypass outside Preview or without the secret", async () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    vi.stubEnv("API_PROTECTION_BYPASS_SECRET", "bypass-secret");
+    await apiFetch("/health");
+    vi.stubEnv("VERCEL_ENV", "preview");
+    vi.stubEnv("API_PROTECTION_BYPASS_SECRET", "");
+    await apiFetch("/health");
+
+    for (const [, init] of fetchMock.mock.calls as unknown as [
+      string,
+      RequestInit,
+    ][]) {
+      expect(new Headers(init.headers).has("x-vercel-protection-bypass")).toBe(
+        false,
+      );
+    }
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it("refuses paths that could move the request to another host", async () => {
     for (const path of ["@evil.example/x", "//evil.example/x", "health"]) {
       await expect(apiFetch(path)).rejects.toThrow("single /");
