@@ -6,7 +6,6 @@ import {
 
 import { AuthModule } from "./auth/auth.module";
 import { OriginCheckMiddleware } from "./common/origin-check.middleware";
-import { ProxySecretMiddleware } from "./common/proxy-secret.middleware";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 
@@ -15,8 +14,9 @@ import { PrismaModule } from "./prisma/prisma.module";
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // Order matters: the proxy-secret check runs before everything else,
-    // so the origin check can trust x-stride-forwarded-host.
-    consumer.apply(ProxySecretMiddleware, OriginCheckMiddleware).forRoutes("*");
+    // The proxy-secret check isn't here: it runs earlier, as the first Express
+    // middleware, before body parsing (setup-app.ts). So by now the
+    // x-stride-forwarded-host header the origin check reads is trusted.
+    consumer.apply(OriginCheckMiddleware).forRoutes("*");
   }
 }

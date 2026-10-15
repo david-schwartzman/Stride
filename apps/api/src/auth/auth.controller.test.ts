@@ -26,7 +26,8 @@ import {
 import { PrismaService } from "../prisma/prisma.service";
 import { AuthController } from "./auth.controller";
 import { AuthGuard } from "./auth.guard";
-import { useSafeBodyParsing } from "./body-parsing";
+import { useSafeBodyParsing } from "../common/body-parsing";
+import { authMalformedBody } from "./malformed-body";
 import { signInHooks } from "./on-signed-in";
 import * as password from "./password.service";
 import { SessionService, hashToken } from "./session.service";
@@ -156,12 +157,13 @@ beforeAll(async () => {
       { provide: PrismaService, useValue: db },
     ],
   }).compile();
-  // As main.ts sets it up.
+  // As setup-app.ts sets it up, minus the proxy-secret check
+  // (auth.wiring.test.ts covers the full pipeline).
   app = moduleRef.createNestApplication<NestExpressApplication>({
     logger: false,
     bodyParser: false,
   });
-  useSafeBodyParsing(app);
+  useSafeBodyParsing(app, authMalformedBody);
   app.use(cookieParser());
   await app.listen(0, "127.0.0.1");
   baseUrl = await app.getUrl();
