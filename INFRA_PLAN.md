@@ -23,10 +23,10 @@ The plan has two phases:
 | Service | Why | Notes |
 |---|---|---|
 | **GitHub** | Code + CI (GitHub Actions) | ✅ Already set up (`david-schwartzman/Stride`, `develop` exists) |
-| **Vercel** | Hosting + a preview site per PR | Sign up with GitHub. ⚠️ The free **Hobby plan is non-commercial only**. If Stride is client work, check with the team whether you need **Pro** or a company team account. |
+| **Vercel** | Hosting + a preview site per PR — two projects in the same account since 2026-10-13: the existing `stride` project (today's single Next app, which becomes the web project at `apps/web`) and `stride-api` (NestJS, created in Phase 2 step D2) | Sign up with GitHub. ⚠️ The free **Hobby plan is non-commercial only**. If Stride is client work, check with the team whether you need **Pro** or a company team account. |
 | **Neon** | Postgres database + a database branch per preview | Sign up with GitHub. The free plan limits the number of branches. |
 
-No other accounts are needed. Prisma, `@node-rs/argon2`, Vitest and Playwright are free libraries the agent installs into the project. They need no sign-up.
+No other accounts are needed (the NestJS API runs on the same Vercel account). Prisma, `@node-rs/argon2`, Vitest and Playwright are free libraries the agent installs into the project. They need no sign-up.
 
 ---
 
@@ -87,15 +87,15 @@ The `.env.local` file itself gets created in Phase 2, once the app exists.
 
 *(About 20 min.)*
 
-1. In Vercel: **Add New → Project → import `david-schwartzman/Stride`**.
+1. In Vercel: **Add New → Project → import `david-schwartzman/Stride`** (Root Directory: repo root). This project runs today's single Next app. Once `api-foundation` lands it becomes the **web** project; the API project is created later, in Phase 2 step D2.
    - ℹ️ Vercel may try a first build and **fail**, because there's no app yet. That's expected and harmless.
 2. Settings → Git: production branch can stay `main` for now (production deploys belong to the launch-polish epic).
-3. Install the **Neon integration** from Vercel's Marketplace/Integrations and connect it to the `stride` Neon project:
+3. Install the **Neon integration** from Vercel's Marketplace/Integrations and connect it to the `stride` Neon project and attach it to this project for now, because the pre-split app (app-foundation, signup-login) talks to the database directly. It moves to the API project in Phase 2 step D2:
    - turn on **"create a database branch for each preview deployment"**,
    - set the **parent branch to `develop`**,
    - turn on **automatic branch deletion** if it's offered.
 4. Vercel → Settings → Environment Variables:
-   - `PASSWORD_PEPPER` and `GUEST_CART_SECRET`: add a fresh value for **Preview** and a different one for **Development**. Generate each with `openssl rand -base64 32`, and back up the peppers. Production comes later, with its own values.
+   - `PASSWORD_PEPPER` and `GUEST_CART_SECRET` on this project for now (the pre-split app needs them): add a fresh value for **Preview** and a different one for **Development**. In Phase 2 step D2 they're copied to the API project, and they're removed from this project only after `auth-api-migration` ships. Generate each with `openssl rand -base64 32`, and back up the peppers. Production comes later, with its own values.
 5. **Write down** the exact names of the database variables the Neon integration added. The direct one is usually `DATABASE_URL_UNPOOLED`, not `DIRECT_URL`. The agent needs these names in Phase 2.
 6. **Write down** whether the integration offered automatic branch deletion. If it didn't, Phase 2 needs a cleanup workflow.
 
@@ -140,11 +140,12 @@ These need the app scaffold, so they're part of implementing the `app-foundation
 
 | # | Step | Who | Needs |
 |---|---|---|---|
-| A | Scaffold the app: Next.js, tooling, Prisma setup, `.env.example`, `ci.yml` (app-foundation T1–T5, T7) on `feat/accounts-auth/app-foundation`, as a draft PR | 🤖 Agent (🧑 reviews) | Step 1, Step 2 |
+| A | Scaffold the app: Next.js, tooling, Prisma setup (since 2026-10-13 the monorepo — `apps/web`, `apps/api` NestJS with Prisma, `packages/shared` — comes in spec `api-foundation`), `.env.example`, `ci.yml` (app-foundation T1–T5, T7) on `feat/accounts-auth/app-foundation`, as a draft PR | 🤖 Agent (🧑 reviews) | Step 1, Step 2 |
 | B | Create `.env.local` from `.env.example` with the values from Step 4; check `npm run dev` | 🧑 Human | A |
-| C | Preview build command: `prisma migrate deploy` before `next build`, mapping Neon's direct URL to `DIRECT_URL` | 🤖 Agent | A + variable names from Step 5.5 |
+| C | Preview build command: `prisma migrate deploy` before the build (on the API project after `api-foundation`), mapping Neon's direct URL to `DIRECT_URL` | 🤖 Agent | A + variable names from Step 5.5 |
 | D | If the integration doesn't delete branches: add a GitHub workflow that deletes the preview's Neon branch on PR close (T6.2). 🧑 You create a Neon API key and add it as a GitHub secret. | 🤖 Agent + 🧑 Human | A, Step 5.6 |
-| E | **Spike:** a PR gets its own Neon branch, the build runs migrations, the preview loads, CI is green, and closing the PR deletes the branch (T6.1) | 🤝 Both | A–D |
+| D2 | **Create the API project** (when `api-foundation` starts): Add New → Project → the same repo, name `stride-api`, Root Directory `apps/api`; set the existing project's Root Directory to `apps/web`. Attach the Neon integration to `stride-api` (preview branch per deployment, parent `develop`). Copy `PASSWORD_PEPPER` and `GUEST_CART_SECRET` to `stride-api` with the **same values** per environment (a new pepper would lock out every existing account), and add `CRON_SECRET`. Generate `WEB_PROXY_SECRET` (`openssl rand -base64 32`) and set the same value on both projects, a different one per environment. Add `API_URL` to the web project. On `stride-api`, create the Deployment Protection "bypass for automation" secret and add it to the web project's Preview env. Remove `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER` and `GUEST_CART_SECRET` from the web project only after `auth-api-migration` ships | 🧑 Human (🤖 updates `.env.example` and the docs) | A, `api-foundation` branch |
+| E | **Spike:** a PR gets its own Neon branch, the build runs migrations, the preview loads (after `api-foundation` and step D2: settle how the web preview reaches the API preview from the same commit, and check that the protection bypass works and that a direct call without `WEB_PROXY_SECRET` gets 401), CI is green, and closing the PR deletes the branch (T6.1) | 🤝 Both | A–D |
 | F | GitHub → Settings → Branches: require the CI check before merging into `develop` (the check only appears after CI has run once) | 🧑 Human (or 🤖 with approval) | E |
 
 After Phase 2, the infrastructure is **proven working**, and the rest of `app-foundation` (design system, header, footer) and then `signup-login` can be built.
