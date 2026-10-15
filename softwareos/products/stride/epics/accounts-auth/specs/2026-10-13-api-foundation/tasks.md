@@ -10,9 +10,9 @@
 
 - [~] T1 Dependency gate: confirm PR #20 (signup-login) is merged into `develop` (human). Rebase `feat/accounts-auth/api-foundation` onto `develop`. Record a green baseline of `npm run lint`, `typecheck`, `test` and `test:e2e` (including `e2e/auth.spec.ts`) as the no-regression reference (AC2, AC11)
   - Baseline recorded 2026-10-13 on `feat/accounts-auth/auth-api-demo` (PR #20 and #21 merged into the branch, not yet into `develop` — the gate itself is deferred for the demo): lint ✓, typecheck ✓, `test` 164 passed / 8 skipped (Postgres-only `*.db.test.ts`, no `TEST_DATABASE_URL`), `test:e2e` 5 passed, plus `e2e/auth.spec.ts` 3 passed against the Neon demo branch (`TEST_DATABASE_URL` set to un-skip)
-- [ ] T2 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Spike, on a throwaway branch: a minimal NestJS app behind a web proxy (`proxy.ts`) that rewrites `/api/*` with `NextResponse.rewrite` and added request headers, deployed to Vercel previews. Record the results in `spike-notes.md` in this spec folder before starting T3. Also record whether `next.config.ts` `headers()` reach proxied `/api/*` responses (AC4, AC9, AC12, AC15)
-- [ ] T2.1 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Preview pairing: compare two linked Vercel projects (the proxy derives the API preview's branch URL from `VERCEL_GIT_COMMIT_REF`) with Vercel Services. Aim for a web preview that reaches the API preview from the same commit through `/api`, with both on the same Neon preview branch. Prove that the proxy's `x-vercel-protection-bypass` gets past the API preview's Deployment Protection. If neither option works with reasonable setup, record the fallback (web previews call the shared `develop` API preview) and why. Record the chosen setup (human for the Vercel/Neon dashboard parts) (AC12)
-- [ ] T2.2 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Trusted proxy headers: deploy an echo endpoint on the spike API that returns the `x-stride-*` headers it received (the spike branch is never merged). Call it through the web proxy and record:
+- [ ] T2 **Not started — needs Vercel access (human).** Spike, on a throwaway branch: a minimal NestJS app behind a web proxy (`proxy.ts`) that rewrites `/api/*` with `NextResponse.rewrite` and added request headers, deployed to Vercel previews. Record the results in `spike-notes.md` in this spec folder before starting T3. Also record whether `next.config.ts` `headers()` reach proxied `/api/*` responses (AC4, AC9, AC12, AC15)
+- [ ] T2.1 **Not started — needs Vercel access (human).** Preview pairing: compare two linked Vercel projects (the proxy derives the API preview's branch URL from `VERCEL_GIT_COMMIT_REF`) with Vercel Services. Aim for a web preview that reaches the API preview from the same commit through `/api`, with both on the same Neon preview branch. Prove that the proxy's `x-vercel-protection-bypass` gets past the API preview's Deployment Protection. If neither option works with reasonable setup, record the fallback (web previews call the shared `develop` API preview) and why. Record the chosen setup (human for the Vercel/Neon dashboard parts) (AC12)
+- [ ] T2.2 **Not started — needs Vercel access (human).** Trusted proxy headers: deploy an echo endpoint on the spike API that returns the `x-stride-*` headers it received (the spike branch is never merged). Call it through the web proxy and record:
   - that `x-stride-client-ip` equals the browser's real IP (Vercel's `x-real-ip` at the web edge), including when the browser sends a spoofed `x-stride-client-ip` or `x-real-ip`
   - that two clients on different networks show different IPs
   - that `x-stride-forwarded-host` is the web preview's host and the secret arrives intact
@@ -110,16 +110,17 @@
 
 ## Vercel
 
-- [ ] T23 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** Split the Vercel config by app (AC5, AC12):
+- [x] T23 Split the Vercel config by app (AC5, AC12):
   - add `apps/api/vercel.json` with build command `DIRECT_URL="${DIRECT_URL:-$DATABASE_URL_UNPOOLED}" prisma migrate deploy && nest build`, plus the Nest entry/function config the spike proved in T2.1
   - move the root `vercel.json` to `apps/web/vercel.json` with `framework: nextjs` and a plain `next build`, so the web build no longer migrates
-- [ ] T24 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** (human) In Vercel, apply the setup chosen in T2.1 (AC10, AC12):
+  - Done 2026-10-15: `apps/api/vercel.json` holds only the build command, and the root `vercel.json` is gone. The Nest entry/function config is left to Vercel's defaults because the T2.1 spike hasn't run: the spike must confirm it (or add the config it proves) on the first API preview. Until T24 moves the web project's Root Directory to `apps/web`, a web preview built from the repo root has no `vercel.json`
+- [ ] T24 **Not started — needs Vercel access (human).** (human) In Vercel, apply the setup chosen in T2.1 (AC10, AC12):
   - web project: Root Directory `apps/web`
   - API project (create or configure): Root Directory `apps/api`
   - follow `INFRA_PLAN.md` step D2: create and deploy the API project first (deploy order), then move the web Root Directory
   - attach the Neon integration so both get the same preview branch (the web still needs it for the temporary auth code)
   - set the AC10 env vars on each: `WEB_PROXY_SECRET` with the same value on both and a different one per environment; `PASSWORD_PEPPER` and `GUEST_CART_SECRET` copied with the **same** values; on web, `API_URL` per the T2.1 result and `API_PROTECTION_BYPASS_SECRET` on Preview
-- [ ] T25 **Deferred (demo — local-only build on feat/accounts-auth/auth-api-demo).** (human-assisted) Push the branch and verify the preview: `GET <web-preview>/api/health` returns the API's 200 body, needs no CORS headers and makes no cross-origin browser request. A direct `GET <api-preview>/health` without the secret gets 401. Both deployments come from the same commit and the same Neon branch, or the AC12 fallback is in place. Record the URLs in `spike-notes.md` (AC4, AC12, AC13, AC15)
+- [ ] T25 **Not started — needs Vercel access (human).** (human-assisted) Push the branch and verify the preview: `GET <web-preview>/api/health` returns the API's 200 body, needs no CORS headers and makes no cross-origin browser request. A direct `GET <api-preview>/health` without the secret gets 401. Both deployments come from the same commit and the same Neon branch, or the AC12 fallback is in place. Record the URLs in `spike-notes.md` (AC4, AC12, AC13, AC15)
 
 ## Docs
 
