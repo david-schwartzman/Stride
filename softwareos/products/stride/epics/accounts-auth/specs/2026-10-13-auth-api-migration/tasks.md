@@ -23,7 +23,7 @@
   - no password, token or body in responses or the spied logger
 - [x] T5 Write `apps/api/src/auth/auth.guard.test.ts` (testing skill): valid, missing, expired, revoked and tampered cookie; every 401 body has no user data; renewal re-sets Max-Age; 90-day cap; `GET /auth/me` and `@CurrentUser()` return only `{id,email,name}` (AC7)
   - Guard, renewal, cap and `@CurrentUser()` cases green with T15 (probe route in `auth.guard.test.ts`). The `GET /auth/me` assertion needs the controller, so it is in `auth.controller.test.ts` (T4)
-- [x] T6 Rewrite the web tests to mock `fetch` (testing skill): `LoginForm.test.tsx`, `SignupForm.test.tsx`, `AuthPanel.test.tsx` cover the JSON POST to `/api/auth/login|signup`, pending state and blocked double submit, field/form errors mapped from the response, name/email kept after an error, `router.replace(redirectTo)` + `router.refresh()`; `RedirectIfSignedIn.test.tsx` mocks `apiFetch` (AC9, AC10)
+- [x] T6 Rewrite the web tests to mock `fetch` (testing skill): `LoginForm.test.tsx` and `SignupForm.test.tsx` (plus `submit-auth.test.ts`) cover the JSON POST to `/api/auth/login|signup`, pending state and blocked double submit, field/form errors mapped from the response, name/email kept after an error, `router.replace(redirectTo)` + `router.refresh()`; `RedirectIfSignedIn.test.tsx` mocks `apiFetch` (AC9, AC10)
 - [x] T7 Extend `apps/web/e2e/auth.spec.ts` (wiring edit; signup-login's test) (AC5, AC6, AC14):
   - assert the non-production cookie: `stride_session`, HttpOnly, SameSite=Lax, Path=/, no Domain (the production name and Secure flag are unit-tested in T4)
   - logout at the API level: a plain form POST to `/api/auth/logout` gets a 303 to `/`. The browser logout journey stays with protected-routes' AC11
@@ -42,7 +42,7 @@
 - [x] T17 Add `apps/api/src/auth/auth.module.ts` (`onModuleInit` calls `getPepper()`) and import it in `apps/api/src/app.module.ts` (wiring edit); middleware order unchanged (AC1, AC12)
 - [x] T18 Wire env for tests and e2e (AC5, AC12, AC14, AC15):
   - `apps/api/.env.example`: add `TEST_DATABASE_URL`
-  - `apps/web/playwright.config.ts` (wiring edit): the API webServer runs without `NODE_ENV=production`, since the Origin check accepts `http://localhost` only outside production. DB URL and pepper come from `apps/api/.env` locally, so e2e uses the Neon demo database, as today; `TEST_DATABASE_URL` only un-skips `auth.spec.ts`. CI env stays with api-foundation's deferred T22
+  - `apps/web/playwright.config.ts` (wiring edit): the API webServer runs without `NODE_ENV=production`, since the Origin check accepts `http://localhost` only outside production. DB URL and pepper come from `apps/api/.env` locally, so e2e uses the local `apps/api/.env` database; CI uses its Postgres service (api-foundation T22). `TEST_DATABASE_URL` only un-skips `auth.spec.ts`
 
 ## Web switch to /api
 
@@ -72,7 +72,13 @@
 ## Verification
 
 - [x] T29 From the root, run lint, typecheck, test and test:e2e with `TEST_DATABASE_URL` set (`*.db.test.ts` and `e2e/auth.spec.ts` run); spot-check an existing user's login (AC14, AC15)
-  - Done 2026-10-13: lint, typecheck, test (API 148 incl. the 8 Postgres tests on the Neon demo DB, web 94, shared 44) and test:e2e (10/10, both apps). Existing-user spot-check not possible: the database had no pre-migration accounts; the Argon2 parameters and pepper are unchanged (password.service.test.ts)
+  - Done 2026-10-13: lint, typecheck, test (API 148 incl. the 8 Postgres tests on the local `apps/api/.env` database, web 94, shared 44) and test:e2e (10/10, both apps). Existing-user spot-check not possible: the database had no pre-migration accounts; the Argon2 parameters and pepper are unchanged (password.service.test.ts)
 - [x] T30 Security review (security-reviewer agent) of `apps/api/src/auth/**`, the `main.ts`/`app.module.ts` changes and the web fetch path (AC3–AC7, AC12, AC13)
-  - 2026-10-13 review: APPROVE WITH NOTES (0 critical, 0 high, 1 medium, 3 low). Fixed: `GET /auth/me` / AuthGuard send `Cache-Control: private, no-store` (#3). Fixed: malformed JSON no longer echoes the body (#1, medium; `auth/body-parsing.ts`, wired in `main.ts`). Deferred by the user: backslash `redirectTo` check in `submit-auth.ts` (#2, low) and Prisma error logging (#4, low)
+  - 2026-10-13 review: APPROVE WITH NOTES (0 critical, 0 high, 1 medium, 3 low). Findings: #1 medium, malformed JSON echoed the body (fixed; now `common/body-parsing.ts`, wired in `setup-app.ts`, see T32). #2 low, backslash `redirectTo` (deferred, then fixed in T33). #3 low, `GET /auth/me` / AuthGuard cacheable (fixed: `Cache-Control: private, no-store`). #4 low, Prisma error logging (deferred by the user)
 - [x] T31 Run QA against acceptance criteria AC1–AC15 (qa skill)
+
+## Pre-PR review fixes (Changelog 2026-10-15)
+
+- [x] T32 Run the proxy-secret check as the first Express middleware, before body parsing (`apps/api/src/setup-app.ts`, called by `main.ts`; wiring edits to api-foundation files); remove it from `AppModule.configure`, keep the Origin check there; move `body-parsing.ts` to `apps/api/src/common/`, keeping the login/sign-up empty-form answer in `auth/malformed-body.ts`; add `auth.wiring.test.ts` (real `AppModule`, Prisma stubbed): no secret → 401 with an empty body, malformed body included; secret + foreign Origin → the Origin middleware's rejection; the handler never runs (AC1, AC13)
+- [x] T33 `authSuccessSchema.redirectTo` matches `^\/(?![\/\\])`; `submit-auth.ts` relies on it; tests in `responses.test.ts` and `submit-auth.test.ts` (T30 #2) (AC9)
+- [ ] T34 Re-run QA against AC1–AC15 at the branch tip with `TEST_DATABASE_URL` set (qa skill)

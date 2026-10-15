@@ -9,7 +9,7 @@
 
 ## Upstream Meeting
 
-None (no meetings folder). Planning notes: `NESTJS_MIGRATION_PLAN.md` (phase 4, untracked).
+None (no meetings folder). The planning decisions it relied on: build this only after api-foundation is merged (it needs the monorepo and the API), and the session cookie keeps signup-login's name and flags, now set by the API through the `/api` rewrite and checked in e2e (AC5, AC14).
 
 ## Similar Implementations
 
