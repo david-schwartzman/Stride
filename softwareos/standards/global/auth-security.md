@@ -19,7 +19,7 @@ Rules for any code that knows who the user is. The design behind them is in `sof
 
 - GET never changes state. Every change, including logout, is a POST (or DELETE) to `/api/*`.
 - Redirect targets taken from input (`next`, `callbackUrl`) must be same-origin relative paths; otherwise fall back to `/`.
-- The API is publicly reachable, so it trusts nothing a direct caller sends. One global Nest middleware rejects any request without a valid `x-stride-proxy-secret` (`WEB_PROXY_SECRET`, constant-time compare) with 401. `/cron/*` is the only exception (Bearer `CRON_SECRET`). The web sets that secret on every call, from the proxy's `/api` rewrite and from Server Components, and overwrites any client-sent copy.
+- The API is publicly reachable, so it trusts nothing a direct caller sends. One global middleware, the first in the API's request pipeline, rejects any request without a valid `x-stride-proxy-secret` (`WEB_PROXY_SECRET`, constant-time compare) with 401. `/cron/*` is the only exception (Bearer `CRON_SECRET`). The web sets that secret on every call, from the proxy's `/api` rewrite and from Server Components, and overwrites any client-sent copy.
 - The client IP comes only from `x-stride-client-ip` on a request that passed that check (validated, else null), never from `x-forwarded-for`, `x-real-ip` or the connecting address. Per-IP throttles skip a null IP (fail open) and never put every caller in one shared bucket.
 - The API checks `Origin` on every state-changing request: it must equal `https://` + the trusted `x-stride-forwarded-host` (`http://` in local dev only). A missing or different `Origin` gets 401. The browser reaches the API only through the same-origin `/api` rewrite — no CORS.
 
