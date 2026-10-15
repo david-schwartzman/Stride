@@ -3,6 +3,7 @@
 > Epic: accounts-auth
 > Spec: 2026-10-13-api-foundation
 > Branch: feat/accounts-auth/api-foundation
+> PR: https://github.com/david-schwartzman/Stride/pull/22
 > Reviewed: 2026-10-15 APPROVE WITH COMMENTS
 > SecurityReviewed: 2026-10-15 APPROVE WITH COMMENTS
 
