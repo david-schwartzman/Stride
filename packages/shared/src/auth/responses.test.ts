@@ -14,12 +14,9 @@ describe("authSuccessSchema", () => {
     "/checkout?step=2",
     "/catalog?q=run&sort=price#top",
     "/search?next=/account",
-  ])(
-    "accepts the same-site path %s",
-    (redirectTo) => {
-      expect(authSuccessSchema.parse({ redirectTo })).toEqual({ redirectTo });
-    },
-  );
+  ])("accepts the same-site path %s", (redirectTo) => {
+    expect(authSuccessSchema.parse({ redirectTo })).toEqual({ redirectTo });
+  });
 
   it.each([
     {},
