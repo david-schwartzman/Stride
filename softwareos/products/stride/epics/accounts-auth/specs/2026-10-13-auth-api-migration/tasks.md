@@ -83,3 +83,7 @@
 - [x] T33 `authSuccessSchema.redirectTo` matches `^\/(?![\/\\])`; `submit-auth.ts` relies on it; tests in `responses.test.ts` and `submit-auth.test.ts` (T30 #2) (AC9)
 - [x] T34 Re-run QA against AC1–AC15 at the branch tip with `TEST_DATABASE_URL` set (qa skill)
   - Done 2026-10-15: PASS WITH NOTES. lint, typecheck, build and test pass (API 155 + 8 skipped, web 96, shared 50). No database was reachable, so the 8 Postgres tests and the e2e auth journeys did not run (qa-report.md Notes 1–2)
+
+## Final review fixes (Changelog 2026-10-15)
+
+- [x] T35 `authSuccessSchema.redirectTo` rejects control characters and requires the path to resolve to the same origin (security review LOW-1); tests in `responses.test.ts` (`/\t/evil.com`, `/\n\evil.com`, `/\r//evil.com`, `//evil.com`, `/\evil.com`, NUL/DEL, valid paths with query strings) and `submit-auth.test.ts` (AC8, AC9)

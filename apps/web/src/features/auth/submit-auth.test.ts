@@ -92,6 +92,11 @@ describe("submitAuth", () => {
       200,
       JSON.stringify({ redirectTo: "/\\evil.example" }),
     ],
+    [
+      "a redirectTo with a tab (security review LOW-1)",
+      200,
+      JSON.stringify({ redirectTo: "/\t/evil.example" }),
+    ],
     ["a body that isn't JSON", 400, "<html>"],
   ])("throws on %s, as the Server Action did", async (_label, status, body) => {
     respond(status, body);

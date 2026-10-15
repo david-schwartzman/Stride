@@ -8,7 +8,13 @@ import {
 } from "./responses";
 
 describe("authSuccessSchema", () => {
-  it.each(["/", "/account", "/checkout?step=2"])(
+  it.each([
+    "/",
+    "/account",
+    "/checkout?step=2",
+    "/catalog?q=run&sort=price#top",
+    "/search?next=/account",
+  ])(
     "accepts the same-site path %s",
     (redirectTo) => {
       expect(authSuccessSchema.parse({ redirectTo })).toEqual({ redirectTo });
@@ -23,6 +29,15 @@ describe("authSuccessSchema", () => {
     { redirectTo: "//evil.example" },
     { redirectTo: "/\\evil.example" },
     { redirectTo: "/\\/evil.example" },
+    // Browsers strip tab, CR and LF from URLs, so these become //evil.com
+    // or /\evil.com (security review LOW-1).
+    { redirectTo: "/\t/evil.com" },
+    { redirectTo: "/\n\\evil.com" },
+    { redirectTo: "/\r//evil.com" },
+    { redirectTo: "//evil.com" },
+    { redirectTo: "/\\evil.com" },
+    { redirectTo: "/account\u0000" },
+    { redirectTo: "/account\u007f" },
   ])("rejects %j", (body) => {
     expect(authSuccessSchema.safeParse(body).success).toBe(false);
   });
