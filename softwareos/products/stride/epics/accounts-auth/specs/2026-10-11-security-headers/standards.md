@@ -89,7 +89,7 @@ Rules for any code that knows who the user is. The design behind them is in `sof
 
 ## Secrets and logs
 
-- Secrets (`DATABASE_URL`, `PASSWORD_PEPPER`, `GUEST_CART_SECRET`, `CRON_SECRET`) live in the API project's env vars with a different value per environment — never on the web project and never in a `NEXT_PUBLIC_` variable. `WEB_PROXY_SECRET` is the one secret on both projects (same value on both, different per environment, server-only on the web). Until `auth-api-migration` ships, the pre-split Next app still needs `DATABASE_URL` and `PASSWORD_PEPPER` on the web project.
+- Secrets (`DATABASE_URL`, `PASSWORD_PEPPER`, `GUEST_CART_SECRET`, `CRON_SECRET`) live in the API project's env vars with a different value per environment — never on the web project and never in a `NEXT_PUBLIC_` variable. `WEB_PROXY_SECRET` is the one secret on both projects (same value on both, different per environment, server-only on the web).
 - Never log passwords, session tokens, cookies, reset links or raw request bodies from auth endpoints. Users see generic errors; details go to logs only.
 
 ---

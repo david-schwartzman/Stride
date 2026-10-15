@@ -6,7 +6,7 @@
 
 ## Prerequisites
 
-- [ ] T1 Confirm that signup-login (apps/api/src/auth/** (after auth-api-migration), User/Session/AuthAttempt) and session-management (`Session.publicId`, apps/api/src/account-security/, the API cron controller (apps/api/src/cron/)) are merged into this branch's base, and that their Vitest and Playwright suites pass. Every wiring edit below depends on those files. If either is unmerged, stop and rebase. Do not stub their code here.
+- [ ] T1 Confirm that signup-login (User/Session/AuthAttempt), auth-api-migration (apps/api/src/auth/**) and session-management (`Session.publicId`, apps/api/src/account-security/, the API cron controller (apps/api/src/cron/)) are merged into this branch's base, and that their Vitest and Playwright suites pass. Every wiring edit below depends on those files. If either is unmerged, stop and rebase. Do not stub their code here.
 
 ## Data
 
@@ -30,7 +30,7 @@
   - Each `reason` outside the type's allowed set fails a `// @ts-expect-error` type assertion (AC1, AC5).
   - (testing skill)
 - [ ] T5 Write failing Vitest cases in apps/api/src/auth-events/prune.test.ts. `pruneAuthEvents(olderThan)` deletes only rows with `createdAt < olderThan` and returns the deleted count. A row exactly at the cutoff is kept. Rows with a null `userId` are pruned too (AC8). (testing skill)
-- [ ] T6 Extend the API auth controller tests in apps/api/src/auth/ (signup-login file, wiring edit), with `recordAuthEvent` mocked:
+- [ ] T6 Extend the API auth controller tests in apps/api/src/auth/ (auth-api-migration file, wiring edit), with `recordAuthEvent` mocked:
   - `POST /auth/signup` records `signup` with `userId` + the new `sessionPublicId` on success.
   - `POST /auth/signup` records `signup_failure` / `email_taken` on P2002 and `signup_failure` / `throttled` when throttled.
   - An invalid form records nothing (AC1).
@@ -50,7 +50,7 @@
   - `POST /account/sessions/revoke` records `session_revoked` with the revoked `publicId` only when the count is 1, and nothing on `notFound()` or when the current `publicId` is refused (AC1, AC3).
   - `POST /account/sessions/revoke-others` records `logout_others` with `count` from `deleteMany` (AC1).
   - (testing skill)
-- [ ] T8 Extend the API session service tests in apps/api/src/auth/ (signup-login file, wiring edit). `createSession` returns the new session's `publicId`. `invalidateOtherSessions` returns the deleted count. Existing callers still compile and pass (AC3). (testing skill)
+- [ ] T8 Extend the API session service tests in apps/api/src/auth/ (auth-api-migration file, wiring edit). `createSession` returns the new session's `publicId`. `invalidateOtherSessions` returns the deleted count. Existing callers still compile and pass (AC3). (testing skill)
 - [ ] T9 Extend the cron controller tests in apps/api/src/cron/ (session-management file, wiring edit). An authorised GET calls `pruneAuthEvents` with `now − 90 days` and returns `{ sessions, authAttempts, authEvents }`. The 401 cases call no prune (AC8). (testing skill)
 - [ ] T10 Write a failing AC5 secret-leak Vitest in apps/api/src/auth-events/no-secrets.test.ts:
   - Use a fixed known password, known session token, its `sha256` (`Session.id`), the cookie header value, test `PASSWORD_PEPPER` and `CRON_SECRET`, and a raw form email.
@@ -83,8 +83,8 @@
 
 ## Auth module (sibling files, wiring edits)
 
-- [ ] T17 Edit the API session service in apps/api/src/auth/ (signup-login file). `createSession` returns `{ publicId }` alongside its current return value. `invalidateOtherSessions` returns the `deleteMany` count. If `POST /account/password` uses `invalidateAllSessions`, that returns its count too. Update the existing callers in apps/api/src/auth/ and apps/api/src/account-security/ so they still type-check (AC3). T8 goes green.
-- [ ] T18 Edit the API auth controller/service in apps/api/src/auth/ (signup-login file):
+- [ ] T17 Edit the API session service in apps/api/src/auth/ (auth-api-migration file). `createSession` returns `{ publicId }` alongside its current return value. `invalidateOtherSessions` returns the `deleteMany` count. If `POST /account/password` uses `invalidateAllSessions`, that returns its count too. Update the existing callers in apps/api/src/auth/ and apps/api/src/account-security/ so they still type-check (AC3). T8 goes green.
+- [ ] T18 Edit the API auth controller/service in apps/api/src/auth/ (auth-api-migration file):
   - `POST /auth/signup`: `signup_failure` / `throttled` after the throttle check; `signup_failure` / `email_taken` on P2002; `signup` with `userId` + `publicId` after `createSession`.
   - `POST /auth/login`: `login_failure` / `throttled`; `unknown_email` on the dummy-hash branch, with no `userId` and no email; `bad_password` with `userId`; `login_success` with `userId` + `publicId`.
   - `POST /auth/logout`: call `getCurrentSession()` before `invalidateSession` and record `logout` with `userId` + `publicId`.

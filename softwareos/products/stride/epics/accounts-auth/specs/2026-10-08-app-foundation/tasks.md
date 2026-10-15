@@ -4,7 +4,7 @@
 > Spec: 2026-10-08-app-foundation
 > Branch: feat/accounts-auth/app-foundation
 > PR: https://github.com/david-schwartzman/Stride/pull/17 · https://github.com/david-schwartzman/Stride/pull/18 (T8–T15)
-> Reviewed: 2026-10-12 APPROVE
+> Reviewed: 2026-10-12 APPROVE (stale — spec changed 2026-10-15)
 
 ## Scaffold & tooling
 
