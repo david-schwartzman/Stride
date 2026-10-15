@@ -144,6 +144,7 @@
   - `origin-check.middleware.test.ts` also covers a missing `x-stride-forwarded-host` and `http://` in and out of production
   - `request-ip.test.ts`: valid IPv4/IPv6 in `x-stride-client-ip`, garbage, empty, a missing header, and a request carrying only `x-forwarded-for` or `x-real-ip` (→ null)
   - Written with T15/T16 (`12405fe`, `027698a`); verified 2026-10-13: every case above is covered and passes in the API suite (25 passed)
+  - Added 2026-10-15 (code review M2): `apps/api/src/app.module.test.ts` boots `AppModule` with Prisma stubbed and checks the wiring over HTTP: no secret → 401 empty body (`/health` and an unknown route), the secret with a foreign Origin on a POST → 401, and the secret check answers before the Origin check
 - [x] T31 Write config and regression tests (testing skill) for the web wiring (AC2, AC4, AC6, AC10, AC11):
   - `apiRewrite`: `/api` stripped, query kept, `Cookie` passed through, bypass header only on Preview with the secret set, and the production 503 when `API_URL` or `WEB_PROXY_SECRET` is missing
   - `next.config.ts` has no `/api` rewrite
