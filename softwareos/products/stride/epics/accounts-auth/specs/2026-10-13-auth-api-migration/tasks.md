@@ -3,6 +3,8 @@
 > Epic: accounts-auth
 > Spec: 2026-10-13-auth-api-migration
 > Branch: feat/accounts-auth/auth-api-migration
+> Reviewed: 2026-10-15 APPROVE WITH COMMENTS
+> SecurityReviewed: 2026-10-15 APPROVE WITH COMMENTS
 
 ## Tests first (TDD)
 
