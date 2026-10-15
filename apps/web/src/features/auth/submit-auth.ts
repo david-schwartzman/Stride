@@ -41,11 +41,9 @@ export function submitAuth(
     const values = valuesOf(data);
 
     if (res.ok) {
-      // Same-site paths only, so a tampered body can't navigate off-site.
+      // The schema allows same-site paths only (no "//" or "/\"), so a
+      // tampered body can't navigate off-site; anything else throws.
       const { redirectTo } = authSuccessSchema.parse(body);
-      if (redirectTo.startsWith("//")) {
-        throw new Error("Unexpected auth response");
-      }
       onSignedIn(redirectTo);
       return { values };
     }

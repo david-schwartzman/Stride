@@ -8,18 +8,24 @@ import {
 } from "./responses";
 
 describe("authSuccessSchema", () => {
-  it("accepts a relative redirect target", () => {
-    expect(authSuccessSchema.parse({ redirectTo: "/" })).toEqual({
-      redirectTo: "/",
-    });
-  });
-
-  it.each([{}, { redirectTo: "" }, { redirectTo: "https://evil.example" }])(
-    "rejects %j",
-    (body) => {
-      expect(authSuccessSchema.safeParse(body).success).toBe(false);
+  it.each(["/", "/account", "/checkout?step=2"])(
+    "accepts the same-site path %s",
+    (redirectTo) => {
+      expect(authSuccessSchema.parse({ redirectTo })).toEqual({ redirectTo });
     },
   );
+
+  it.each([
+    {},
+    { redirectTo: "" },
+    { redirectTo: "https://evil.example" },
+    { redirectTo: "evil.example" },
+    { redirectTo: "//evil.example" },
+    { redirectTo: "/\\evil.example" },
+    { redirectTo: "/\\/evil.example" },
+  ])("rejects %j", (body) => {
+    expect(authSuccessSchema.safeParse(body).success).toBe(false);
+  });
 });
 
 describe("authErrorSchema", () => {

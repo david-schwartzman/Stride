@@ -82,6 +82,16 @@ describe("submitAuth", () => {
       200,
       JSON.stringify({ redirectTo: "https://evil.example" }),
     ],
+    [
+      "a protocol-relative redirectTo",
+      200,
+      JSON.stringify({ redirectTo: "//evil.example" }),
+    ],
+    [
+      "a backslash redirectTo (security review T30 #2)",
+      200,
+      JSON.stringify({ redirectTo: "/\\evil.example" }),
+    ],
     ["a body that isn't JSON", 400, "<html>"],
   ])("throws on %s, as the Server Action did", async (_label, status, body) => {
     respond(status, body);
