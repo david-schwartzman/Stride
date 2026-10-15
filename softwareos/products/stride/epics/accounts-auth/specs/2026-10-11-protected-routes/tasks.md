@@ -8,7 +8,7 @@
 
 - [ ] T1 Confirm installed Next.js major (proxy.ts on 16+, middleware.ts on 15); add packages/shared/src/callback-url.ts (safeCallbackUrl, buildLoginUrl)
 - [ ] T2 Add src/features/session/guard.ts (pure guard() + PROTECTED_PREFIXES, whole-segment matching per AC1)
-- [ ] T3 Add src/proxy.ts (or src/middleware.ts): cookie-presence check (no DB, no auth library) calling guard(); matcher for all page routes excluding static files; redirect only PROTECTED_PREFIXES; on GET with the cookie call refreshSessionCookie(response, token) from packages/shared/src/session-cookie.ts (cookie name + attributes shared with the API; no secrets, no Prisma/Argon2) — AC12
+- [ ] T3 Add src/proxy.ts (or src/middleware.ts): cookie-presence check (no DB, no auth library) calling guard(); matcher for all page routes excluding static files; redirect only PROTECTED_PREFIXES; on GET with the cookie call refreshSessionCookie(response, token) from packages/shared/src/session-cookie.ts. Create that file by moving the name rule and attributes out of apps/api/src/auth/session-cookie.ts (API NODE_ENV: __Host-stride_session in production, stride_session otherwise) and make the API import it; the proxy detects whichever of the two names is present and never derives it from the web's NODE_ENV (no secrets, no Prisma/Argon2) — AC12
 - [ ] T4 Add src/features/session/require-user.ts (requireUser(path) → getCurrentSession() calls GET /auth/me at API_URL with the cookie forwarded → user, or on 401 redirect to buildLoginUrl)
 
 ## Return-to wiring (signup-login files)
