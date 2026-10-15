@@ -41,6 +41,7 @@ specs:
       - packages/shared/tsconfig.build.json
       - packages/shared/src/index.ts
       - packages/shared/src/health.ts
+      - packages/shared/src/health.test.ts
       - .github/workflows/**
   - folder: 2026-10-08-app-foundation
     slug: app-foundation
