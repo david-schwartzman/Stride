@@ -81,4 +81,5 @@
 
 - [x] T32 Run the proxy-secret check as the first Express middleware, before body parsing (`apps/api/src/setup-app.ts`, called by `main.ts`; wiring edits to api-foundation files); remove it from `AppModule.configure`, keep the Origin check there; move `body-parsing.ts` to `apps/api/src/common/`, keeping the login/sign-up empty-form answer in `auth/malformed-body.ts`; add `auth.wiring.test.ts` (real `AppModule`, Prisma stubbed): no secret → 401 with an empty body, malformed body included; secret + foreign Origin → the Origin middleware's rejection; the handler never runs (AC1, AC13)
 - [x] T33 `authSuccessSchema.redirectTo` matches `^\/(?![\/\\])`; `submit-auth.ts` relies on it; tests in `responses.test.ts` and `submit-auth.test.ts` (T30 #2) (AC9)
-- [ ] T34 Re-run QA against AC1–AC15 at the branch tip with `TEST_DATABASE_URL` set (qa skill)
+- [x] T34 Re-run QA against AC1–AC15 at the branch tip with `TEST_DATABASE_URL` set (qa skill)
+  - Done 2026-10-15: PASS WITH NOTES. lint, typecheck, build and test pass (API 155 + 8 skipped, web 96, shared 50). No database was reachable, so the 8 Postgres tests and the e2e auth journeys did not run (qa-report.md Notes 1–2)
