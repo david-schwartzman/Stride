@@ -30,12 +30,16 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
-      # Throwaway CI database and a test-only pepper (base64 of the 32-byte
-      # string "ci-only-test-pepper-not-a-secret"); never used outside CI.
+      # Throwaway CI database and test-only secrets; never used outside CI.
+      # The pepper is base64 of the 32-byte string "ci-only-test-pepper-not-a-secret".
       DATABASE_URL: postgresql://stride:stride@localhost:5432/stride_test
       DIRECT_URL: postgresql://stride:stride@localhost:5432/stride_test
       TEST_DATABASE_URL: postgresql://stride:stride@localhost:5432/stride_test
       PASSWORD_PEPPER: Y2ktb25seS10ZXN0LXBlcHBlci1ub3QtYS1zZWNyZXQ=
+      GUEST_CART_SECRET: ci-only-guest-cart-secret-not-a-secret
+      # Both apps read it: the web proxy sends it, the API checks it.
+      WEB_PROXY_SECRET: ci-only-web-proxy-secret-not-a-secret
+      API_URL: http://localhost:4000
     steps:
       - uses: actions/checkout@v7
 
@@ -49,6 +53,7 @@ jobs:
 
       # Before the unit tests too: the Postgres integration tests need the tables.
       - name: Migrate database
+        working-directory: apps/api
         run: npx prisma migrate deploy
 
       - name: Lint
@@ -60,11 +65,14 @@ jobs:
       - name: Unit tests
         run: npm test
 
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
-
+      # Builds packages/shared, then both apps.
       - name: Build
         run: npm run build
 
-      - name: E2E smoke
+      - name: Install Playwright browser
+        working-directory: apps/web
+        run: npx playwright install --with-deps chromium
+
+      # Starts the built API (:4000) and web (:3000); see apps/web/playwright.config.ts.
+      - name: E2E
         run: npm run test:e2e
