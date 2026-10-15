@@ -3,7 +3,8 @@
 > Epic: accounts-auth
 > Spec: 2026-10-13-api-foundation
 > Branch: feat/accounts-auth/api-foundation
-> Reviewed: 2026-10-15 REQUEST CHANGES (re-review pending)
+> Reviewed: 2026-10-15 APPROVE WITH COMMENTS
+> SecurityReviewed: 2026-10-15 APPROVE WITH COMMENTS
 
 ## Gate & spike
 
@@ -113,6 +114,7 @@
 - [x] T23 Split the Vercel config by app (AC5, AC12):
   - add `apps/api/vercel.json` with build command `DIRECT_URL="${DIRECT_URL:-$DATABASE_URL_UNPOOLED}" prisma migrate deploy && nest build`, plus the Nest entry/function config the spike proved in T2.1
   - move the root `vercel.json` to `apps/web/vercel.json` with `framework: nextjs` and a plain `next build`, so the web build no longer migrates
+  - both build commands first run the root `build:shared` (`npm --prefix ../.. run build:shared`): `@stride/shared` resolves to its gitignored `dist/`, and a Vercel build with Root Directory `apps/<app>` skips the root `build` script that CI uses
   - Done 2026-10-15: `apps/api/vercel.json` holds only the build command, and the root `vercel.json` is gone. The Nest entry/function config is left to Vercel's defaults because the T2.1 spike hasn't run: the spike must confirm it (or add the config it proves) on the first API preview. Until T24 moves the web project's Root Directory to `apps/web`, a web preview built from the repo root has no `vercel.json`
 - [ ] T24 **Not started — needs Vercel access (human).** (human) In Vercel, apply the setup chosen in T2.1 (AC10, AC12):
   - web project: Root Directory `apps/web`
