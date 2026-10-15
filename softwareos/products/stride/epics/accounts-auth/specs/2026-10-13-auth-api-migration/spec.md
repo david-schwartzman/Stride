@@ -3,7 +3,7 @@
 > Epic: ../../epic.md
 > Status: in-progress
 > Branch: feat/accounts-auth/auth-api-migration
-> Covers: apps/api/src/auth/**, packages/shared/src/auth/**, apps/web/src/features/auth/**, apps/web/src/lib/auth/**, apps/web/src/lib/db.ts, apps/web/src/instrumentation.ts, apps/api/src/setup-app.ts
+> Covers: apps/api/src/auth/**, packages/shared/src/auth/**, apps/web/src/features/auth/**, apps/web/src/lib/auth/**, apps/web/src/lib/db.ts, apps/web/src/instrumentation.ts, apps/api/src/setup-app.ts, apps/api/src/common/body-parsing.ts
 
 ## Overview
 
@@ -84,3 +84,4 @@ Moves signup-login's auth code out of the Next app into a NestJS `AuthModule`, s
 | 2026-10-13 | david-schwartzman | created | Initial shaping | — |
 | 2026-10-15 | david-schwartzman | change | Technical Approach: the proxy-secret check runs first as an Express middleware in the new `apps/api/src/setup-app.ts`, before body parsing (it ran after it as AppModule middleware, so a malformed body without the secret got 400 instead of 401); body parsing is global in `common/body-parsing.ts`; guarded responses send `Cache-Control: private, no-store`; Covers adds `apps/api/src/setup-app.ts`; tests run against the local `apps/api/.env` database, and CI against its Postgres service; `authSuccessSchema.redirectTo` rejects `/\` (T30 #2); T32–T34 added — pre-PR review: auth-security standard (the proxy secret is checked before anything else) and doc accuracy | — |
 | 2026-10-15 | david-schwartzman | change | AC5: the API's `NODE_ENV` picks the cookie name, so the web must not derive it from its own `NODE_ENV`; `packages/shared/src/session-cookie.ts` is the single source, with a handoff note for protected-routes' proxy refresh — `next start` is always production while the e2e API runs with `NODE_ENV=test`, so the names would disagree | — |
+| 2026-10-15 | david-schwartzman | change | Covers adds `apps/api/src/common/body-parsing.ts` (created by T32); `references.md` lists every file this branch edits but doesn't own, checked against the branch diff — final review (N3) | — |
