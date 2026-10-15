@@ -84,7 +84,7 @@ And the mission: checkout and wishlist require login. The protected pages themse
 - A wishlist-specific login banner variant. The design copy is checkout-specific, so the banner shows for /checkout only.
 - Heart-toggle guest redirect (account-wishlist's wishlist endpoint returns 401 via the `AuthGuard`; the heart sends guests to login).
 - Role-based / admin authorization; per-resource ownership checks (each feature scopes its queries to `session.user.id`).
-- "Your devices" list, sign out of other devices, change password (candidate `session-management`). Login throttling and logout revocation are signup-login's. "Remember me" (sessions already last 30 days of activity).
+- "Your devices" list, sign out of other devices, change password (`session-management`). Login throttling and logout revocation are signup-login's. "Remember me" (sessions already last 30 days of activity).
 - Password reset, social login, email verification (epic Out of Scope).
 
 ## Standards Applied
