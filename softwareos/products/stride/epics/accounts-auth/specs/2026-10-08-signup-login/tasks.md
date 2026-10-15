@@ -3,22 +3,23 @@
 > Epic: accounts-auth
 > Spec: 2026-10-08-signup-login
 > Branch: feat/accounts-auth/signup-login
+> PR: https://github.com/david-schwartzman/Stride/pull/20
 
 ## Data & passwords
 
-- [ ] T1 Add User (incl. pepperVersion), Session and AuthAttempt models to prisma/schema.prisma and generate migration prisma/migrations/<ts>_init_auth/
-- [ ] T2 Add @node-rs/argon2 (exact pin) and src/lib/auth/password.ts (hashPassword / verifyPassword / verifyDummy; Argon2id m=19456 t=2 p=1, secret = PASSWORD_PEPPER via getPepper(), which throws when the pepper is missing, empty or decodes to < 32 bytes); src/instrumentation.ts runs the same check at server start
+- [x] T1 Add User (incl. pepperVersion), Session and AuthAttempt models to prisma/schema.prisma and generate migration prisma/migrations/<ts>_init_auth/
+- [x] T2 Add @node-rs/argon2 (exact pin) and src/lib/auth/password.ts (hashPassword / verifyPassword / verifyDummy; Argon2id m=19456 t=2 p=1, secret = PASSWORD_PEPPER via getPepper(), which throws when the pepper is missing, empty or decodes to < 32 bytes); src/instrumentation.ts runs the same check at server start
 
 ## Auth module
 
-- [ ] T15 Add @oslojs/crypto + @oslojs/encoding (exact pins) and src/lib/auth/session.ts (generateSessionToken, hashToken, createSession, validateSessionToken with 30d sliding / renew under 15d / 90d cap, invalidateSession, invalidateAllSessions)
-- [ ] T16 Add src/lib/auth/cookie.ts (set/delete with exact attributes; __Host-stride_session in production, stride_session in dev) and src/lib/auth/current.ts (getCurrentSession wrapped in React cache())
-- [ ] T17 Add src/lib/request-ip.ts (`getClientIp(headers)`: `x-real-ip` validated with `net.isIP()`, else null; never `x-forwarded-for`) and src/lib/auth/throttle.ts (AuthAttempt-based checkLoginThrottle, recordLoginFailure, clearLoginFailures, checkSignupThrottle; each normalises the email itself via normalizeEmail (trim + lowercase) from src/lib/auth/email.ts, also used by T5's schemas; exact limits + back-off table per AC14 as an exported const; IP from `getClientIp` only, per-IP checks skipped when it's null)
-- [ ] T18 Spike before building forms: deploy a throwaway route to a Vercel preview that hashes + verifies a password with @node-rs/argon2 (pepper from env) and sets/reads the session cookie; confirm the native module loads in the serverless function, then remove the route
+- [x] T15 Add @oslojs/crypto + @oslojs/encoding (exact pins) and src/lib/auth/session.ts (generateSessionToken, hashToken, createSession, validateSessionToken with 30d sliding / renew under 15d / 90d cap, invalidateSession, invalidateAllSessions)
+- [x] T16 Add src/lib/auth/cookie.ts (set/delete with exact attributes; __Host-stride_session in production, stride_session in dev) and src/lib/auth/current.ts (getCurrentSession wrapped in React cache())
+- [x] T17 Add src/lib/request-ip.ts (`getClientIp(headers)`: `x-real-ip` validated with `net.isIP()`, else null; never `x-forwarded-for`) and src/lib/auth/throttle.ts (AuthAttempt-based checkLoginThrottle, recordLoginFailure, clearLoginFailures, checkSignupThrottle; each normalises the email itself via normalizeEmail (trim + lowercase) from src/lib/auth/email.ts, also used by T5's schemas; exact limits + back-off table per AC14 as an exported const; IP from `getClientIp` only, per-IP checks skipped when it's null)
+- [x] T18 Spike before building forms: deploy a throwaway route to a Vercel preview that hashes + verifies a password with @node-rs/argon2 (pepper from env) and sets/reads the session cookie; confirm the native module loads in the serverless function, then remove the route — verified 2026-10-13 on a Vercel preview (iad1, Node 24): Argon2id m=19456 t=2 p=1 hash + verify OK (~86 ms), __Host-stride_session round-tripped on reload; spike route removed with its branch
 
 ## Auth module tests (before T5)
 
-- [ ] T19 Write Vitest tests test-first for the auth module (testing skill), passing before T5 starts: password.ts (hash, verify, wrong password, wrong pepper, verifyDummy, missing / empty / < 32-byte pepper throws); session.ts (create, validate, sliding renewal, 90-day cap, expired deleted, invalidate, invalidateAll, only hash stored, old token rejected after invalidateSession — AC16); throttle.ts (each back-off step delay(5..9+), per-IP 30/15 min block, signup 10/60 min limit, clear on success, unknown-email failures counted per email and per IP, 5 failures as `a@x.com` then ` A@X.com ` is refused, a refused attempt isn't recorded as a failure, per-IP checks skipped when the IP is null); request-ip.ts (valid IPv4/IPv6 `x-real-ip` returned; missing, empty or garbage → null; a spoofed `x-forwarded-for` is ignored)
+- [x] T19 Write Vitest tests test-first for the auth module (testing skill), passing before T5 starts: password.ts (hash, verify, wrong password, wrong pepper, verifyDummy, missing / empty / < 32-byte pepper throws); session.ts (create, validate, sliding renewal, 90-day cap, expired deleted, invalidate, invalidateAll, only hash stored, old token rejected after invalidateSession — AC16); throttle.ts (each back-off step delay(5..9+), per-IP 30/15 min block, signup 10/60 min limit, clear on success, unknown-email failures counted per email and per IP, 5 failures as `a@x.com` then ` A@X.com ` is refused, a refused attempt isn't recorded as a failure, per-IP checks skipped when the IP is null); request-ip.ts (valid IPv4/IPv6 `x-real-ip` returned; missing, empty or garbage → null; a spoofed `x-forwarded-for` is ignored)
 
 ## Auth.js
 
@@ -28,22 +29,27 @@
 
 ## Validation, actions & hook
 
-- [ ] T5 Add src/features/auth/schemas.ts (signupSchema, loginSchema: email via normalizeEmail, password 12–128, name required)
-- [ ] T6 Add src/features/auth/hooks.ts (no-op onSignedIn) and runOnSignedIn wrapper (try/catch, log userId + error only)
-- [ ] T7 Implement signupAction in src/features/auth/actions.ts (checkSignupThrottle, safeParse, hashPassword, create user, P2002 → email error, new token + createSession + set cookie, runOnSignedIn, redirect /)
-- [ ] T8 Implement loginAction (safeParse first, then checkLoginThrottle on the normalised email → "Too many attempts" error, lookup by email, verifyDummy + recordLoginFailure when missing, verifyPassword, recordLoginFailure → password error, clearLoginFailures, new token + createSession + set cookie, runOnSignedIn, redirect /) and signOutAction (invalidateSession, delete cookie, redirect /)
+- [x] T5 Add src/features/auth/schemas.ts (signupSchema, loginSchema: email via normalizeEmail, password 12–128, name required)
+- [x] T6 Add src/features/auth/hooks.ts (no-op onSignedIn) and runOnSignedIn wrapper (try/catch, log userId + error only)
+- [x] T7 Implement signupAction in src/features/auth/actions.ts (checkSignupThrottle, safeParse, hashPassword, create user, P2002 → email error, new token + createSession + set cookie, runOnSignedIn, redirect /)
+- [x] T8 Implement loginAction (safeParse first, then checkLoginThrottle on the normalised email → "Too many attempts" error, lookup by email, verifyDummy + recordLoginFailure when missing, verifyPassword, recordLoginFailure → password error, clearLoginFailures, new token + createSession + set cookie, runOnSignedIn, redirect /) and signOutAction (invalidateSession, delete cookie, redirect /)
 
 ## Pages & forms
 
-- [ ] T9 Add src/app/(auth)/layout.tsx split panel per Login/Signup designs (side panel hidden at mobile)
-- [ ] T10 Build src/features/auth/SignupForm.tsx (useActionState, on-blur Zod, Input errors, pending Button, autoComplete) and src/app/(auth)/signup/page.tsx (redirect / if signed in)
-- [ ] T11 Build src/features/auth/LoginForm.tsx and src/app/(auth)/login/page.tsx (same pattern, design copy + links)
+- [x] T9 Add src/app/(auth)/layout.tsx split panel per Login/Signup designs (side panel hidden at mobile)
+- [x] T10 Build src/features/auth/SignupForm.tsx (useActionState, on-blur Zod, Input errors, pending Button, autoComplete) and src/app/(auth)/signup/page.tsx (redirect / if signed in)
+- [x] T11 Build src/features/auth/LoginForm.tsx and src/app/(auth)/login/page.tsx (same pattern, design copy + links)
 
 ## CI
 
-- [ ] T12 Extend .github/workflows/ci.yml: postgres:16 service, DATABASE_URL/DIRECT_URL and test-only PASSWORD_PEPPER env, prisma migrate deploy before e2e
+- [x] T12 Extend .github/workflows/ci.yml: postgres:16 service, DATABASE_URL/DIRECT_URL and test-only PASSWORD_PEPPER env, prisma migrate deploy before e2e
 
 ## Verification
 
-- [ ] T13 Write tests first (testing skill), module tests are T19: Vitest for schemas and signup/login/signOut actions (duplicate email, P2002, wrong password, unknown email uses dummy hash, unknown email hits "Too many attempts" after 5 failures like a real one, 5 wrong passwords as `a@x.com` then ` A@X.com ` gets "Too many attempts", too many attempts, signup limit message, new token per login, hook called once, hook throwing still signs in, no password in returned state, signOut deletes the row + clears the cookie); RTL for form error wiring; Playwright e2e sign up → session holds across reload → fresh context log in → session holds (logout e2e is protected-routes T11)
-- [ ] T14 Run QA against acceptance criteria (qa skill)
+- [x] T13 Write tests first (testing skill), module tests are T19: Vitest for schemas and signup/login/signOut actions (duplicate email, P2002, wrong password, unknown email uses dummy hash, unknown email hits "Too many attempts" after 5 failures like a real one, 5 wrong passwords as `a@x.com` then ` A@X.com ` gets "Too many attempts", too many attempts, signup limit message, new token per login, hook called once, hook throwing still signs in, no password in returned state, signOut deletes the row + clears the cookie); RTL for form error wiring; Playwright e2e sign up → session holds across reload → fresh context log in → session holds (logout e2e is protected-routes T11)
+- [x] T14 Run QA against acceptance criteria (qa skill)
+
+## PR #20 review
+
+- [x] T20 PR #20 review fixes (see spec Changelog 2026-10-13): per-IP throttle keys bucket IPv6 to its /64 via `ipThrottleBucket` in src/lib/request-ip.ts (IPv4 exact, mapped IPv6 → IPv4), with tests; `emailBlockedUntil` returns 0 when the failures are cleared between count and findFirst, with a race test; src/lib/auth/throttle.db.test.ts (5-failure block, own attempt excluded and withdrawn, 30-failure /64 block, 11th sign-up refused) and two renewal cases in session.db.test.ts (30-day slide, 90-day cap), Postgres-only; `signupSchema` name ≤ 100, email ≤ 254, with tests
+- [x] T21 Rerun QA against the changed AC7 and AC14 (qa skill)

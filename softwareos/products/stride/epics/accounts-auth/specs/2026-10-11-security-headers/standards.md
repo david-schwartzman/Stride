@@ -16,28 +16,29 @@ The following standards apply to this work.
 
 ## Backend
 
-- Built into Next.js — no separate Express server
-- Server Components for data loading
-- Server Actions for mutations (cart, wishlist, checkout, auth)
-- Route Handlers only where an HTTP endpoint is needed
-- Zod for input validation on both client and server
+- Separate NestJS API (`apps/api`) in the same npm-workspaces monorepo as the Next.js frontend (`apps/web`); shared Zod schemas and types in `packages/shared`
+- **Boundary rule:** `apps/web` never imports Prisma, `@node-rs/argon2` or any secret. All data goes through the API. If a page needs data that no endpoint returns, add an endpoint
+- The browser reaches the API only through the same-origin `/api/*` rewrite, which the web proxy does (not `next.config`, so it can add the trusted proxy headers and strip the `/api` prefix); Server Components call it server-to-server at `API_URL` with the same headers (see `auth-security.md`, Requests)
+- **Deploy order:** web and API don't deploy atomically. The API ships first, and every API change stays backward-compatible with the web deploy in production; remove old endpoints or fields only in a later deploy
+- Server Components load data through the API; client forms send writes to `/api/*` — no Server Actions for data
+- Zod for input validation on both client and server, from `packages/shared`
 
 ## Auth
 
-- In-house session module (`src/lib/auth/`) with email + password — no auth library
+- In-house auth module in the API (`apps/api/src/auth/`) with email + password — no auth library
 - Opaque database sessions: random token in an HttpOnly `__Host-stride_session` cookie, only its SHA-256 hash stored in Postgres
 - Passwords hashed with Argon2id + per-user salt + server-side pepper (`@node-rs/argon2`)
 - Rules for using it: `standards/global/auth-security.md`
 
 ## Database
 
-- PostgreSQL hosted on Neon (serverless Postgres)
-- Prisma 6 ORM (pinned major; Prisma 7 moves `directUrl` to `prisma.config.ts` and needs a driver adapter) with migrations and a seed script for the product catalog
+- PostgreSQL hosted on Neon (serverless Postgres), connected to the API project only
+- Prisma 6 (in `apps/api`) ORM (pinned major; Prisma 7 moves `directUrl` to `prisma.config.ts` and needs a driver adapter) with migrations and a seed script for the product catalog
   - Catalog content lives in one shared catalog data file, imported by both the seed script and the production catalog load
-  - Neon needs two connection strings: pooled `DATABASE_URL` for the app at runtime, and unpooled `DIRECT_URL` (`directUrl` in `schema.prisma`) for `prisma migrate`
-  - Migrations stay backward-compatible with the previous deploy (expand → contract), so a Vercel rollback never needs a database rollback
+  - Neon needs two connection strings: pooled `DATABASE_URL` for the API at runtime, and unpooled `DIRECT_URL` (`directUrl` in `schema.prisma`) for `prisma migrate`
+  - Migrations stay backward-compatible with the previous deploy (expand → contract), so a Vercel rollback (of either project) never needs a database rollback
 - Neon branch per preview deployment: each PR preview gets its own database branch, forked from the `develop` database branch, so preview data and migrations stay isolated
-  - CI/preview build runs `prisma migrate deploy` then the seed script against that preview's branch
+  - The API project's CI/preview build runs `prisma migrate deploy` then the seed script against that preview's branch
   - Production runs migrations only, never the seed script. The seed script refuses to run against the production database.
   - Exception: production catalog content is loaded by a dedicated, idempotent catalog load (upserts keyed by slug) that reads the shared catalog data file. It loads catalog data only, never test users, orders or other fixture data.
   - The preview branch is deleted when the PR closes
@@ -49,7 +50,7 @@ The following standards apply to this work.
 
 ## Other
 
-- Vercel hosting, with preview deployments per PR
+- Vercel hosting: two projects (web, API), each with preview deployments per PR. Goal: a web preview calls the API preview from the same commit. The mechanism (and the Deployment Protection bypass) is settled by the `api-foundation` spike; until then a web preview may call the shared `develop` API preview
 - GitHub Actions CI: lint, typecheck, tests on every PR
 - Product images stored in the repo under `/public`
 - Payment is mocked (no real payment provider)
@@ -67,8 +68,8 @@ Rules for any code that knows who the user is. The design behind them is in `sof
 
 ## Who the user is
 
-- Only `src/lib/auth/` touches session tokens, cookies and password hashes. Everything else calls `getCurrentSession()` (`src/lib/auth/current.ts`) or `requireUser()` (`src/features/session/require-user.ts`).
-- Every mutating Server Action and every page or query that reads private data calls `requireUser()` first. The proxy/middleware is a redirect convenience, not authorization.
+- Only the API's auth module (`apps/api/src/auth/`) touches session tokens, password hashes and creates or deletes the session cookie. Other API code uses its `AuthGuard` and current-user decorator; the web app uses `getCurrentSession()` (calls `GET /auth/me`) or `requireUser()` (`src/features/session/require-user.ts`). One exception: the web proxy may re-send the existing session cookie unchanged (Max-Age refresh on GET) through `refreshSessionCookie` in `packages/shared/src/session-cookie.ts`. It never builds cookie attributes itself, never reads the token's meaning and never deletes the cookie.
+- Every API endpoint that changes data or returns private data runs the `AuthGuard`. That is the authorization layer. The web's `requireUser()` and proxy/middleware only decide what to render or where to redirect; they are not authorization.
 - The user ID always comes from the session. Never accept a `userId` from the client.
 - Scope every private query by the session user (`where: { id, userId: user.id }`). An object the user doesn't own returns 404, not 403.
 
@@ -76,18 +77,20 @@ Rules for any code that knows who the user is. The design behind them is in `sof
 
 - Create a **new** session token at login, sign-up and password change. Never reuse a token that arrived with the request.
 - Store only `sha256(token)` server-side; the raw token lives only in the HttpOnly `__Host-stride_session` cookie (never `localStorage`).
-- Hash passwords with Argon2id + pepper via `src/lib/auth/password.ts`. Never hash on the client.
+- Hash passwords with Argon2id + pepper via the API auth module's password service. Never hash on the client or in `apps/web`.
 
 ## Requests
 
-- GET never changes state. Every change, including logout, is a POST (Server Action or form).
+- GET never changes state. Every change, including logout, is a POST (or DELETE) to `/api/*`.
 - Redirect targets taken from input (`next`, `callbackUrl`) must be same-origin relative paths; otherwise fall back to `/`.
-- Plain Route Handlers that change data check the `Origin` header themselves.
+- The API is publicly reachable, so it trusts nothing a direct caller sends. One global middleware, the first in the API's request pipeline, rejects any request without a valid `x-stride-proxy-secret` (`WEB_PROXY_SECRET`, constant-time compare) with 401. `/cron/*` is the only exception (Bearer `CRON_SECRET`). The web sets that secret on every call, from the proxy's `/api` rewrite and from Server Components, and overwrites any client-sent copy.
+- The client IP comes only from `x-stride-client-ip` on a request that passed that check (validated, else null), never from `x-forwarded-for`, `x-real-ip` or the connecting address. Per-IP throttles skip a null IP (fail open) and never put every caller in one shared bucket.
+- The API checks `Origin` on every state-changing request: it must equal `https://` + the trusted `x-stride-forwarded-host` (`http://` in local dev only). A missing or different `Origin` gets 401. The browser reaches the API only through the same-origin `/api` rewrite — no CORS.
 
 ## Secrets and logs
 
-- Secrets (`DATABASE_URL`, `PASSWORD_PEPPER`, `GUEST_CART_SECRET`) live in env vars with a different value per environment, and never in a `NEXT_PUBLIC_` variable.
-- Never log passwords, session tokens, cookies, reset links or raw form data from auth actions. Users see generic errors; details go to logs only.
+- Secrets (`DATABASE_URL`, `PASSWORD_PEPPER`, `GUEST_CART_SECRET`, `CRON_SECRET`) live in the API project's env vars with a different value per environment — never on the web project and never in a `NEXT_PUBLIC_` variable. `WEB_PROXY_SECRET` is the one secret on both projects (same value on both, different per environment, server-only on the web).
+- Never log passwords, session tokens, cookies, reset links or raw request bodies from auth endpoints. Users see generic errors; details go to logs only.
 
 ---
 
