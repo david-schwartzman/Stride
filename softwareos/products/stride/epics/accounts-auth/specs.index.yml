@@ -78,6 +78,7 @@ specs:
       - apps/web/src/lib/db.ts
       - apps/web/src/instrumentation.ts
       - apps/api/src/setup-app.ts
+      - apps/api/src/common/body-parsing.ts
   - folder: 2026-10-11-auth-event-logging
     slug: auth-event-logging
     status: shaped
