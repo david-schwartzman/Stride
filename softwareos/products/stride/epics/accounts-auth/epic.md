@@ -24,4 +24,4 @@ Shoppers can sign up and log in with email and password, and protected pages (ch
 | 2026-10-11-session-management | shaped | feat/accounts-auth/session-management |
 | 2026-10-11-auth-event-logging | shaped | feat/accounts-auth/auth-event-logging |
 | 2026-10-13-api-foundation | in-progress | feat/accounts-auth/api-foundation |
-| 2026-10-13-auth-api-migration | done | feat/accounts-auth/auth-api-migration |
+| 2026-10-13-auth-api-migration | in-progress | feat/accounts-auth/auth-api-migration |
