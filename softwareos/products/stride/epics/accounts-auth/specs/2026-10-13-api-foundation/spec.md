@@ -21,7 +21,7 @@ This is a **no-regression** spec. Every accounts-auth criterion and test that pa
 
 #20's `src/lib/request-ip.ts` (`getClientIp(headers)` reading Vercel's `x-real-ip`, and `ipThrottleBucket`, which buckets IPv6 per /64) moves to `apps/web` unchanged. It stays correct there: the temporary auth code still runs on the web project, where Vercel sets `x-real-ip`. The web proxy reuses it to fill `x-stride-client-ip`. `auth-api-migration` ports `ipThrottleBucket` into the API with the throttles.
 
-**Temporary boundary exception.** Until candidate `auth-api-migration` moves the auth code into the API, that code keeps using Prisma inside `apps/web`. It goes through `apps/web/src/lib/db.ts`, using the client generated from the API's schema. `auth-api-migration` removes the exception.
+**Temporary boundary exception.** Until candidate `auth-api-migration` moves the auth code into the API, that code keeps using Prisma inside `apps/web`. It goes through `apps/web/src/lib/db.ts`, using the client generated from the API's schema. `auth-api-migration` removes the exception. *(Moved by auth-api-migration: the exception is gone; `apps/web` no longer imports Prisma.)*
 
 ## Goals & User Stories
 
@@ -46,6 +46,8 @@ This is a **no-regression** spec. Every accounts-auth criterion and test that pa
    - the signup-login auth files (`src/lib/auth/**`, `src/features/auth/actions.ts`, `src/features/auth/actions.test.ts`)
 
    An ESLint `no-restricted-imports` rule fails lint anywhere else. A comment on the rule names `auth-api-migration` as the spec that removes it.
+
+   *(Moved by auth-api-migration: the allowlist and `apps/web/src/lib/db.ts` are removed; no file in `apps/web` may import Prisma.)*
 7. AC7: `packages/shared` is imported by both apps. It holds at least the health response type/schema used by `apps/api` and by a web test. Both builds and typechecks resolve it with no extra publish step.
 8. AC8: A global API middleware handles state-changing requests:
    - It runs after the proxy-secret check (AC13), so `x-stride-forwarded-host` is trusted.
@@ -56,7 +58,7 @@ This is a **no-regression** spec. Every accounts-auth criterion and test that pa
 10. AC10: Local dev works from one command:
     - Root `npm run dev` starts web on :3000 and the API on :4000 together.
     - The web proxy rewrites `/api/*` to `API_URL` (default `http://localhost:4000`).
-    - Each app has its own `.env.example`. The API's lists `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER`, `GUEST_CART_SECRET` and `WEB_PROXY_SECRET`. The web's lists `API_URL` and `WEB_PROXY_SECRET` (the same local value as the API's), plus `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER` and `TEST_DATABASE_URL` marked "temporary — removed by auth-api-migration".
+    - Each app has its own `.env.example`. The API's lists `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER`, `GUEST_CART_SECRET` and `WEB_PROXY_SECRET`. The web's lists `API_URL` and `WEB_PROXY_SECRET` (the same local value as the API's), plus `DATABASE_URL`, `DIRECT_URL`, `PASSWORD_PEPPER` and `TEST_DATABASE_URL` marked "temporary — removed by auth-api-migration". *(Moved by auth-api-migration: those temporary web vars are removed.)*
 11. AC11: CI runs, in order:
     - `npm ci`, then `prisma migrate deploy` from `apps/api` against the Postgres service (before the unit tests: the Postgres-only suites need the tables)
     - lint, typecheck and unit tests for every workspace
@@ -106,7 +108,7 @@ This is a **no-regression** spec. Every accounts-auth criterion and test that pa
 - **Prisma:**
   - `prisma/` moves to `apps/api/prisma/`, and the `postinstall` / `db:*` scripts move to `apps/api`.
   - `apps/api/src/prisma/prisma.service.ts`: `PrismaService extends PrismaClient`, connects on module init and disconnects on shutdown. A `PrismaModule` exports it.
-  - The generated client is hoisted, so `apps/web/src/lib/db.ts` keeps working for the exception (AC6).
+  - The generated client is hoisted, so `apps/web/src/lib/db.ts` keeps working for the exception (AC6). *(Moved by auth-api-migration: `db.ts` and the exception are removed.)*
 - **API scaffold:**
   - Nest 11 with `@nestjs/platform-express`.
   - `main.ts` reads `PORT` (default 4000) and enables shutdown hooks.
@@ -114,7 +116,7 @@ This is a **no-regression** spec. Every accounts-auth criterion and test that pa
   - The `/health` controller runs `SELECT 1` with a short timeout.
   - Tests run on Vitest with `unplugin-swc` for decorator metadata.
 - **Common (`apps/api/src/common/`):**
-  - `proxy-secret.middleware.ts` (AC13), applied first in `AppModule.configure` for all routes, using `crypto.timingSafeEqual` after a length check.
+  - `proxy-secret.middleware.ts` (AC13), applied first in `AppModule.configure` for all routes, using `crypto.timingSafeEqual` after a length check. *(Moved by auth-api-migration: it is now applied in `apps/api/src/setup-app.ts` as the first Express middleware, before body parsing; `AppModule.configure` keeps only the Origin check.)*
   - `origin-check.middleware.ts` (AC8), applied after it for all routes.
   - `request-ip.ts` (AC9).
 - **Rewrite (web proxy):**
@@ -163,3 +165,4 @@ This is a **no-regression** spec. Every accounts-auth criterion and test that pa
 | 2026-10-15 | david-schwartzman | change | AC8: the Origin check rejects with 401 instead of 403, so both gatekeeper checks (proxy secret, Origin) answer 401; `standards.md` matches; new task T37 switches the middleware and its tests (done T15/T30 still read 403 as history) — tech lead decision: both checks run before the user is identified | — |
 | 2026-10-15 | david-schwartzman | change | AC14: `apiFetch` drops caller `x-stride-*` headers, passes the incoming `Origin` through instead of deriving one from the host, defaults to a 10-second timeout, and sends the Preview bypass header; AC12: the bypass comes from one helper shared by the proxy and `apiFetch`; AC11: migrate runs right after install, before the unit tests (as CI does); Covers: `playwright.config.ts` → `apps/web/playwright.config.ts`, adds the files the build actually created (`packages/shared/src/health.ts`, the `tsconfig.build.json`s, the API's ESLint and Vitest configs, the web config and health tests, `apps/web/e2e/api-health.spec.ts`, `apps/api/src/app.module.test.ts`) and `apps/web/vercel.json`; T35 notes the hardening — code and security review of the branch | — |
 | 2026-10-15 | david-schwartzman | change | AC14 lists `apiFetch`'s existing path check (a single leading `/`); Covers adds `packages/shared/src/health.test.ts`; T23: both Vercel build commands build `@stride/shared` first — re-review of the branch | — |
+| 2026-10-15 | david-schwartzman | change | auth-api-migration moved the proxy-secret check into `apps/api/src/setup-app.ts` (first Express middleware, before body parsing) and removed the temporary Prisma-in-web exception; "moved by auth-api-migration" notes added to the temporary boundary exception, AC6, AC10, Prisma and Common, original text kept as history — auth-api-migration review | — |
