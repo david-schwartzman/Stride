@@ -48,9 +48,8 @@ const handlers = {
 };
 
 /**
- * The status OriginCheckMiddleware itself gives a foreign Origin: 403 today
- * (it throws ForbiddenException). api-foundation's review fixes change it to
- * 401; asking the middleware keeps this test right on both sides of that merge.
+ * The status OriginCheckMiddleware itself gives a foreign Origin (401 since the
+ * 2026-10-15 decision), asked from the middleware so the two can't drift.
  */
 function originRejectionStatus(): number {
   const req = {

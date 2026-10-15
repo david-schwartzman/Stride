@@ -1,6 +1,8 @@
-// covers AC8, AC13 (api-foundation T30, T36): the middleware is wired into
-// AppModule for every route, the proxy-secret check first.
-import type { INestApplication } from "@nestjs/common";
+// covers AC8, AC13 (api-foundation T30, T36): the proxy-secret check (setupApp)
+// and the Origin check (AppModule) cover every route, the proxy-secret check first.
+import { randomBytes } from "node:crypto";
+
+import type { NestExpressApplication } from "@nestjs/platform-express";
 import { Test } from "@nestjs/testing";
 import {
   afterAll,
@@ -15,20 +17,27 @@ import {
 
 import { AppModule } from "./app.module";
 import { PrismaService } from "./prisma/prisma.service";
+import { setupApp } from "./setup-app";
 
 const SECRET = "wiring-test-secret";
 const HOST = "shop.example";
 
 describe("AppModule middleware wiring", () => {
-  let app: INestApplication;
+  let app: NestExpressApplication;
   let base: string;
 
   beforeAll(async () => {
+    // AppModule loads the auth module, which checks the pepper on init.
+    vi.stubEnv("PASSWORD_PEPPER", randomBytes(32).toString("base64"));
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(PrismaService)
       .useValue({ $queryRaw: async () => [{ "?column?": 1 }] })
       .compile();
-    app = moduleRef.createNestApplication({ logger: false });
+    app = moduleRef.createNestApplication<NestExpressApplication>({
+      logger: false,
+      bodyParser: false,
+    });
+    setupApp(app);
     await app.listen(0, "127.0.0.1");
     base = await app.getUrl();
   });
