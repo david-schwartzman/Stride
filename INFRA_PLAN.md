@@ -140,7 +140,7 @@ These need the app scaffold, so they're part of implementing the `app-foundation
 
 | # | Step | Who | Needs |
 |---|---|---|---|
-| A | Scaffold the app: Next.js, tooling, Prisma setup (since 2026-10-13 the monorepo — `apps/web`, `apps/api` NestJS with Prisma, `packages/shared` — comes in candidate spec `api-foundation`), `.env.example`, `ci.yml` (app-foundation T1–T5, T7) on `feat/accounts-auth/app-foundation`, as a draft PR | 🤖 Agent (🧑 reviews) | Step 1, Step 2 |
+| A | Scaffold the app: Next.js, tooling, Prisma setup (since 2026-10-13 the monorepo — `apps/web`, `apps/api` NestJS with Prisma, `packages/shared` — comes in spec `api-foundation`), `.env.example`, `ci.yml` (app-foundation T1–T5, T7) on `feat/accounts-auth/app-foundation`, as a draft PR | 🤖 Agent (🧑 reviews) | Step 1, Step 2 |
 | B | Create `.env.local` from `.env.example` with the values from Step 4; check `npm run dev` | 🧑 Human | A |
 | C | Preview build command: `prisma migrate deploy` before the build (on the API project after `api-foundation`), mapping Neon's direct URL to `DIRECT_URL` | 🤖 Agent | A + variable names from Step 5.5 |
 | D | If the integration doesn't delete branches: add a GitHub workflow that deletes the preview's Neon branch on PR close (T6.2). 🧑 You create a Neon API key and add it as a GitHub secret. | 🤖 Agent + 🧑 Human | A, Step 5.6 |

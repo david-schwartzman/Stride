@@ -3,7 +3,7 @@
 > Epic: ../../epic.md
 > Status: shaped
 > Branch: feat/accounts-auth/protected-routes
-> Covers: apps/web/src/middleware.ts, apps/web/src/proxy.ts, packages/shared/src/callback-url.ts, packages/shared/src/session-cookie.ts, apps/web/src/features/session/**, e2e/protected-routes.spec.ts
+> Covers: apps/web/src/middleware.ts, apps/web/src/proxy.ts, packages/shared/src/callback-url.ts, packages/shared/src/session-cookie.ts, apps/web/src/features/session/**, apps/web/e2e/protected-routes.spec.ts
 
 ## Overview
 
@@ -101,3 +101,5 @@ And the mission: checkout and wishlist require login. The protected pages themse
 | 2026-10-12 | david-schwartzman | change | AC1: whole-segment prefix matching (`/accounting` isn't protected); Technical Approach: neutral `<Suspense>` header fallback instead of the signed-out header, stale-cookie wording corrected (re-sent by AC12, cleared by the next auth action, not expired); references.md records the `refreshSessionCookie` edit to signup-login's `cookie.ts`; T2/T9/T11 updated — PR #12 review (2nd round) | https://github.com/david-schwartzman/Stride/pull/12 |
 | 2026-10-13 | david-schwartzman | change | Backend moved to a separate NestJS API: AC7 logout POSTs to `/api/auth/logout`; AC9/AC10 validate through `GET /auth/me` and add the API `AuthGuard`; callback-url and session-cookie helpers move to `packages/shared`; return-to handled by the API auth endpoints; Covers updated; tasks T1/T3/T4/T6/T8/T9/T11 reworded, T13–T14 added — tech-lead decision for a clear frontend / backend split | softwareos/products/stride/architecture.md |
 | 2026-10-13 | david-schwartzman | revised | PR review: the `AuthGuard` and `GET /auth/me` belong to `auth-api-migration`, so T13–T14 are dropped (they were added in the same PR and never shipped), AC9 and the Technical Approach rely on it, and `auth.guard.ts` leaves Covers. Covers uses `apps/web/src/...`; the guard file is shared with `api-foundation`'s `/api` rewrite | https://github.com/david-schwartzman/Stride/pull/21 |
+| 2026-10-15 | david-schwartzman | change | `standards.md` (global/auth-security copy): a missing or different `Origin` gets 401, not 403 — tech lead decision: both gatekeeper checks answer 401 | ../../../../../../standards/global/auth-security.md |
+| 2026-10-15 | david-schwartzman | revised | Covers: the e2e entry gets the `apps/web/` prefix like the other web paths (the e2e folder moved with the web app in api-foundation) — api-foundation review | — |

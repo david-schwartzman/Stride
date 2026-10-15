@@ -1,7 +1,7 @@
 import {
-  ForbiddenException,
   Injectable,
   type NestMiddleware,
+  UnauthorizedException,
 } from "@nestjs/common";
 import type { NextFunction, Request, Response } from "express";
 
@@ -20,12 +20,12 @@ export class OriginCheckMiddleware implements NestMiddleware {
     const origin = req.headers.origin;
     const host = req.headers["x-stride-forwarded-host"];
     if (!origin || typeof host !== "string" || !host) {
-      throw new ForbiddenException();
+      throw new UnauthorizedException();
     }
 
     const allowed = [`https://${host}`];
     if (process.env.NODE_ENV !== "production") allowed.push(`http://${host}`);
-    if (!allowed.includes(origin)) throw new ForbiddenException();
+    if (!allowed.includes(origin)) throw new UnauthorizedException();
 
     next();
   }

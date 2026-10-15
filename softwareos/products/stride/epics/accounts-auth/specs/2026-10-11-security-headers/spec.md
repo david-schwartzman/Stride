@@ -96,3 +96,4 @@ Builds on `app-foundation` (owns `next.config.ts`) and `protected-routes` (owns 
 | 2026-10-11 | david-schwartzman | created | Initial shaping | — |
 | 2026-10-12 | david-schwartzman | revised | PR review: `isPrivatePath` moved to `src/lib/private-paths.ts` so next.config's import chain stays import-free; exact preview CSP in AC7; AC1 headers tested on the proxy 307; HSTS ramp-up (one week at launch); `'unsafe-inline'` recorded in tech-plan.md | PR #14 |
 | 2026-10-13 | david-schwartzman | revised | PR review: the private-path note points at `packages/shared/src/callback-url.ts`, where protected-routes now puts the helper | https://github.com/david-schwartzman/Stride/pull/21 |
+| 2026-10-15 | david-schwartzman | change | `standards.md` (global/auth-security copy): a missing or different `Origin` gets 401, not 403 — tech lead decision: both gatekeeper checks answer 401 | ../../../../../../standards/global/auth-security.md |

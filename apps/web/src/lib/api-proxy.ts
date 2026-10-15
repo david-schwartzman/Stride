@@ -45,6 +45,18 @@ export function missingApiEnv(): string[] {
 }
 
 /**
+ * On Vercel Preview, adds `x-vercel-protection-bypass` so the call gets past
+ * the API preview's Deployment Protection (AC12). Shared by the `/api` proxy
+ * and `apiFetch`; a no-op elsewhere or when `API_PROTECTION_BYPASS_SECRET` is unset.
+ */
+export function addProtectionBypass(headers: Headers): void {
+  const bypass = process.env.API_PROTECTION_BYPASS_SECRET;
+  if (process.env.VERCEL_ENV === "preview" && bypass) {
+    headers.set("x-vercel-protection-bypass", bypass);
+  }
+}
+
+/**
  * Same-origin `/api/*` → the API (AC4): strips `/api`, keeps the query and
  * passes the whole request (Cookie included) with the trusted headers.
  */
@@ -59,10 +71,7 @@ export function apiRewrite(request: NextRequest): NextResponse {
   const { pathname, search } = request.nextUrl;
   const path = pathname.slice("/api".length) || "/";
   const headers = trustedProxyHeaders(request.headers);
-  const bypass = process.env.API_PROTECTION_BYPASS_SECRET;
-  if (process.env.VERCEL_ENV === "preview" && bypass) {
-    headers.set("x-vercel-protection-bypass", bypass);
-  }
+  addProtectionBypass(headers);
 
   return NextResponse.rewrite(`${base}${path}${search}`, {
     request: { headers },

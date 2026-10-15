@@ -24,7 +24,7 @@
 ## Data Flow
 
 - **Reads:** browser → Next.js page → Server Component fetches `API_URL` (whole `Cookie` header and the trusted proxy headers forwarded) → Nest → Prisma → JSON → HTML with products. Endpoints with private data run the `AuthGuard`: one indexed `Session` ⋈ `User` lookup per request; renews `expiresAt` when fewer than 15 days remain
-- **Writes:** user action → client form `POST /api/*` (same origin, rewritten to Nest by the web proxy) → proxy-secret check → Origin check (`Origin` must equal `https://` + the trusted `x-stride-forwarded-host` (`http://` in local dev only); a missing `Origin` is rejected; 403 otherwise) → `AuthGuard` → validate (shared Zod) → write via Prisma → JSON → the page calls `router.refresh()`
+- **Writes:** user action → client form `POST /api/*` (same origin, rewritten to Nest by the web proxy) → proxy-secret check → Origin check (`Origin` must equal `https://` + the trusted `x-stride-forwarded-host` (`http://` in local dev only); a missing `Origin` is rejected; 401 otherwise, like the proxy-secret check) → `AuthGuard` → validate (shared Zod) → write via Prisma → JSON → the page calls `router.refresh()`
 - **Login / sign-up:** `POST /api/auth/login|signup` → throttle check → verify password (Argon2id) → new token → insert `Session` → merge guest cart → API sets the cookie → web redirects to a safe relative path
 - **Logout:** `POST /api/auth/logout` → delete the `Session` row → API clears the cookie
 - **Guest cart:** an HttpOnly, HMAC-signed (`GUEST_CART_SECRET`, API-only) cookie of `{variantId, qty}` only — no prices, about 50 lines max, Zod-parsed on read — merged into the DB cart in one transaction on login
